@@ -21,7 +21,6 @@ public class HelloApplication extends Application {
         stage.setTitle("Boardgame Go");
         stage.setResizable(true);
 
-
         Text header = new Text();
         header.setText("Welcome to Go!");
         header.setFont(Font.font("Cambria", 40));
@@ -31,7 +30,6 @@ public class HelloApplication extends Application {
         header.setWrappingWidth(565);
         header.setTextAlignment(TextAlignment.CENTER);
         root.getChildren().add(header);
-
 
         stage.setScene(inputMask);
         stage.show();
