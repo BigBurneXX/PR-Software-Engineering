@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Text boundsType="VISUAL" fill="#713600" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Go!" AnchorPane.bottomAnchor="323.11328125" AnchorPane.leftAnchor="166.0" AnchorPane.rightAnchor="165.640625" AnchorPane.topAnchor="29.9921875">
+         <font>
+            <Font name="Cambria" size="40.0" />
+         </font>
+      </Text>
+      <Button alignment="BOTTOM_CENTER" layoutX="239.0" layoutY="341.0" mnemonicParsing="false" text="Start Game" textFill="#713600">
+         <font>
+            <Font name="Cambria" size="20.0" />
+         </font>
+      </Button>
+      <Button alignment="BOTTOM_CENTER" layoutX="369.0" layoutY="341.0" mnemonicParsing="false" text="Load Game" textFill="#713600">
+         <font>
+            <Font name="Cambria" size="20.0" />
+         </font>
+      </Button>
+      <Button alignment="BOTTOM_CENTER" layoutX="124.0" layoutY="341.0" mnemonicParsing="false" text="Save to ..." textFill="#713600">
+         <font>
+            <Font name="Cambria" size="20.0" />
+         </font>
+      </Button>
+      <MenuBar id="boardsize_menubar" layoutX="329.0" layoutY="100.0" mouseTransparent="true">
+        <menus>
+          <Menu mnemonicParsing="false" text="9x9">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="11x11">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="13x13">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="19x19">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+      <Text layoutX="59.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Board Size:">
+         <font>
+            <Font name="Cambria" size="21.0" />
+         </font>
+      </Text>
+      <Text layoutX="59.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Your Players:">
+         <font>
+            <Font name="Cambria" size="21.0" />
+         </font>
+      </Text>
+      <TextField layoutX="288.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 1" text="Player 1" />
+      <TextField layoutX="430.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 2" text="Player 2" />
+      <Text layoutX="59.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Komi:">
+         <font>
+            <Font name="Cambria" size="21.0" />
+         </font>
+      </Text>
+      <Text layoutX="59.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Number of Handicaps:">
+         <font>
+            <Font name="Cambria" size="21.0" />
+         </font>
+      </Text>
+      <Text layoutX="59.0" layoutY="287.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Specify Time Rules:">
+         <font>
+            <Font name="Cambria" size="21.0" />
+         </font>
+      </Text>
+      <TextField layoutX="430.0" layoutY="187.0" prefHeight="26.0" prefWidth="106.0" promptText="Komi" text="0" />
+      <TextField layoutX="430.0" layoutY="227.0" prefHeight="26.0" prefWidth="106.0" promptText="Handicaps" text="0" />
+      <ChoiceBox layoutX="386.0" layoutY="267.0" prefWidth="150.0" />
+   </children>
+</AnchorPane>
