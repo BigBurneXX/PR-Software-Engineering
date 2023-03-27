@@ -12,7 +12,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe2.inputMaskController">
    <children>
-      <Button alignment="BOTTOM_CENTER" layoutX="239.0" layoutY="341.0" mnemonicParsing="false" onAction="#switchToBoardMask" text="Start Game" textFill="#713600">
+      <Button fx:id="startButton" alignment="BOTTOM_CENTER" layoutX="239.0" layoutY="341.0" mnemonicParsing="false" onAction="#switchToBoardMask" text="Start Game" textFill="#713600">
          <font>
             <Font name="Cambria" size="20.0" />
          </font>
@@ -32,8 +32,8 @@
             <Font name="Cambria" size="21.0" />
          </font>
       </Text>
-      <TextField layoutX="288.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 1" />
-      <TextField layoutX="430.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 2" />
+      <TextField fx:id="player1" layoutX="288.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 1" />
+      <TextField fx:id="player2" layoutX="430.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 2" />
       <Text layoutX="59.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Komi:">
          <font>
             <Font name="Cambria" size="21.0" />
