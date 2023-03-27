@@ -22,7 +22,7 @@ import java.util.Objects;
 public class MainGUI extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("GUI.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("inputMaskGUI.fxml"));
         Scene inputMask = new Scene(root, 600, 400, Color.BEIGE);
         stage.setTitle("Boardgame Go");
         stage.setResizable(true);
