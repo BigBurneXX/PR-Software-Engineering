@@ -80,7 +80,7 @@
             <Font name="Baskerville Old Face" size="21.0" />
          </font>
       </Label>
-      <Label fx:id="handiCapLabel" layoutX="59.0" layoutY="227.0" text="Enter Number of Handicaps:">
+      <Label fx:id="handicapsLabel" layoutX="59.0" layoutY="227.0" text="Enter Number of Handicaps:">
          <font>
             <Font name="Baskerville Old Face" size="21.0" />
          </font>
