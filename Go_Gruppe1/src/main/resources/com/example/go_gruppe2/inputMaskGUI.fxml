@@ -8,7 +8,6 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe2.inputMaskController">
    <children>
@@ -27,30 +26,14 @@
             <Font name="Cambria" size="20.0" />
          </font>
       </Button>
-      <Text layoutX="59.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Your Players:">
+      <TextField fx:id="player1" layoutX="288.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 1">
          <font>
-            <Font name="Cambria" size="21.0" />
-         </font>
-      </Text>
-      <TextField fx:id="player1" layoutX="288.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 1" />
-      <TextField fx:id="player2" layoutX="430.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 2" />
-      <Text layoutX="59.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Komi:">
+            <Font name="Baskerville Old Face" size="12.0" />
+         </font></TextField>
+      <TextField fx:id="komi" layoutX="430.0" layoutY="187.0" prefHeight="26.0" prefWidth="106.0" promptText="Komi">
          <font>
-            <Font name="Cambria" size="21.0" />
-         </font>
-      </Text>
-      <Text layoutX="59.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Number of Handicaps:">
-         <font>
-            <Font name="Cambria" size="21.0" />
-         </font>
-      </Text>
-      <Text layoutX="59.0" layoutY="287.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Specify Time Rules:">
-         <font>
-            <Font name="Cambria" size="21.0" />
-         </font>
-      </Text>
-      <TextField layoutX="430.0" layoutY="187.0" prefHeight="26.0" prefWidth="106.0" promptText="Komi" text="0" />
-      <TextField layoutX="430.0" layoutY="227.0" prefHeight="26.0" prefWidth="106.0" promptText="Handicaps" text="0" />
+            <Font name="Baskerville Old Face" size="12.0" />
+         </font></TextField>
       <ChoiceBox layoutX="386.0" layoutY="267.0" prefWidth="150.0" />
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-4.0" layoutY="25.0" prefHeight="50.0" prefWidth="607.0" text="GO" textAlignment="CENTER" textFill="#713600">
          <font>
@@ -82,5 +65,35 @@
          <font>
             <Font name="Baskerville Old Face" size="15.0" />
          </font></RadioButton>
+      <Label fx:id="playersLabel" layoutX="59.0" layoutY="146.0" text="Enter Player Names:">
+         <font>
+            <Font name="Baskerville Old Face" size="21.0" />
+         </font>
+      </Label>
+      <TextField fx:id="player2" layoutX="430.0" layoutY="146.0" prefHeight="26.0" prefWidth="106.0" promptText="Player 2">
+         <font>
+            <Font name="Baskerville Old Face" size="12.0" />
+         </font>
+      </TextField>
+      <Label fx:id="komiLabel" layoutX="59.0" layoutY="187.0" text="Enter Komi:">
+         <font>
+            <Font name="Baskerville Old Face" size="21.0" />
+         </font>
+      </Label>
+      <Label fx:id="handiCapLabel" layoutX="59.0" layoutY="227.0" text="Enter Number of Handicaps:">
+         <font>
+            <Font name="Baskerville Old Face" size="21.0" />
+         </font>
+      </Label>
+      <Label fx:id="timeRuleLabel" layoutX="58.0" layoutY="266.0" text="Specify Time Rules:">
+         <font>
+            <Font name="Baskerville Old Face" size="21.0" />
+         </font>
+      </Label>
+      <TextField fx:id="handicaps" layoutX="430.0" layoutY="227.0" prefHeight="26.0" prefWidth="106.0" promptText="Handicaps">
+         <font>
+            <Font name="Baskerville Old Face" size="12.0" />
+         </font>
+      </TextField>
    </children>
 </AnchorPane>
