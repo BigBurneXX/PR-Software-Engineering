@@ -1,8 +1,8 @@
-module com.example.go_gruppe2 {
+module com.example.go_gruppe1 {
     requires javafx.controls;
     requires javafx.fxml;
 
 
-    opens com.example.go_gruppe2 to javafx.fxml;
-    exports com.example.go_gruppe2;
+    opens com.example.go_gruppe1 to javafx.fxml;
+    exports com.example.go_gruppe1;
 }

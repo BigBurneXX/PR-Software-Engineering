@@ -1,4 +1,4 @@
-package com.example.go_gruppe2;
+package com.example.go_gruppe1;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
