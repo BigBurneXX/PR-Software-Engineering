@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -23,7 +24,7 @@ public class MainGUI extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/inputMaskGUI.fxml"));
-        Scene inputMask = new Scene(root, 600, 400, Color.BEIGE);
+        Scene inputMask = new Scene(root);
         stage.setTitle("Boardgame Go");
         stage.setResizable(true);
 
