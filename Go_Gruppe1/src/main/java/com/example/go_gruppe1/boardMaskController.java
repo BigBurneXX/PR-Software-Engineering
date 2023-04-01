@@ -29,7 +29,7 @@ public class boardMaskController {
     public void displayKomi(String komiAdvantage) {
         komiBoard.setText("Komi: 0");
 
-        if(Integer.valueOf(komiAdvantage) > 0) {
+        if(!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0) {
             komiBoard.setText("Komi: " + komiAdvantage);
         }
     }
@@ -37,7 +37,7 @@ public class boardMaskController {
     public void displayHandicaps(String handicaps) {
         handicapsBoard.setText("Handicaps: 0");
 
-        if(Integer.valueOf(handicaps) > 0) {
+        if(!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0) {
             handicapsBoard.setText("Handicaps: " + handicaps);
         }
     }

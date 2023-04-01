@@ -32,20 +32,16 @@ public class inputMaskController {
     private TextField player1, player2, komi, handicaps;
 
     public void switchToBoardMask(ActionEvent event) throws IOException {
-        String p1 = player1.getText();
-        String p2 = player2.getText();
         int size = getBoardSize(new ActionEvent());
-        int komiAdvantage = Integer.parseInt(komi.getText());
-        int handicapAdvantage = Integer.parseInt(handicaps.getText());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/boardMaskGUI.fxml"));
         root = loader.load();
 
         boardMaskController boardMask = loader.getController();
-        boardMask.displayPlayerNames(p1, p2);
+        boardMask.displayPlayerNames(player1.getText(), player2.getText());
         boardMask.displayBoardSize(String.valueOf(size));
-        boardMask.displayKomi(String.valueOf(komiAdvantage));
-        boardMask.displayHandicaps(String.valueOf(handicapAdvantage));
+        boardMask.displayKomi(komi.getText());
+        boardMask.displayHandicaps(handicaps.getText());
 
 
         //Parent root = FXMLLoader.load(getClass().getResource("boardMaskGUI.fxml"));
