@@ -38,7 +38,7 @@ public class inputMaskController {
         int komiAdvantage = Integer.parseInt(komi.getText());
         int handicapAdvantage = Integer.parseInt(handicaps.getText());
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("boardMaskGUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/boardMaskGUI.fxml"));
         root = loader.load();
 
         boardMaskController boardMask = loader.getController();
@@ -56,7 +56,7 @@ public class inputMaskController {
     }
 
     public void switchToInputMask(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("inputMaskGUI.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/inputMaskGUI.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
