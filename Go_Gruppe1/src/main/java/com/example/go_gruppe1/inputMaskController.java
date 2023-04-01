@@ -3,6 +3,7 @@ package com.example.go_gruppe1;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,6 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class inputMaskController {
 
@@ -36,40 +39,28 @@ public class inputMaskController {
     private TextField player1, player2, komi, handicaps;
 
     public void switchToBoardMask(ActionEvent event) throws IOException {
-        int size = getBoardSize(new ActionEvent());
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/boardMaskGUI.fxml"));
         root = loader.load();
 
         boardMaskController boardMask = loader.getController();
         boardMask.setSize(getWidth(), getHeight());
         boardMask.displayPlayerNames(player1.getText(), player2.getText());
-        boardMask.displayBoardSize(String.valueOf(size));
         boardMask.displayKomi(komi.getText());
         boardMask.displayHandicaps(handicaps.getText());
+        boardMask.drawBoard(getBoardSize(new ActionEvent()));
 
-
-        //Parent root = FXMLLoader.load(getClass().getResource("boardMaskGUI.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
-    public void switchToInputMask(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/inputMaskGUI.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public int getBoardSize(ActionEvent event) throws IOException {
-        if(size9.isSelected()) {
+    public int getBoardSize(ActionEvent event) {
+        if (size9.isSelected()) {
             return 9;
-        } else if(size11.isSelected()) {
+        } else if (size11.isSelected()) {
             return 11;
-        } else if(size13.isSelected()) {
+        } else if (size13.isSelected()) {
             return 13;
         } else {
             return 19;
@@ -82,5 +73,10 @@ public class inputMaskController {
 
     public double getHeight() {
         return inputPane.getHeight();
+    }
+
+    public void setSize(double width, double height) {
+        inputPane.setPrefHeight(height);
+        inputPane.setPrefWidth(width);
     }
 }

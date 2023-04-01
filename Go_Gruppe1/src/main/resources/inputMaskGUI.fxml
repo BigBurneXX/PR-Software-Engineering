@@ -39,7 +39,7 @@
             <Font name="Baskerville Old Face" size="54.0" />
          </font>
          <GridPane.margin>
-            <Insets bottom="30.0" />
+            <Insets bottom="50.0" />
          </GridPane.margin>
       </Label>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Board Size:" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
@@ -93,7 +93,7 @@
             <Insets left="20.0" />
          </GridPane.margin>
       </Text>
-      <TextField fx:id="player2" minWidth="100.0" promptText="Player 2" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+      <TextField fx:id="player2" minWidth="100.0" promptText="White" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
          <font>
             <Font name="Baskerville Old Face" size="15.0" />
          </font>
@@ -101,7 +101,7 @@
             <Insets right="20.0" />
          </GridPane.margin>
       </TextField>
-      <TextField fx:id="player1" layoutX="415.0" layoutY="172.0" minWidth="100.0" promptText="Player 1" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+      <TextField fx:id="player1" layoutX="415.0" layoutY="172.0" minWidth="100.0" promptText="Black" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
          <font>
             <Font name="Baskerville Old Face" size="15.0" />
          </font>
@@ -151,17 +151,17 @@
       </Text>
       <ButtonBar buttonMinWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="7">
         <buttons>
-          <Button alignment="CENTER" contentDisplay="CENTER" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="152.0" text="Location ..." textAlignment="CENTER">
+          <Button alignment="CENTER" contentDisplay="CENTER" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="152.0" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Location ..." textAlignment="CENTER">
                <font>
                   <Font name="Baskerville Old Face" size="20.0" />
                </font>
             </Button>
-            <Button fx:id="startButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#switchToBoardMask" text="Start Game" textAlignment="CENTER">
+            <Button fx:id="startButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#switchToBoardMask" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start Game" textAlignment="CENTER">
                <font>
                   <Font name="Baskerville Old Face" size="20.0" />
                </font>
             </Button>
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Load Game" textAlignment="CENTER">
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Load Game" textAlignment="CENTER">
                <font>
                   <Font name="Baskerville Old Face" size="20.0" />
                </font>
