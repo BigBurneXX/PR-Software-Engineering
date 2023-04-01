@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -16,6 +17,9 @@ public class inputMaskController {
     private Stage stage;
     private Scene scene;
     private Parent root;
+
+    @FXML
+    private GridPane inputPane;
     @FXML
     private Label boardSizeLabel, komiLabel, handicapsLabel, timeRuleLabel;
 
@@ -38,6 +42,7 @@ public class inputMaskController {
         root = loader.load();
 
         boardMaskController boardMask = loader.getController();
+        boardMask.setSize(getWidth(), getHeight());
         boardMask.displayPlayerNames(player1.getText(), player2.getText());
         boardMask.displayBoardSize(String.valueOf(size));
         boardMask.displayKomi(komi.getText());
@@ -71,5 +76,11 @@ public class inputMaskController {
         }
     }
 
+    public double getWidth() {
+        return inputPane.getWidth();
+    }
 
+    public double getHeight() {
+        return inputPane.getHeight();
+    }
 }

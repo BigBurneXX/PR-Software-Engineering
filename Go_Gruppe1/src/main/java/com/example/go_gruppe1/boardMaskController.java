@@ -3,9 +3,11 @@ package com.example.go_gruppe1;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.GridPane;
 
 public class boardMaskController {
-
+    @FXML
+    private GridPane boardPane;
     @FXML
     private Label pl1, pl2, sizeOfBoard, komiBoard, handicapsBoard;
     public void displayPlayerNames(String p1, String p2) {
@@ -40,5 +42,11 @@ public class boardMaskController {
         if(!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0) {
             handicapsBoard.setText("Handicaps: " + handicaps);
         }
+    }
+
+    public void setSize(double width, double height) {
+        System.out.println(width + " " + height);
+        boardPane.setPrefHeight(height);
+        boardPane.setPrefWidth(width);
     }
 }
