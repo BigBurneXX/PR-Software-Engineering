@@ -9,6 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -110,7 +113,48 @@ public class boardMaskController {
     }
 
     public void drawBoard(int size) {
+        double boardSize = boardPane.getPrefWidth() * 0.42;
+        board.setX((boardPane.getPrefWidth() - boardSize) / 2);
+        board.setY((boardPane.getPrefHeight() - boardSize) / 2);
+        board.setWidth(boardSize);
+        board.setHeight(boardSize);
+
         board.widthProperty().bind(boardPane.widthProperty().multiply(0.42));
         board.heightProperty().bind(boardPane.widthProperty().multiply(0.42));
+
+        //grid does not work yet
+        /*GridPane boardGrid = new GridPane();
+        boardGrid.setPrefSize(boardSize, boardSize);
+        boardGrid.setTranslateX((boardPane.getPrefWidth() - boardSize) / 2);
+        boardGrid.setTranslateY((boardPane.getPrefHeight() - boardSize) / 2);
+        boardGrid.prefWidthProperty().bind(board.widthProperty());
+        boardGrid.prefHeightProperty().bind(board.heightProperty());
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                Pane cell = new Pane();
+                cell.setStyle("-fx-border-color: black;");
+                cell.prefWidthProperty().bind(boardGrid.widthProperty().divide(2));
+                cell.prefHeightProperty().bind(boardGrid.heightProperty().divide(2));
+                boardGrid.add(cell, i, j);
+            }
+        }
+
+        boardPane.add(boardGrid, 3, 4);*/
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
