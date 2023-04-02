@@ -28,8 +28,8 @@
       <RowConstraints maxHeight="32.599981689453124" minHeight="10.0" prefHeight="28.599981689453124" vgrow="SOMETIMES" />
       <RowConstraints maxHeight="45.600012207031256" minHeight="1.1999938964843722" prefHeight="1.1999938964843722" vgrow="SOMETIMES" />
       <RowConstraints maxHeight="96.00000610351563" minHeight="0.0" prefHeight="3.199993896484358" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="129.60000610351562" minHeight="9.199987792968727" prefHeight="129.60000610351562" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="129.60000610351562" minHeight="9.199987792968727" prefHeight="82.39999999999999" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="97.39999999999998" minHeight="10.0" prefHeight="97.39999999999998" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
@@ -116,6 +116,10 @@
             <Font name="Baskerville Old Face" size="13.0" />
          </font>
       </Button>
-      <Rectangle fx:id="board" arcHeight="5.0" arcWidth="5.0" fill="#c4a484" height="200.0" stroke="#483c32" strokeType="INSIDE" width="200.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+      <Rectangle fx:id="board" arcHeight="5.0" arcWidth="5.0" fill="#c4a484" height="200.0" stroke="#483c32" strokeType="INSIDE" width="200.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BASELINE">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </Rectangle>
    </children>
 </GridPane>
