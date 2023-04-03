@@ -3,6 +3,7 @@ package com.example.go_gruppe1;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,13 +24,17 @@ public class boardMaskController {
     private Scene scene;
     private Parent root;
     @FXML
-    private GridPane boardPane;
+    private GridPane boardPaneText;
+
+    @FXML
+    private Pane boardPane;
     @FXML
     private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
     @FXML
     private ToggleButton play, navigate;
     @FXML
     private Button startButton;
+
     @FXML
     private Rectangle board;
     public void displayPlayerNames(String p1, String p2) {
@@ -65,7 +70,10 @@ public class boardMaskController {
     public void setSize(double width, double height) {
         boardPane.setPrefHeight(height);
         boardPane.setPrefWidth(width);
+        boardPaneText.prefWidthProperty().bind(boardPane.widthProperty());
+        boardPaneText.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.25));
     }
+
 
     public boolean getMode(ActionEvent event) {
         if(play.isSelected()) {
@@ -112,36 +120,33 @@ public class boardMaskController {
         stage.show();
     }
 
+
+    //does not fully work yet
     public void drawBoard(int size) {
-        double boardSize = boardPane.getPrefWidth() * 0.42;
-        board.setX((boardPane.getPrefWidth() - boardSize) / 2);
-        board.setY((boardPane.getPrefHeight() - boardSize) / 2);
+        double boardSize = Math.min(boardPane.getPrefWidth(), boardPane.getPrefHeight()) * 0.4;
+        double xOffset = (boardPane.getWidth() - boardSize);
+        double yOffset = (boardPane.getHeight() - boardSize) / 2;
+
+        //board.setX(xOffset);
+        //board.setY(yOffset);
         board.setWidth(boardSize);
         board.setHeight(boardSize);
 
-        board.widthProperty().bind(boardPane.widthProperty().multiply(0.42));
-        board.heightProperty().bind(boardPane.widthProperty().multiply(0.42));
-
-        //grid does not work yet
-        /*GridPane boardGrid = new GridPane();
-        boardGrid.setPrefSize(boardSize, boardSize);
-        boardGrid.setTranslateX((boardPane.getPrefWidth() - boardSize) / 2);
-        boardGrid.setTranslateY((boardPane.getPrefHeight() - boardSize) / 2);
-        boardGrid.prefWidthProperty().bind(board.widthProperty());
-        boardGrid.prefHeightProperty().bind(board.heightProperty());
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                Pane cell = new Pane();
-                cell.setStyle("-fx-border-color: black;");
-                cell.prefWidthProperty().bind(boardGrid.widthProperty().divide(2));
-                cell.prefHeightProperty().bind(boardGrid.heightProperty().divide(2));
-                boardGrid.add(cell, i, j);
-            }
-        }
-
-        boardPane.add(boardGrid, 3, 4);*/
+        board.widthProperty().bind(boardPane.widthProperty().multiply(0.4));
+        board.heightProperty().bind(boardPane.widthProperty().multiply(0.4));
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
