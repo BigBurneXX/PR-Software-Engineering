@@ -7,119 +7,113 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 
-<GridPane fx:id="boardPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.boardMaskController">
-   <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="32.599981689453124" minHeight="10.0" prefHeight="28.599981689453124" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="45.600012207031256" minHeight="1.1999938964843722" prefHeight="1.1999938964843722" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="96.00000610351563" minHeight="0.0" prefHeight="3.199993896484358" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="129.60000610351562" minHeight="9.199987792968727" prefHeight="82.39999999999999" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="97.39999999999998" minHeight="10.0" prefHeight="97.39999999999998" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-   </rowConstraints>
+<Pane fx:id="boardPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.boardMaskController">
    <children>
-      <Label fx:id="pl1" minHeight="-Infinity" minWidth="-Infinity" text="Player 1 (Black)" textAlignment="RIGHT" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-         <font>
-            <Font name="Baskerville Old Face" size="20.0" />
-         </font>
-         <GridPane.margin>
-            <Insets left="20.0" />
-         </GridPane.margin>
-      </Label>
-      <Label fx:id="pl2" minHeight="-Infinity" minWidth="-Infinity" text="Player 2 (White)" textAlignment="RIGHT" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-         <font>
-            <Font name="Baskerville Old Face" size="20.0" />
-         </font>
-         <GridPane.margin>
-            <Insets right="20.0" />
-         </GridPane.margin>
-      </Label>
-      <Label fx:id="komiBoard" minHeight="-Infinity" minWidth="-Infinity" text="Komi" textAlignment="RIGHT" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP">
-         <font>
-            <Font name="Baskerville Old Face" size="14.0" />
-         </font>
-         <GridPane.margin>
-            <Insets right="20.0" />
-         </GridPane.margin>
-      </Label>
-      <Label fx:id="handicapsBoard" minHeight="-Infinity" minWidth="-Infinity" text="Handicaps" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="TOP">
-         <font>
-            <Font name="Baskerville Old Face" size="14.0" />
-         </font>
-         <GridPane.margin>
-            <Insets left="20.0" />
-         </GridPane.margin>
-      </Label>
-      <Label contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" text="GO" textAlignment="CENTER" textFill="#703400" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <font>
-            <Font name="Baskerville Old Face" size="54.0" />
-         </font>
-         <GridPane.margin>
-            <Insets bottom="50.0" />
-         </GridPane.margin>
-      </Label>
-      <ToggleButton minWidth="70.0" mnemonicParsing="false" selected="true" style="-fx-border-color: #483C32; -fx-background-color: #D2B48C;" text="Play" GridPane.valignment="TOP">
-         <toggleGroup>
-            <ToggleGroup fx:id="mode" />
-         </toggleGroup>
-         <font>
-            <Font name="Baskerville Old Face" size="13.0" />
-         </font>
-      </ToggleButton>
-      <ToggleButton minWidth="70.0" mnemonicParsing="false" style="-fx-background-color: #D2B48C; -fx-border-color: #483C32;" text="Navigate" toggleGroup="$mode" GridPane.halignment="LEFT" GridPane.valignment="TOP">
-         <font>
-            <Font name="Baskerville Old Face" size="13.0" />
-         </font>
-         <GridPane.margin>
-            <Insets left="70.0" />
-         </GridPane.margin>
-      </ToggleButton>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="vs." GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
-         <font>
-            <Font name="Baskerville Old Face" size="20.0" />
-         </font>
-      </Text>
-      <Label fx:id="blackTrapped" layoutX="30.0" layoutY="99.0" minHeight="-Infinity" minWidth="-Infinity" text="Trapped:" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
-         <font>
-            <Font name="Baskerville Old Face" size="14.0" />
-         </font>
-         <GridPane.margin>
-            <Insets left="20.0" />
-         </GridPane.margin>
-      </Label>
-      <Label fx:id="whiteTrapped" layoutX="30.0" layoutY="120.0" minHeight="-Infinity" minWidth="-Infinity" text="Trapped:" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="TOP">
-         <font>
-            <Font name="Baskerville Old Face" size="14.0" />
-         </font>
-         <GridPane.margin>
-            <Insets right="20.0" />
-         </GridPane.margin>
-      </Label>
-      <Button fx:id="startButton" minWidth="140.0" mnemonicParsing="false" onAction="#switchToInputMask" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start New Game" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-         <font>
-            <Font name="Baskerville Old Face" size="13.0" />
-         </font>
-      </Button>
-      <Rectangle fx:id="board" arcHeight="5.0" arcWidth="5.0" fill="#c4a484" height="200.0" stroke="#483c32" strokeType="INSIDE" width="200.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="BASELINE">
-         <GridPane.margin>
-            <Insets />
-         </GridPane.margin>
-      </Rectangle>
+      <GridPane fx:id="boardPaneText" prefHeight="129.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="109.60001220703126" minHeight="0.0" prefHeight="55.8" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="186.20000228881835" minHeight="0.0" prefHeight="31.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="292.8000213623047" minHeight="10.0" prefHeight="19.999993896484384" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="292.8000213623047" minHeight="5.999981689453136" prefHeight="23.20000610351562" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Button fx:id="startButton" minWidth="140.0" mnemonicParsing="false" onAction="#switchToInputMask" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start New Game" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+               <font>
+                  <Font name="Baskerville Old Face" size="13.0" />
+               </font>
+            </Button>
+            <Label fx:id="whiteTrapped" minHeight="-Infinity" minWidth="-Infinity" text="Trapped:" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Baskerville Old Face" size="14.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets right="20.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="blackTrapped" minHeight="-Infinity" minWidth="-Infinity" text="Trapped:" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Baskerville Old Face" size="14.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin>
+            </Label>
+            <ToggleButton minWidth="70.0" mnemonicParsing="false" style="-fx-background-color: #D2B48C; -fx-border-color: #483C32;" text="Navigate" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+               <font>
+                  <Font name="Baskerville Old Face" size="13.0" />
+               </font>
+               <toggleGroup>
+                  <ToggleGroup fx:id="mode" />
+               </toggleGroup>
+               <GridPane.margin>
+                  <Insets left="70.0" />
+               </GridPane.margin>
+            </ToggleButton>
+            <Label contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" text="GO" textAlignment="CENTER" textFill="#703400" GridPane.columnIndex="3" GridPane.valignment="BASELINE">
+               <font>
+                  <Font name="Baskerville Old Face" size="54.0" />
+               </font>
+            </Label>
+            <Label fx:id="handicapsBoard" minHeight="-Infinity" minWidth="-Infinity" text="Handicaps" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Baskerville Old Face" size="14.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="pl1" minHeight="-Infinity" minWidth="-Infinity" text="Player 1 (Black)" textAlignment="RIGHT" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Baskerville Old Face" size="20.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="komiBoard" minHeight="-Infinity" minWidth="-Infinity" text="Komi" textAlignment="RIGHT" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Baskerville Old Face" size="14.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets right="20.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="pl2" minHeight="-Infinity" minWidth="-Infinity" text="Player 2 (White)" textAlignment="RIGHT" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Baskerville Old Face" size="20.0" />
+               </font>
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
+            </Label>
+            <ToggleButton minWidth="70.0" mnemonicParsing="false" selected="true" style="-fx-border-color: #483C32; -fx-background-color: #D2B48C;" text="Play" toggleGroup="$mode" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+               <font>
+                  <Font name="Baskerville Old Face" size="13.0" />
+               </font>
+            </ToggleButton>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="vs." GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+               <font>
+                  <Font name="Baskerville Old Face" size="20.0" />
+               </font>
+            </Text>
+         </children>
+      </GridPane>
+      <Rectangle fx:id="board" arcHeight="5.0" arcWidth="5.0" fill="#c4a484" height="200.0" layoutX="200.0" layoutY="129.0" stroke="#483c32" strokeType="INSIDE" width="200.0" />
    </children>
-</GridPane>
+</Pane>
