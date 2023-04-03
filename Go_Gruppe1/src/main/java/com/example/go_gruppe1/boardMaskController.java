@@ -27,7 +27,10 @@ public class boardMaskController {
     private GridPane boardPaneText;
 
     @FXML
-    private Pane boardPane;
+    private BorderPane boardPane;
+
+    @FXML
+    private Pane centerPane;
     @FXML
     private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
     @FXML
@@ -37,13 +40,14 @@ public class boardMaskController {
 
     @FXML
     private Rectangle board;
+
     public void displayPlayerNames(String p1, String p2) {
-        if(p1.isEmpty()) {
-            if(!p2.equals("Player 1")); //names cannot be the same
+        if (p1.isEmpty()) {
+            if (!p2.equals("Player 1")) ; //names cannot be the same
             p1 = "Player 1";
         }
-        if(p2.isEmpty()) {
-            if(!p1.equals("Player 2")); //names cannot be the same
+        if (p2.isEmpty()) {
+            if (!p1.equals("Player 2")) ; //names cannot be the same
             p2 = "Player 2";
         }
 
@@ -54,7 +58,7 @@ public class boardMaskController {
     public void displayKomi(String komiAdvantage) {
         komiBoard.setText("Komi: 0");
 
-        if(!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0) {
+        if (!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0) {
             komiBoard.setText("Komi: " + komiAdvantage);
         }
     }
@@ -62,7 +66,7 @@ public class boardMaskController {
     public void displayHandicaps(String handicaps) {
         handicapsBoard.setText("Handicaps: 0");
 
-        if(!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0) {
+        if (!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0) {
             handicapsBoard.setText("Handicaps: " + handicaps);
         }
     }
@@ -76,7 +80,7 @@ public class boardMaskController {
 
 
     public boolean getMode(ActionEvent event) {
-        if(play.isSelected()) {
+        if (play.isSelected()) {
             return true;
         } else {
             return false;
@@ -86,7 +90,7 @@ public class boardMaskController {
     public void displayBlackTrapped(String black) {
         blackTrapped.setText("Trapped: 0");
 
-        if((!black.isEmpty() && Integer.valueOf(black)  > 0)) {
+        if ((!black.isEmpty() && Integer.valueOf(black) > 0)) {
             blackTrapped.setText("Trapped: " + black);
         }
     }
@@ -94,7 +98,7 @@ public class boardMaskController {
     public void displayWhiteTrapped(String white) {
         whiteTrapped.setText("Trapped: 0");
 
-        if((!white.isEmpty() && Integer.valueOf(white)  > 0)) {
+        if ((!white.isEmpty() && Integer.valueOf(white) > 0)) {
             blackTrapped.setText("Trapped: " + white);
         }
     }
@@ -114,49 +118,17 @@ public class boardMaskController {
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
 
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
 
-    //does not fully work yet
+    //will work on it
     public void drawBoard(int size) {
-        double boardSize = Math.min(boardPane.getPrefWidth(), boardPane.getPrefHeight()) * 0.4;
-        double xOffset = (boardPane.getWidth() - boardSize);
-        double yOffset = (boardPane.getHeight() - boardSize) / 2;
 
-        //board.setX(xOffset);
-        //board.setY(yOffset);
-        board.setWidth(boardSize);
-        board.setHeight(boardSize);
-
-        board.widthProperty().bind(boardPane.widthProperty().multiply(0.4));
-        board.heightProperty().bind(boardPane.widthProperty().multiply(0.4));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
