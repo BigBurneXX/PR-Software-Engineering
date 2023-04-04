@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -37,9 +38,8 @@ public class boardMaskController {
     private ToggleButton play, navigate;
     @FXML
     private Button startButton;
-
     @FXML
-    private Rectangle board;
+    private Region leftRegion, rightRegion, bottomRegion;
 
     public void displayPlayerNames(String p1, String p2) {
         if (p1.isEmpty()) {
@@ -127,7 +127,15 @@ public class boardMaskController {
 
     //will work on it
     public void drawBoard(int size) {
-
+        centerPane.setMinWidth(boardPane.getWidth()*0.25);
+        centerPane.setMinHeight(boardPane.getWidth()*0.25);
+        centerPane.setPrefWidth(boardPane.getWidth()*0.25);
+        centerPane.setPrefHeight(boardPane.getWidth()*0.25);
+        centerPane.prefWidthProperty().bind(boardPane.widthProperty());
+        centerPane.prefHeightProperty().bind(boardPane.widthProperty());
+        //leftRegion.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.4));
+        //rightRegion.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.4));
+        //bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
     }
 
 
