@@ -1,16 +1,26 @@
 package com.example.go_gruppe1;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -27,7 +37,7 @@ public class boardMaskController {
     private BorderPane boardPane;
 
     @FXML
-    private Region centerRegion;
+    private GridPane board, rightRegion;
     @FXML
     private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
     @FXML
@@ -35,7 +45,10 @@ public class boardMaskController {
     @FXML
     private Button startButton;
     @FXML
-    private Region leftRegion, rightRegion, bottomRegion;
+    private Region leftRegion, bottomRegion;
+
+    @FXML
+    private StackPane circlePane;
 
     public void displayPlayerNames(String p1, String p2) {
         if (p1.isEmpty()) {
@@ -70,8 +83,6 @@ public class boardMaskController {
     public void setSize(double width, double height) {
         boardPane.setPrefHeight(height);
         boardPane.setPrefWidth(width);
-        boardPaneText.prefWidthProperty().bind(boardPane.widthProperty());
-        boardPaneText.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.25));
     }
 
 
@@ -120,28 +131,90 @@ public class boardMaskController {
         stage.show();
     }
 
-
-    //will work on it
     public void drawBoard(int size) {
         //bind bottom and upper region to 25% of window width
-        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.25));
-        boardPaneText.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.25));
+        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
+        boardPaneText.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
 
         //set left, right and center (board) region to 50% of window width
-        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.5));
-        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.5));
-        centerRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.5));
+        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.6));
+        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.6));
+        board.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.6));
 
         //bind center width to 50% of window width, so it's a square
-        centerRegion.prefWidthProperty().bind(boardPane.heightProperty().multiply(0.5));
+        board.prefWidthProperty().bind(boardPane.heightProperty().multiply(0.6));
 
         //bind left and right width to remaining width of the window of what's left from taking 50% of the height
-        leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(centerRegion.prefWidthProperty()).divide(2));
-        rightRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(centerRegion.prefWidthProperty()).divide(2));
+        leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
+        rightRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
+
+        //create grid
+        board.getColumnConstraints().clear();
+        board.getRowConstraints().clear();
+        rightRegion.getColumnConstraints().clear();
+        rightRegion.getRowConstraints().clear();
+        for (int i = 0; i <= size; i++) {
+            ColumnConstraints colConstraints = new ColumnConstraints();
+            colConstraints.setPercentWidth(100.0 / size);
+            board.getColumnConstraints().add(colConstraints);
+            if (i < 5) {
+                rightRegion.getColumnConstraints().add(colConstraints);
+            }
+
+            RowConstraints rowConstraints = new RowConstraints();
+            rowConstraints.setPercentHeight(100.0 / size);
+            board.getRowConstraints().add(rowConstraints);
+            rightRegion.getRowConstraints().add(rowConstraints);
+        }
+
+        //add color to board
+        for(int row = 0; row < size; row ++) {
+            for(int col = 0; col < size; col++) {
+                Pane cell = new Pane();
+                cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
+                board.add(cell, row, col);
+            }
+        }
+
+        //add board labelling
+        for (int row = 0; row < size; row++) {
+            //numbers on the right
+            Pane numberCell = new Pane();
+            numberCell.setStyle("-fx-background-color:  #F5F5DC; -fx-border-color: transparent");
+            board.add(numberCell, size, row);
+
+            Label number = new Label(String.valueOf(row + 1));
+            number.setCenterShape(true);
+            number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+            number.setStyle("-fx-text-fill: #C4A484");
+            board.setHalignment(number, HPos.RIGHT);
+            board.setValignment(number, VPos.CENTER);
+            number.setStyle("-fx-font-size: 15");
+            board.add(number, size, row);
+
+            //letters on the bottom
+            Pane letterCell = new Pane();
+            letterCell.setStyle("-fx-background-color:  #F5F5DC; -fx-border-color: transparent");
+            board.add(letterCell, row, size);
+
+            char[] alphabet = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S'};
+
+            Label letter = new Label();
+            letter.setText(String.valueOf(alphabet[row]));
+            letter.setCenterShape(true);
+            letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+            letter.setStyle("-fx-text-fill: #C4A484");
+            board.setHalignment(letter, HPos.CENTER);
+            board.setValignment(letter, VPos.BOTTOM);
+            letter.setStyle("-fx-font-size: 15");
+            board.add(letter, row, size);
+        }
+
+        //get rid of color of remaining bottom right cell
+        Pane lastCell = new Pane();
+        lastCell.setStyle("-fx-background-color:  #F5F5DC; -fx-border-color: transparent");
+        board.add(lastCell, size, size);
     }
-
-
-
 
 
 }
