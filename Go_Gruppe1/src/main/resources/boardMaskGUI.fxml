@@ -8,11 +8,10 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-
 
 <BorderPane fx:id="boardPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.boardMaskController">
    <top>
@@ -65,7 +64,7 @@
                   <Insets left="70.0" />
                </GridPane.margin>
             </ToggleButton>
-            <Label contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" text="GO" textAlignment="CENTER" textFill="#703400" GridPane.columnIndex="3" GridPane.valignment="BASELINE">
+            <Label contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" text="GO" textAlignment="CENTER" textFill="#703400" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                <font>
                   <Font name="Baskerville Old Face" size="54.0" />
                </font>
@@ -116,15 +115,15 @@
       </GridPane>
    </top>
    <left>
-      <Pane prefHeight="199.0" prefWidth="185.0" style="-fx-background-color: #F5F5DC;" BorderPane.alignment="CENTER" />
+      <Region fx:id="leftRegion" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F5F5DC;" BorderPane.alignment="CENTER" />
    </left>
-   <right>
-      <Pane prefHeight="199.0" prefWidth="186.0" style="-fx-background-color: #F5F5DC;" BorderPane.alignment="CENTER" />
-   </right>
    <bottom>
-      <Pane prefHeight="66.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" BorderPane.alignment="CENTER" />
+      <Region fx:id="bottomRegion" prefHeight="72.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" BorderPane.alignment="CENTER" />
    </bottom>
+   <right>
+      <Region fx:id="rightRegion" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F5F5DC;" BorderPane.alignment="CENTER" />
+   </right>
    <center>
-      <Pane fx:id="centerPane" prefHeight="220.0" prefWidth="220.0" style="-fx-border-color: #483C32;" BorderPane.alignment="CENTER" />
+      <Region fx:id="centerRegion" minHeight="20.0" minWidth="20.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #483C32;" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

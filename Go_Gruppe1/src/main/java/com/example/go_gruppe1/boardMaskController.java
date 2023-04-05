@@ -3,7 +3,6 @@ package com.example.go_gruppe1;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,9 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -30,16 +27,15 @@ public class boardMaskController {
     private BorderPane boardPane;
 
     @FXML
-    private Pane centerPane;
+    private Region centerRegion;
     @FXML
     private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
     @FXML
     private ToggleButton play, navigate;
     @FXML
     private Button startButton;
-
     @FXML
-    private Rectangle board;
+    private Region leftRegion, rightRegion, bottomRegion;
 
     public void displayPlayerNames(String p1, String p2) {
         if (p1.isEmpty()) {
@@ -127,7 +123,21 @@ public class boardMaskController {
 
     //will work on it
     public void drawBoard(int size) {
+        //bind bottom and upper region to 25% of window width
+        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.25));
+        boardPaneText.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.25));
 
+        //set left, right and center (board) region to 50% of window width
+        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.5));
+        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.5));
+        centerRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.5));
+
+        //bind center width to 50% of window width, so it's a square
+        centerRegion.prefWidthProperty().bind(boardPane.heightProperty().multiply(0.5));
+
+        //bind left and right width to remaining width of the window of what's left from taking 50% of the height
+        leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(centerRegion.prefWidthProperty()).divide(2));
+        rightRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(centerRegion.prefWidthProperty()).divide(2));
     }
 
 
