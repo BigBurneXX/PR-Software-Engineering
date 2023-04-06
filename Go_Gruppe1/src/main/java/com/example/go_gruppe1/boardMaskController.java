@@ -214,6 +214,20 @@ public class boardMaskController {
         Pane lastCell = new Pane();
         lastCell.setStyle("-fx-background-color:  #F5F5DC; -fx-border-color: transparent");
         board.add(lastCell, size, size);
+
+
+        for(int row = 0; row <= size; row++) {
+            for(int col = 0; col <= size; col++) {
+                Circle circle = new Circle(10, Color.BLACK);
+
+                board.add(circle, row, col);
+
+                circle.setTranslateX(-8);
+                circle.setTranslateY(-15);
+            }
+        }
+
+
     }
 
 
