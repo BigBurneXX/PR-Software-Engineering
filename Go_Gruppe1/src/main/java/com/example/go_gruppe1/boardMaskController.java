@@ -20,6 +20,7 @@ import java.io.IOException;
 
 public class boardMaskController {
 
+    public ToggleGroup mode;
     private Stage stage;
     private Scene scene;
     private Parent root;
