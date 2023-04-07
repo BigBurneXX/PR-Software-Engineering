@@ -49,6 +49,7 @@ public class inputMaskController {
         boardMask.displayHandicaps(handicaps.getText());
         boardMask.displayBlackTrapped("");
         boardMask.displayWhiteTrapped("");
+        boardMask.onModePlayClick();
         boardMask.drawBoard(getBoardSize(new ActionEvent()));
 
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();

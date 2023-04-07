@@ -21,9 +21,6 @@ import java.io.IOException;
 public class boardMaskController {
 
     public ToggleGroup mode;
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
 
     @FXML
     private BorderPane topRegion;
@@ -43,7 +40,10 @@ public class boardMaskController {
     private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
 
     @FXML
-    private Region leftRegion, bottomRegion;
+    private Region leftRegion;
+
+    @FXML
+    private Label bottomRegion;
 
     @FXML
     private StackPane circlePane;
@@ -69,14 +69,12 @@ public class boardMaskController {
         pl2.setText(p2 + " (White)");
     }
 
-    //slightly changing the logic
     public void displayKomi(String komiAdvantage) {
         komiBoard.setText("Komi: " +
                 (!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0 ? komiAdvantage : "0")
         );
     }
 
-    //slightly changing the logic
     public void displayHandicaps(String handicaps) {
         handicapsBoard.setText("Handicaps: " +
                 (!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0 ? handicaps : "0")
@@ -88,19 +86,19 @@ public class boardMaskController {
         boardPane.setPrefWidth(width);
     }
 
-    //slightly changing the logic
     public boolean getMode(ActionEvent event) {
         return modePlay.isSelected();
     }
 
-    //slightly changing the logic
+    public void onModePlayClick() {bottomRegion.setText("Play mode activated!");}
+    public void onModeNavigateClick() {bottomRegion.setText("Navigate mode activated");}
+
     public void displayBlackTrapped(String black) {
         blackTrapped.setText("Trapped: " +
                 (!black.isEmpty() && Integer.valueOf(black) > 0 ? black : "0")
         );
     }
 
-    //slightly changing the logic
     public void displayWhiteTrapped(String white) {
         whiteTrapped.setText("Trapped: " +
                 (!white.isEmpty() && Integer.valueOf(white) > 0 ? white : "0")
@@ -117,14 +115,14 @@ public class boardMaskController {
 
     public void switchToInputMask() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
-        root = loader.load();
+        Parent root = loader.load();
 
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
 
         Node source = topRegion.getTop();
-        stage = (Stage) source.getScene().getWindow();
-        scene = new Scene(root);
+        Stage stage = (Stage) source.getScene().getWindow();
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
@@ -223,10 +221,28 @@ public class boardMaskController {
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(-0.028));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(-0.015));
 
+                //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
-                    if(circle.getFill() == Color.TRANSPARENT) {
+                    if(circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
                         setStone(circle);
+                });
+
+                //when the mouse is hovering over a transparent circle this circle is coloured white or black
+                //side note: these colours are a little different from the white and black that a circle is filled with
+                //           when clicked so that .equals will return false
+                circle.setOnMouseEntered(e -> {
+                    if(circle.getFill() == Color.TRANSPARENT) {
+                        if (lastColor == Color.BLACK)
+                            circle.setFill(Color.valueOf("#000001"));
+                        else
+                            circle.setFill(Color.SNOW);
                     }
+                });
+
+                //when the mouse is no longer hovering over the circle the colour is removed
+                circle.setOnMouseExited(e -> {
+                    if(circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
+                        circle.setFill(Color.TRANSPARENT);
                 });
             }
         }
