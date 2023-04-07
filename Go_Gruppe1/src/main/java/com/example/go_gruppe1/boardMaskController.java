@@ -64,20 +64,18 @@ public class boardMaskController {
         pl2.setText(p2 + " (White)");
     }
 
+    //slighty changing the logic
     public void displayKomi(String komiAdvantage) {
-        komiBoard.setText("Komi: 0");
-
-        if (!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0) {
-            komiBoard.setText("Komi: " + komiAdvantage);
-        }
+        komiBoard.setText("Komi: " +
+                (!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0 ? komiAdvantage : "0")
+        );
     }
 
+    //slighty changing the logic
     public void displayHandicaps(String handicaps) {
-        handicapsBoard.setText("Handicaps: 0");
-
-        if (!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0) {
-            handicapsBoard.setText("Handicaps: " + handicaps);
-        }
+        handicapsBoard.setText("Handicaps: " +
+                (!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0 ? handicaps : "0")
+        );
     }
 
     public void setSize(double width, double height) {
@@ -85,29 +83,23 @@ public class boardMaskController {
         boardPane.setPrefWidth(width);
     }
 
-
+    //slighty changing the logic
     public boolean getMode(ActionEvent event) {
-        if (play.isSelected()) {
-            return true;
-        } else {
-            return false;
-        }
+        return play.isSelected();
     }
 
+    //slighty changing the logic
     public void displayBlackTrapped(String black) {
-        blackTrapped.setText("Trapped: 0");
-
-        if ((!black.isEmpty() && Integer.valueOf(black) > 0)) {
-            blackTrapped.setText("Trapped: " + black);
-        }
+        blackTrapped.setText("Trapped: " +
+                (!black.isEmpty() && Integer.valueOf(black) > 0 ? black : "0")
+        );
     }
 
+    //slighty changing the logic
     public void displayWhiteTrapped(String white) {
-        whiteTrapped.setText("Trapped: 0");
-
-        if ((!white.isEmpty() && Integer.valueOf(white) > 0)) {
-            blackTrapped.setText("Trapped: " + white);
-        }
+        whiteTrapped.setText("Trapped: " +
+                (!white.isEmpty() && Integer.valueOf(white) > 0 ? white : "0")
+        );
     }
 
     public double getWidth() {
@@ -134,6 +126,8 @@ public class boardMaskController {
     public void drawBoard(int size) {
         //bind bottom and upper region to 25% of window width
         bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
+
+        //-> needs to be adapted!
         boardPaneText.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
 
         //set left, right and center (board) region to 50% of window width

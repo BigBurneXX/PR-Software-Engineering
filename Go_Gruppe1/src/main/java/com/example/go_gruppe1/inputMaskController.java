@@ -47,6 +47,8 @@ public class inputMaskController {
         boardMask.displayPlayerNames(player1.getText(), player2.getText());
         boardMask.displayKomi(komi.getText());
         boardMask.displayHandicaps(handicaps.getText());
+        boardMask.displayBlackTrapped("");
+        boardMask.displayWhiteTrapped("");
         boardMask.drawBoard(getBoardSize(new ActionEvent()));
 
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
