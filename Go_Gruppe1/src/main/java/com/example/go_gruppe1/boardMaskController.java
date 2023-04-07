@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -54,19 +56,8 @@ public class boardMaskController {
     private Color lastColor = Color.BLACK;
 
     public void displayPlayerNames(String p1, String p2) {
-        //doesn't allow the same name
-        if(!p1.isEmpty() && p1.equals(p2)){
-            p1 = p1 + "_1";
-            p2 = p2 + "_2";
-        }
-        p1 = !p1.isEmpty() ? p1 : p2.equals("Player 1") ? "Player 2" : "Player 1";
-        p2 = !p2.isEmpty() ? p2 : p1.equals("Player 2") ? "Player 1" : "Player 2";
-
-        //would allow the same name
-        /*
         p1 = p1.isEmpty() ? "Player 1" : p1;
         p2 = p2.isEmpty() ? "Player 2" : p2;
-         */
 
         pl1.setText(p1 + " (Black)");
         pl2.setText(p2 + " (White)");
@@ -97,6 +88,9 @@ public class boardMaskController {
         modeAndMoveDisplay.setText("Navigate mode activated");
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
+        System.out.println(modeAndMoveDisplay.getTextAlignment());
+
+
     }
 
     protected void playActivate(){
@@ -138,6 +132,9 @@ public class boardMaskController {
     }
 
     public void drawBoard(int size) {
+        //set padding, so stones are not covered by top region
+        board.setPadding(new Insets(20, 0, 0, 0));
+
         //bind bottom and upper region to 25% of window width
         bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
         topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
