@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eaf2946a-4713-4549-803c-2c5e7d73028e" name="Changes" comment="" />
+    <list default="true" id="eaf2946a-4713-4549-803c-2c5e7d73028e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,6 +66,7 @@
       <option name="presentableId" value="Default" />
       <updated>1680899859452</updated>
       <workItem from="1680899862994" duration="1499000" />
+      <workItem from="1680902230037" duration="86000" />
     </task>
     <servers />
   </component>

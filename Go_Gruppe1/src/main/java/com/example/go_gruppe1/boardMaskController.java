@@ -213,11 +213,6 @@ public class boardMaskController {
             board.add(letter, row, size);
         }
 
-        //get rid of color of remaining bottom right cell
-        Pane lastCell = new Pane();
-        lastCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
-        board.add(lastCell, size, size);
-
         //add circles for stones
         for (int row = 0; row <= size; row++) {
             for (int col = 0; col <= size; col++) {
