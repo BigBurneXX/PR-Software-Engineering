@@ -23,6 +23,9 @@ public class boardMaskController {
     public ToggleGroup mode;
 
     @FXML
+    private Label modeAndMoveDisplay, sampleSolutionDisplay;
+
+    @FXML
     private BorderPane topRegion;
 
     @FXML
@@ -43,7 +46,7 @@ public class boardMaskController {
     private Region leftRegion;
 
     @FXML
-    private Label bottomRegion;
+    private VBox bottomRegion;
 
     @FXML
     private StackPane circlePane;
@@ -90,8 +93,15 @@ public class boardMaskController {
         return modePlay.isSelected();
     }
 
-    public void onModePlayClick() {bottomRegion.setText("Play mode activated!");}
-    public void onModeNavigateClick() {bottomRegion.setText("Navigate mode activated");}
+    public void onModeNavigateClick() {
+        modeAndMoveDisplay.setText("Navigate mode activated");
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
+        modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
+    }
+
+    protected void playActivate(){
+        modePlay.setSelected(true);
+    }
 
     public void displayBlackTrapped(String black) {
         blackTrapped.setText("Trapped: " +
@@ -223,26 +233,32 @@ public class boardMaskController {
 
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
-                    if(circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
-                        setStone(circle);
+                    if(modePlay.isSelected()) {
+                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
+                            setStone(circle);
+                    }
                 });
 
                 //when the mouse is hovering over a transparent circle this circle is coloured white or black
                 //side note: these colours are a little different from the white and black that a circle is filled with
                 //           when clicked so that .equals will return false
                 circle.setOnMouseEntered(e -> {
-                    if(circle.getFill() == Color.TRANSPARENT) {
-                        if (lastColor == Color.BLACK)
-                            circle.setFill(Color.valueOf("#000001"));
-                        else
-                            circle.setFill(Color.SNOW);
+                    if(modePlay.isSelected()) {
+                        if (circle.getFill() == Color.TRANSPARENT) {
+                            if (lastColor == Color.BLACK)
+                                circle.setFill(Color.valueOf("#000001"));
+                            else
+                                circle.setFill(Color.SNOW);
+                        }
                     }
                 });
 
                 //when the mouse is no longer hovering over the circle the colour is removed
                 circle.setOnMouseExited(e -> {
-                    if(circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
-                        circle.setFill(Color.TRANSPARENT);
+                    if(modePlay.isSelected()) {
+                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
+                            circle.setFill(Color.TRANSPARENT);
+                    }
                 });
             }
         }
@@ -254,9 +270,11 @@ public class boardMaskController {
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
             lastColor = Color.BLACK;
+            modeAndMoveDisplay.setText("Black's turn!");
         } else {
             c.setFill(lastColor);
             lastColor = Color.WHITE;
+            modeAndMoveDisplay.setText("White's turn!");
         }
     }
 
