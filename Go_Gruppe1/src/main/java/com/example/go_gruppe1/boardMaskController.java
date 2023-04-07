@@ -49,6 +49,8 @@ public class boardMaskController {
     @FXML
     private StackPane circlePane;
 
+    private Color lastColor = Color.BLACK;
+
     public void displayPlayerNames(String p1, String p2) {
         if (p1.isEmpty()) {
             if (!p2.equals("Player 1")) ; //names cannot be the same
@@ -160,8 +162,8 @@ public class boardMaskController {
         }
 
         //add color to board
-        for(int row = 0; row < size; row ++) {
-            for(int col = 0; col < size; col++) {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
                 Pane cell = new Pane();
                 cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
                 board.add(cell, row, col);
@@ -189,7 +191,7 @@ public class boardMaskController {
             letterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
             board.add(letterCell, row, size);
 
-            char[] alphabet = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S'};
+            char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'};
 
             Label letter = new Label();
             letter.setText(String.valueOf(alphabet[row]));
@@ -207,20 +209,47 @@ public class boardMaskController {
         lastCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
         board.add(lastCell, size, size);
 
-
-        for(int row = 0; row <= size; row++) {
-            for(int col = 0; col <= size; col++) {
-                Circle circle = new Circle(10, Color.BLACK);
-
+        //add circles for stones
+        for (int row = 0; row <= size; row++) {
+            for (int col = 0; col <= size; col++) {
+                Circle circle = new Circle(10, Color.TRANSPARENT);
                 board.add(circle, row, col);
 
-                circle.setTranslateX(-8);
-                circle.setTranslateY(-15);
+                circle.radiusProperty().bind(boardPane.heightProperty().divide(size * 7));
+                circle.translateYProperty().bind(boardPane.heightProperty().multiply(-0.028));
+                circle.translateXProperty().bind(boardPane.heightProperty().multiply(-0.015));
+
+                circle.setOnMouseClicked(e -> {
+                    if(circle.getFill() == Color.TRANSPARENT) {
+                        setStone(circle);
+                    }
+                });
             }
         }
 
 
     }
 
+    public void setStone(Circle c) {
+        if(lastColor == Color.WHITE){
+            c.setFill(lastColor);
+            lastColor = Color.BLACK;
+        } else {
+            c.setFill(lastColor);
+            lastColor = Color.WHITE;
+        }
+    }
 
+    /*public boolean isFirstStone() {
+        for (Node node : board.getChildren()) {
+            if (node instanceof Circle) {
+                if(!((Circle) node).getFill().equals(Color.TRANSPARENT)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }*/
 }
+
+
