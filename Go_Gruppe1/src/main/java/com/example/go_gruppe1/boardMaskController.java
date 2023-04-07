@@ -24,8 +24,6 @@ public class boardMaskController {
     private Stage stage;
     private Scene scene;
     private Parent root;
-    @FXML
-    private GridPane boardPaneText;
 
     @FXML
     private BorderPane topRegion;
@@ -53,14 +51,19 @@ public class boardMaskController {
     private Color lastColor = Color.BLACK;
 
     public void displayPlayerNames(String p1, String p2) {
-        if (p1.isEmpty()) {
-            if (!p2.equals("Player 1")) ; //names cannot be the same
-            p1 = "Player 1";
+        //doesn't allow the same name
+        if(!p1.isEmpty() && p1.equals(p2)){
+            p1 = p1 + "_1";
+            p2 = p2 + "_2";
         }
-        if (p2.isEmpty()) {
-            if (!p1.equals("Player 2")) ; //names cannot be the same
-            p2 = "Player 2";
-        }
+        p1 = !p1.isEmpty() ? p1 : p2.equals("Player 1") ? "Player 2" : "Player 1";
+        p2 = !p2.isEmpty() ? p2 : p1.equals("Player 2") ? "Player 1" : "Player 2";
+
+        //would allow the same name
+        /*
+        p1 = p1.isEmpty() ? "Player 1" : p1;
+        p2 = p2.isEmpty() ? "Player 2" : p2;
+         */
 
         pl1.setText(p1 + " (Black)");
         pl2.setText(p2 + " (White)");
