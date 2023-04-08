@@ -219,9 +219,11 @@ public class boardMaskController {
                 Circle circle = new Circle(10, Color.TRANSPARENT);
                 board.add(circle, row, col);
 
-                circle.radiusProperty().bind(boardPane.heightProperty().divide(size * 7));
-                circle.translateYProperty().bind(boardPane.heightProperty().multiply(-0.028));
-                circle.translateXProperty().bind(boardPane.heightProperty().multiply(-0.015));
+                //make stones resizable and adjust x and y properties
+                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size).divide(4));
+                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 2.4).multiply(-1));
+                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 3.9).multiply(-1));
+
 
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
