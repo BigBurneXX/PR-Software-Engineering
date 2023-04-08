@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -18,9 +18,6 @@
 <?import javafx.scene.text.Text?>
 
 <BorderPane fx:id="boardPane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.boardMaskController">
-   <left>
-      <Region fx:id="leftRegion" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F2F3F5;" BorderPane.alignment="CENTER" />
-   </left>
    <center>
       <StackPane fx:id="circlePane" BorderPane.alignment="CENTER">
          <GridPane fx:id="board">
@@ -36,22 +33,6 @@
          </GridPane>
       </StackPane>
    </center>
-   <right>
-      <GridPane fx:id="rightRegion" style="-fx-background-color: #F2F3F5;" BorderPane.alignment="CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <padding>
-            <Insets left="20.0" />
-         </padding>
-      </GridPane>
-   </right>
    <top>
       <BorderPane fx:id="topRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
@@ -139,7 +120,7 @@
                   <MenuItem fx:id="fileLoadGame" mnemonicParsing="false" text="Load game" />
                </Menu>
                <Menu mnemonicParsing="false" text="Mode">
-                  <RadioMenuItem fx:id="modePlay" mnemonicParsing="false" text="Play">
+                  <RadioMenuItem fx:id="modePlay" mnemonicParsing="false" onAction="#onModePlayClick" text="Play">
                      <toggleGroup>
                         <ToggleGroup fx:id="mode" />
                      </toggleGroup>
@@ -156,4 +137,10 @@
          <Label fx:id="sampleSolutionDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" />
       </VBox>
    </bottom>
+   <left>
+      <Pane fx:id="leftRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Pane fx:id="rightRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </right>
 </BorderPane>

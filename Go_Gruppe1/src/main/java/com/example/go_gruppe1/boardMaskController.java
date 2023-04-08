@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -40,12 +41,9 @@ public class boardMaskController {
     private BorderPane boardPane;
 
     @FXML
-    private GridPane board, rightRegion;
+    private GridPane board;
     @FXML
     private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
-
-    @FXML
-    private Region leftRegion;
 
     @FXML
     private VBox bottomRegion;
@@ -53,7 +51,12 @@ public class boardMaskController {
     @FXML
     private StackPane circlePane;
 
+    @FXML
+    private Pane leftRegion, rightRegion;
+
     private Color lastColor = Color.BLACK;
+
+    private Polygon leftArrow, rightArrow;
 
     public void displayPlayerNames(String p1, String p2) {
         p1 = p1.isEmpty() ? "Player 1" : p1;
@@ -88,9 +91,44 @@ public class boardMaskController {
         modeAndMoveDisplay.setText("Navigate mode activated");
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
-        System.out.println(modeAndMoveDisplay.getTextAlignment());
 
+        // create leftArrow
+        leftArrow = new Polygon(
+                0.0, 0.0,
+                -30.0, 15.0,
+                0.0, 30.0
+        );
+        leftArrow.setFill(Color.web("#483C32"));
+        leftArrow.setStrokeWidth(1.5);
 
+        // add leftArrow to leftRegion
+        leftRegion.getChildren().add(leftArrow);
+        leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
+        leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
+
+        // create rightArrow
+        rightArrow = new Polygon(
+                0.0, 0.0,
+                30.0, 15.0,
+                0.0, 30.0
+        );
+        rightArrow.setFill(Color.web("#483C32"));
+        rightArrow.setStrokeWidth(1.5);
+
+        // add leftArrow to leftRegion
+        rightRegion.getChildren().add(rightArrow);
+        rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
+        rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
+
+        leftArrow.setScaleX(2);
+        leftArrow.setScaleY(2);
+
+        rightArrow.setScaleX(2);
+        rightArrow.setScaleY(2);
+    }
+
+    public void onModePlayClick() {
+        
     }
 
     protected void playActivate(){
@@ -154,29 +192,14 @@ public class boardMaskController {
         //create grid
         board.getColumnConstraints().clear();
         board.getRowConstraints().clear();
-        rightRegion.getColumnConstraints().clear();
-        rightRegion.getRowConstraints().clear();
         for (int i = 0; i <= size; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
             colConstraints.setPercentWidth(100.0 / size);
             board.getColumnConstraints().add(colConstraints);
-            if (i < 5) {
-                rightRegion.getColumnConstraints().add(colConstraints);
-            }
 
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.setPercentHeight(100.0 / size);
             board.getRowConstraints().add(rowConstraints);
-            rightRegion.getRowConstraints().add(rowConstraints);
-        }
-
-        //add color to board
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                Pane cell = new Pane();
-                cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
-                board.add(cell, row, col);
-            }
         }
 
         //add board labelling
@@ -211,6 +234,15 @@ public class boardMaskController {
             board.setValignment(letter, VPos.BOTTOM);
             letter.setStyle("-fx-font-size: 15");
             board.add(letter, row, size);
+        }
+
+        //add color to board
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                Pane cell = new Pane();
+                cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
+                board.add(cell, row, col);
+            }
         }
 
         //add circles for stones
