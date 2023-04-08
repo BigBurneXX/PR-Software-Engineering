@@ -118,6 +118,7 @@
                   <MenuItem fx:id="fileSave" mnemonicParsing="false" text="Save" />
                   <MenuItem fx:id="fileNewGame" mnemonicParsing="false" onAction="#switchToInputMask" text="New game" />
                   <MenuItem fx:id="fileLoadGame" mnemonicParsing="false" text="Load game" />
+                  <MenuItem fx:id="fileRenameFile" mnemonicParsing="false" text="Rename file" />
                </Menu>
                <Menu mnemonicParsing="false" text="Mode">
                   <RadioMenuItem fx:id="modePlay" mnemonicParsing="false" onAction="#onModePlayClick" text="Play">
