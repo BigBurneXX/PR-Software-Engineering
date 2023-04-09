@@ -101,12 +101,28 @@ public class boardMaskController {
     }
 
     public void displayKomi(String komiAdvantage) {
+        //only numeric values can be entered
+        try {
+            double d = Double.parseDouble(komiAdvantage);
+        } catch (NumberFormatException nfe) {
+            komiBoard.setText("Komi: 0");
+            return;
+        }
+        //only values > 0 can be entered
         komiBoard.setText("Komi: " +
                 (!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0 ? komiAdvantage : "0")
         );
     }
 
     public void displayHandicaps(String handicaps) {
+        //only numeric values can be entered
+        try {
+            double d = Double.parseDouble(handicaps);
+        } catch (NumberFormatException nfe) {
+            handicapsBoard.setText("Handicaps: 0");
+            return;
+        }
+        //only values > 0 can be entered
         handicapsBoard.setText("Handicaps: " +
                 (!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0 ? handicaps : "0")
         );
@@ -162,7 +178,18 @@ public class boardMaskController {
     }
 
     public void onModePlayClick() {
-        
+        leftRegion.getChildren().clear();
+        rightRegion.getChildren().clear();
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.05));
+        modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
+
+        if(lastColor == Color.BLACK) {
+            modeAndMoveDisplay.setText("Black's turn!");
+        } else {
+            modeAndMoveDisplay.setText("White's turn!");
+        }
+
+
     }
 
     protected void playActivate(){
@@ -203,6 +230,7 @@ public class boardMaskController {
         stage.show();
     }
 
+    //initially, play mode is displayed
     public void drawBoard(int size) {
         //set padding, so stones are not covered by top region
         board.setPadding(new Insets(20, 0, 0, 0));
@@ -324,9 +352,12 @@ public class boardMaskController {
         }
 
 
+
+
     }
 
     public void setStone(Circle c) {
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.05));
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
             lastColor = Color.BLACK;
