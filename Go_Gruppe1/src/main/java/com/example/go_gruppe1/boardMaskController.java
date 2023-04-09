@@ -326,6 +326,9 @@ public class boardMaskController {
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 2.4).multiply(-1));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 3.9).multiply(-1));
 
+                //initial start ... needs additional logic if handicaps are used
+                modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+                modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
 
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
@@ -398,15 +401,15 @@ public class boardMaskController {
     }
 
     public void setStone(Circle c) {
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.05));
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
             lastColor = Color.BLACK;
-            modeAndMoveDisplay.setText("Black's turn!");
+            modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         } else {
             c.setFill(lastColor);
             lastColor = Color.WHITE;
-            modeAndMoveDisplay.setText("White's turn!");
+            modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
     }
 
