@@ -7,7 +7,6 @@
     <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,6 +75,7 @@
       <workItem from="1680902230037" duration="167000" />
       <workItem from="1680941336131" duration="3412000" />
       <workItem from="1681044984703" duration="2338000" />
+      <workItem from="1681048906280" duration="507000" />
     </task>
     <servers />
   </component>
