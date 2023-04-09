@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -19,6 +18,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class boardMaskController {
@@ -32,7 +33,7 @@ public class boardMaskController {
     private BorderPane topRegion;
 
     @FXML
-    private MenuItem fileSave, fileNewGame, fileLoadGame;
+    private MenuItem fileSave, fileNewGame, fileLoadGame, fileRenameFile;
 
     @FXML
     private RadioMenuItem modePlay, modeNavigate;
@@ -56,14 +57,47 @@ public class boardMaskController {
 
     private Color lastColor = Color.BLACK;
 
+    @FXML
     private Polygon leftArrow, rightArrow;
 
+    private File outputFile;
+
+    protected void createFile(String p1Name, String p2Name){
+        try{
+            outputFile = new File(p1Name + "_" + p2Name + ".txt");
+            if (outputFile.createNewFile()) {
+                System.out.println("File " + outputFile.getName() + " created.");
+                FileWriter fileWriter = new FileWriter(outputFile);
+                fileWriter.write(p1Name + " vs. " + p2Name);
+                fileWriter.write("\nBoardsize: ");
+                fileWriter.write("\nKomi: ");
+                fileWriter.close();
+            }else
+                System.out.println("File " + outputFile.getName() + " already exists!");
+        } catch (IOException e ){
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    protected void createFile(String fileName){
+        try{
+            File outputFile = new File(fileName + ".txt");
+            if (outputFile.createNewFile())
+                System.out.println("File " + outputFile.getName() + " created.");
+            else
+                System.out.println("File " + outputFile.getName() + " already exists!");
+        } catch (IOException e ){
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
     public void displayPlayerNames(String p1, String p2) {
         p1 = p1.isEmpty() ? "Player 1" : p1;
         p2 = p2.isEmpty() ? "Player 2" : p2;
 
         pl1.setText(p1 + " (Black)");
         pl2.setText(p2 + " (White)");
+        //createFile(p1, p2);
     }
 
     public void displayKomi(String komiAdvantage) {
