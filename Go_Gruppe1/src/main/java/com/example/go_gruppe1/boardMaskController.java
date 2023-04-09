@@ -1,5 +1,6 @@
 package com.example.go_gruppe1;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -38,7 +39,7 @@ public class boardMaskController {
     private BorderPane topRegion;
 
     @FXML
-    private MenuItem fileSave, fileLoadGame;
+    private MenuItem fileSave, fileNewGame, fileLoadGame, fileRenameFile;
 
     @FXML
     private RadioMenuItem modePlay, modeNavigate;
@@ -154,13 +155,13 @@ public class boardMaskController {
     public void onModePlayClick() {
         leftRegion.getChildren().clear();
         rightRegion.getChildren().clear();
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.05));
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
 
         if(lastColor == Color.BLACK) {
-            modeAndMoveDisplay.setText("Black's turn!");
+            modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         } else {
-            modeAndMoveDisplay.setText("White's turn!");
+            modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
     }
 
@@ -321,6 +322,10 @@ public class boardMaskController {
             }
         }
 
+        //initial start ... needs additional logic if handicaps are used
+        modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+
         //add circles for stones
         for (int row = 0; row <= size; row++) {
             for (int col = 0; col <= size; col++) {
@@ -332,13 +337,15 @@ public class boardMaskController {
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 2.4).multiply(-1));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 3.9).multiply(-1));
 
+                //initial start ... needs additional logic if handicaps are used
+                modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+                modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
 
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
                     if(modePlay.isSelected()) {
-                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001"))) {
+                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
                             setStone(circle);
-                        }
                     }
                 });
 
@@ -371,12 +378,24 @@ public class boardMaskController {
         pass.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
         pass.setMinWidth(70);
         pass.setPrefWidth(70);
-        pass.setAlignment(Pos.CENTER_RIGHT);
-        pass.setTextAlignment(TextAlignment.CENTER);
         pass.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
         pass.setOnMouseEntered(e -> pass.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
         pass.setOnMouseExited(e -> pass.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
-        topGrid.add(pass, 2, 3);
+        topGrid.add(pass, 1, 3);
+        GridPane.setHalignment(pass, HPos.LEFT);
+        pass.setTextAlignment(TextAlignment.CENTER);
+
+        //pass logic
+        pass.setOnMouseClicked(e -> {
+            if(lastColor == Color.BLACK) {
+                modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
+                lastColor = Color.WHITE;
+            } else {
+                modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
+                lastColor = Color.BLACK;
+            }
+        });
+
 
         resign = new Button("RESIGN");
         resign.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
@@ -388,23 +407,25 @@ public class boardMaskController {
         resign.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
         resign.setOnMouseEntered(e -> resign.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
         resign.setOnMouseExited(e -> resign.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
-        topGrid.add(resign, 4, 3);
+        topGrid.add(resign, 1, 3);
+        GridPane.setHalignment(resign, HPos.RIGHT);
+        resign.setTextAlignment(TextAlignment.CENTER);
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
         //createFile("");
     }
 
-    private void setStone(Circle c) {
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.05));
+    public void setStone(Circle c) {
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
             lastColor = Color.BLACK;
-            modeAndMoveDisplay.setText("Black's turn!");
+            modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         } else {
             c.setFill(lastColor);
             lastColor = Color.WHITE;
-            modeAndMoveDisplay.setText("White's turn!");
+            modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
     }
 
