@@ -108,28 +108,28 @@ public class boardMaskController {
         //only numeric values can be entered
         try {
             double d = Double.parseDouble(komiAdvantage);
+            //only values greater than 0 are valid
+            komiBoard.setText("Komi: " +
+                    (d > 0 ? d : "0")
+            );
         } catch (NumberFormatException nfe) {
             komiBoard.setText("Komi: 0");
-            return;
+            sampleSolutionDisplay.setText("Invalid komi input -> handicaps set to 0");
         }
-        //only values > 0 can be entered
-        komiBoard.setText("Komi: " +
-                (!komiAdvantage.isEmpty() && Integer.valueOf(komiAdvantage) > 0 ? komiAdvantage : "0")
-        );
     }
 
     public void displayHandicaps(String handicaps) {
         //only numeric values can be entered
         try {
-            double d = Double.parseDouble(handicaps);
+            int d = Integer.parseInt(handicaps);
+            //only values greater than 0 are valid
+            handicapsBoard.setText("Handicaps: " +
+                    (d > 0 ? d : "0")
+            );
         } catch (NumberFormatException nfe) {
             handicapsBoard.setText("Handicaps: 0");
-            return;
+            sampleSolutionDisplay.setText("Invalid handicap input -> handicaps set to 0");
         }
-        //only values > 0 can be entered
-        handicapsBoard.setText("Handicaps: " +
-                (!handicaps.isEmpty() && Integer.valueOf(handicaps) > 0 ? handicaps : "0")
-        );
     }
 
     public void setSize(double width, double height) {
