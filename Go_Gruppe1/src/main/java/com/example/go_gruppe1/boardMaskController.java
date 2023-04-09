@@ -1,6 +1,5 @@
 package com.example.go_gruppe1;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -26,7 +25,11 @@ import java.io.IOException;
 
 public class boardMaskController {
 
+    @FXML
     public ToggleGroup mode;
+
+    @FXML
+    private TextField renameFileName;
 
     @FXML
     private Label modeAndMoveDisplay, sampleSolutionDisplay;
@@ -35,7 +38,7 @@ public class boardMaskController {
     private BorderPane topRegion;
 
     @FXML
-    private MenuItem fileSave, fileNewGame, fileLoadGame, fileRenameFile;
+    private MenuItem fileSave, fileLoadGame;
 
     @FXML
     private RadioMenuItem modePlay, modeNavigate;
@@ -66,79 +69,46 @@ public class boardMaskController {
 
     private Button pass, resign;
 
-    protected void createFile(String p1Name, String p2Name){
+    private int boardSize;
+    private String player1Name;
+    private String player2Name;
+
+    private void createFile(String oldFileName){
         try{
-            outputFile = new File(p1Name + "_" + p2Name + ".txt");
+            String newFileName = oldFileName.endsWith(".txt") ?
+                    oldFileName.substring(0, oldFileName.length() -4) + "_1.txt" : player1Name + "_" + player2Name + ".txt";
+            File outputFile = new File(newFileName);
             if (outputFile.createNewFile()) {
-                System.out.println("File " + outputFile.getName() + " created.");
                 FileWriter fileWriter = new FileWriter(outputFile);
-                fileWriter.write(p1Name + " vs. " + p2Name);
-                fileWriter.write("\nBoardsize: ");
-                fileWriter.write("\nKomi: ");
+                fileWriter.write(player1Name + " vs. " + player2Name);
+                fileWriter.write("\nBoard size: " + boardSize);
+                fileWriter.write("\n" + komiBoard.getText());
                 fileWriter.close();
-            }else
-                System.out.println("File " + outputFile.getName() + " already exists!");
-        } catch (IOException e ){
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
-    protected void createFile(String fileName){
-        try{
-            File outputFile = new File(fileName + ".txt");
-            if (outputFile.createNewFile())
                 System.out.println("File " + outputFile.getName() + " created.");
-            else
+            }else {
                 System.out.println("File " + outputFile.getName() + " already exists!");
+                createFile(outputFile.getName());
+            }
         } catch (IOException e ){
-            System.out.println("An error occurred.");
+            System.out.println("File " + outputFile.getName() + " creation failed!");
             e.printStackTrace();
         }
     }
-    public void displayPlayerNames(String p1, String p2) {
-        p1 = p1.isEmpty() ? "Player 1" : p1;
-        p2 = p2.isEmpty() ? "Player 2" : p2;
 
-        pl1.setText(p1 + " (Black)");
-        pl2.setText(p2 + " (White)");
-        //createFile(p1, p2);
-    }
-
-    public void displayKomi(String komiAdvantage) {
-        //only numeric values can be entered
-        try {
-            double d = Double.parseDouble(komiAdvantage);
-            //only values greater than 0 are valid
-            komiBoard.setText("Komi: " +
-                    (d > 0 ? d : "0")
-            );
-        } catch (NumberFormatException nfe) {
-            komiBoard.setText("Komi: 0");
-            sampleSolutionDisplay.setText("Invalid komi input -> handicaps set to 0");
+    public void onRenameFileClick(){
+        File f = new File(renameFileName.getText() + ".txt");
+        if(outputFile.renameTo(f)){
+            sampleSolutionDisplay.setText("File successfully renamed!");
+            System.out.println("The name of the output file has successfully been changed to " + outputFile.getName());
+        } else {
+            System.out.println("Renaming unsuccessfully, check if a file with the same name already exists in the selected directory and try again");
+            sampleSolutionDisplay.setText("Renaming unsuccessfully, check if a file with the same name already exists in the selected directory and try again");
         }
     }
 
-    public void displayHandicaps(String handicaps) {
-        //only numeric values can be entered
-        try {
-            int d = Integer.parseInt(handicaps);
-            //only values greater than 0 are valid
-            handicapsBoard.setText("Handicaps: " +
-                    (d > 0 ? d : "0")
-            );
-        } catch (NumberFormatException nfe) {
-            handicapsBoard.setText("Handicaps: 0");
-            sampleSolutionDisplay.setText("Invalid handicap input -> handicaps set to 0");
-        }
-    }
-
-    public void setSize(double width, double height) {
+    protected void setSize(double width, double height) {
         boardPane.setPrefHeight(height);
         boardPane.setPrefWidth(width);
-    }
-
-    public boolean getMode(ActionEvent event) {
-        return modePlay.isSelected();
     }
 
     public void onModeNavigateClick() {
@@ -192,31 +162,13 @@ public class boardMaskController {
         } else {
             modeAndMoveDisplay.setText("White's turn!");
         }
-
-
     }
 
-    protected void playActivate(){
-        modePlay.setSelected(true);
-    }
-
-    public void displayBlackTrapped(String black) {
-        blackTrapped.setText("Trapped: " +
-                (!black.isEmpty() && Integer.valueOf(black) > 0 ? black : "0")
-        );
-    }
-
-    public void displayWhiteTrapped(String white) {
-        whiteTrapped.setText("Trapped: " +
-                (!white.isEmpty() && Integer.valueOf(white) > 0 ? white : "0")
-        );
-    }
-
-    public double getWidth() {
+    private double getWidth() {
         return boardPane.getWidth();
     }
 
-    public double getHeight() {
+    private double getHeight() {
         return boardPane.getHeight();
     }
 
@@ -234,8 +186,66 @@ public class boardMaskController {
         stage.show();
     }
 
+    protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize){
+        displayPlayerNames(player1Name, player2Name);
+        displayKomi(komi);
+        displayHandicaps(handicaps);
+        displayTrappedStone(0, blackTrapped);
+        displayTrappedStone(0, whiteTrapped);
+        modePlay.setSelected(true);
+        this.boardSize = boardSize;
+        drawBoard(boardSize);
+    }
+
+    private void displayPlayerNames(String p1, String p2) {
+        p1 = p1.isEmpty() ? "Player 1" : p1;
+        p2 = p2.isEmpty() ? "Player 2" : p2;
+
+        pl1.setText(p1 + " (Black)");
+        pl2.setText(p2 + " (White)");
+        player1Name = p1;
+        player2Name = p2;
+    }
+
+    private void displayKomi(String komiAdvantage) {
+        //only numeric values can be entered
+        try {
+            double d = Double.parseDouble(komiAdvantage);
+            //only values greater than 0 are valid
+            komiBoard.setText("Komi: " +
+                    (d >= 0 ? d : "0")
+            );
+        } catch (NumberFormatException nfe) {
+            komiBoard.setText("Komi: 0");
+            sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> handicaps set to 0");
+            System.out.println("Invalid komi input -> handicaps set to 0");
+        }
+    }
+
+    private void displayHandicaps(String handicaps) {
+        //only numeric values can be entered
+        try {
+            int d = Integer.parseInt(handicaps);
+            //only values greater than 0 are valid
+            handicapsBoard.setText("Handicaps: " +
+                    (d >= 0 ? d : "0")
+            );
+        } catch (NumberFormatException nfe) {
+            handicapsBoard.setText("Handicaps: 0");
+            sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> handicaps set to 0");
+            System.out.println("Invalid handicap input -> handicaps set to 0");
+        }
+    }
+    private void displayTrappedStone(int numberTrapped, Label player){
+        if(numberTrapped >= 0)
+            player.setText(String.valueOf(numberTrapped));
+        else
+            System.out.println("Invalid trapped stones input -> number of trapped stones cannot be < 0");
+    }
+
     //initially, play mode is displayed
-    public void drawBoard(int size) {
+    private void drawBoard(int size) {
+        boardSize = size;
         //set padding, so stones are not covered by top region
         board.setPadding(new Insets(20, 0, 0, 0));
 
@@ -326,8 +336,9 @@ public class boardMaskController {
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
                     if(modePlay.isSelected()) {
-                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
+                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001"))) {
                             setStone(circle);
+                        }
                     }
                 });
 
@@ -379,9 +390,12 @@ public class boardMaskController {
         resign.setOnMouseExited(e -> resign.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
         topGrid.add(resign, 4, 3);
 
+        //creating output file
+        //For now creating a file is deactivated, otherwise there would be too much files created while coding
+        //createFile("");
     }
 
-    public void setStone(Circle c) {
+    private void setStone(Circle c) {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.05));
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
