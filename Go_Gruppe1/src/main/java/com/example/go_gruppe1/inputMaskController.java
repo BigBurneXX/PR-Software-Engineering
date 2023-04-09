@@ -23,8 +23,6 @@ public class inputMaskController {
 
     @FXML
     private GridPane inputPane;
-    @FXML
-    private Label boardSizeLabel, komiLabel, handicapsLabel, timeRuleLabel;
 
     @FXML
     private RadioButton size9, size11, size13, size19;

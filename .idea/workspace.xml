@@ -7,6 +7,7 @@
     <list default="true" id="eaf2946a-4713-4549-803c-2c5e7d73028e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/inputMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/inputMaskController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +71,8 @@
       <workItem from="1680899862994" duration="1499000" />
       <workItem from="1680902230037" duration="167000" />
       <workItem from="1680941336131" duration="3412000" />
-      <workItem from="1680956923645" duration="3972000" />
+      <workItem from="1680956923645" duration="4092000" />
+      <workItem from="1681029900471" duration="2409000" />
     </task>
     <servers />
   </component>
