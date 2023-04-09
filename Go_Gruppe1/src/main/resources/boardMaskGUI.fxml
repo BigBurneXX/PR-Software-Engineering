@@ -36,7 +36,7 @@
    <top>
       <BorderPane fx:id="topRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
-            <GridPane prefHeight="129.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" BorderPane.alignment="CENTER">
+            <GridPane fx:id="topGrid" prefHeight="129.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" BorderPane.alignment="CENTER">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

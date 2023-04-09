@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -16,6 +17,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -42,7 +44,7 @@ public class boardMaskController {
     private BorderPane boardPane;
 
     @FXML
-    private GridPane board;
+    private GridPane board, topGrid;
     @FXML
     private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
 
@@ -61,6 +63,8 @@ public class boardMaskController {
     private Polygon leftArrow, rightArrow;
 
     private File outputFile;
+
+    private Button pass, resign;
 
     protected void createFile(String p1Name, String p2Name){
         try{
@@ -351,8 +355,29 @@ public class boardMaskController {
             }
         }
 
+        pass = new Button("PASS");
+        pass.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        pass.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
+        pass.setMinWidth(70);
+        pass.setPrefWidth(70);
+        pass.setAlignment(Pos.CENTER_RIGHT);
+        pass.setTextAlignment(TextAlignment.CENTER);
+        pass.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
+        pass.setOnMouseEntered(e -> pass.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
+        pass.setOnMouseExited(e -> pass.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        topGrid.add(pass, 2, 3);
 
-
+        resign = new Button("RESIGN");
+        resign.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        resign.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
+        resign.setMinWidth(70);
+        resign.setPrefWidth(70);
+        resign.setAlignment(Pos.CENTER_LEFT);
+        resign.setTextAlignment(TextAlignment.CENTER);
+        resign.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
+        resign.setOnMouseEntered(e -> resign.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
+        resign.setOnMouseExited(e -> resign.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        topGrid.add(resign, 4, 3);
 
     }
 

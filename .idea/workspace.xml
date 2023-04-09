@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="" />
+    <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,7 +67,7 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="eaf2946a-4713-4549-803c-2c5e7d73028e" name="Changes" comment="" />
+      <changelist id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="" />
       <created>1680899859452</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -71,6 +75,7 @@
       <workItem from="1680899862994" duration="1499000" />
       <workItem from="1680902230037" duration="167000" />
       <workItem from="1680941336131" duration="3412000" />
+      <workItem from="1681044984703" duration="2338000" />
     </task>
     <servers />
   </component>
