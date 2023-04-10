@@ -4,21 +4,44 @@ import javafx.scene.paint.Color;
 
 public class Stone {
     private final Color colour;
-    private Stone[] neighbours = new Stone[4];
+    private final int col;
+    private final int row;
+    private int liberties = 0;
 
-    Stone(Color colour){
-        this.colour = colour;
+    protected int getCol() {
+        return col;
     }
 
-    public Color getColour() {
+    protected int getRow() {
+        return row;
+    }
+
+    protected Stone(Color colour, int row, int col){
+        this.colour = colour;
+        this.row = row;
+        this.col = col;
+    }
+
+    protected Color getColour() {
         return colour;
     }
 
-    public Stone[] getNeighbours() {
-        return neighbours;
+    protected int getLiberties() {
+        return liberties;
     }
 
-    public void setNeighbours(Stone[] neighbours) {
-        this.neighbours = neighbours;
+    protected void changeLiberty(int addLiberty) {
+       liberties += addLiberty;
+       System.out.println("Stone at " + (col+1) + ", " + (row+1) + " has " + liberties + " liberties");
+       isDead();
     }
+
+    protected boolean isDead(){
+        if(liberties < 1) {
+            System.out.println("Stone at " + col + ", " + row + " should be deleted");
+            return true;
+        }
+        return false;
+    }
+
 }

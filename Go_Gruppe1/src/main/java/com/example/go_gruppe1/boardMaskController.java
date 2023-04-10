@@ -1,6 +1,5 @@
 package com.example.go_gruppe1;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -74,7 +73,14 @@ public class boardMaskController {
     private String player1Name;
     private String player2Name;
 
+    private int blackTrappedStones = 0;
+
+    private int whiteTrappedStones = 0;
+
+
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'};
+
+    private Stone[][] boardArray;
 
     private void createFile(String oldFileName){
         try{
@@ -197,6 +203,7 @@ public class boardMaskController {
         displayTrappedStone(0, whiteTrapped);
         modePlay.setSelected(true);
         this.boardSize = boardSize;
+        boardArray = new Stone[boardSize][boardSize];
         drawBoard(boardSize);
     }
 
@@ -216,12 +223,14 @@ public class boardMaskController {
             double d = Double.parseDouble(komiAdvantage);
             //only values greater than 0 are valid
             komiBoard.setText("Komi: " +
-                    (d >= 0 ? d : "0")
+                    (d < 0 ? "0" : d)
             );
         } catch (NumberFormatException nfe) {
             komiBoard.setText("Komi: 0");
-            sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> handicaps set to 0");
-            System.out.println("Invalid komi input -> handicaps set to 0");
+            if(!komiAdvantage.isEmpty()) {
+                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> handicaps set to 0");
+                System.out.println("Invalid komi input -> handicaps set to 0");
+            }
         }
     }
 
@@ -229,19 +238,26 @@ public class boardMaskController {
         //only numeric values can be entered
         try {
             int d = Integer.parseInt(handicaps);
+            System.out.println(d);
             //only values greater than 0 are valid
             handicapsBoard.setText("Handicaps: " +
-                    (d >= 0 ? d : "0")
+                    (d < 0 ? "0" : d)
             );
         } catch (NumberFormatException nfe) {
             handicapsBoard.setText("Handicaps: 0");
-            sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> handicaps set to 0");
-            System.out.println("Invalid handicap input -> handicaps set to 0");
+            if(!handicaps.isEmpty()) {
+                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> handicaps set to 0");
+                System.out.println("Invalid handicap input -> handicaps set to 0");
+            }
         }
     }
     private void displayTrappedStone(int numberTrapped, Label player){
-        if(numberTrapped >= 0)
-            player.setText(String.valueOf(numberTrapped));
+        if(numberTrapped >= 0){
+            if (player.getText().equals(player1Name))
+                blackTrapped.setText("Trapped: " + numberTrapped);
+            else
+                whiteTrapped.setText("Trapped: " + numberTrapped);
+        }
         else
             System.out.println("Invalid trapped stones input -> number of trapped stones cannot be < 0");
     }
@@ -467,7 +483,7 @@ public class boardMaskController {
                 System.out.println(board.getRowIndex(n));
                 int col = board.getColumnIndex(n);
                 int row = board.getRowIndex(n) + 1;
-
+                //addStoneToBoardArray(board.getColumnIndex(n), board.getRowIndex(n));
                 System.out.print(row);
                 System.out.println(alphabet[col]);
             }
@@ -481,6 +497,77 @@ public class boardMaskController {
             c.setFill(lastColor);
             lastColor = Color.WHITE;
             modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
+        }
+    }
+
+    private void addStoneToBoardArray(int col, int row){
+        Stone stone = new Stone(lastColor, row, col);
+        boardArray[row][col] = stone;
+
+        //sets liberties for the stone above
+        if(!(row - 1 < 0)){
+            Stone upperNeighbour = boardArray[row-1][col];
+            if(upperNeighbour == null)
+                stone.changeLiberty(1);
+            else if(upperNeighbour.getColour() != lastColor) {
+                upperNeighbour.changeLiberty(-1);
+                if(upperNeighbour.isDead())
+                    deleteStone((row - 1), col);
+            }
+        }
+
+        //sets liberties for the stone to the right
+        if(col + 1 < boardSize){
+            Stone rightNeighbour = boardArray[row][col+1];
+            if(rightNeighbour == null)
+                stone.changeLiberty(1);
+            else if(rightNeighbour.getColour() != lastColor) {
+                rightNeighbour.changeLiberty(-1);
+                if(rightNeighbour.isDead())
+                    deleteStone(row, (col + 1));
+            }
+        }
+
+        //sets liberties for the stone underneath
+        if (row + 1 < boardSize) {
+            Stone lowerNeighbour = boardArray[row + 1][col];
+            if (lowerNeighbour == null)
+                stone.changeLiberty(1);
+            else if (lowerNeighbour.getColour() != lastColor) {
+                lowerNeighbour.changeLiberty(-1);
+                if(lowerNeighbour.isDead())
+                    deleteStone((row + 1), row);
+            }
+        }
+
+        //sets liberties for the stone to the left
+        if(!(col - 1 < 0)){
+            Stone leftNeighbour = boardArray[row][col-1];
+            if(leftNeighbour == null)
+                stone.changeLiberty(1);
+            else if(leftNeighbour.getColour() != lastColor){
+                leftNeighbour.changeLiberty(-1);
+                if(leftNeighbour.isDead())
+                    deleteStone(row, (row - 1));
+            }
+        }
+    }
+
+    protected void deleteStone(int row, int col){
+        if(boardArray[row][col].getColour() == Color.BLACK)
+            displayTrappedStone(++blackTrappedStones, pl1);
+        else
+            displayTrappedStone(++whiteTrappedStones, pl2);
+        boardArray[row][col] = null;
+        boardArray[row-1][col].changeLiberty(1);
+        boardArray[row][col+1].changeLiberty(1);
+        boardArray[row-1][col].changeLiberty(1);
+        boardArray[row][col-1].changeLiberty(1);
+
+        for(Node n : board.getChildren()) {
+            if(n instanceof Circle c && board.getColumnIndex(n) == col && board.getRowIndex(n) == row) {
+                c.setFill(Color.TRANSPARENT);
+            }
         }
     }
 
