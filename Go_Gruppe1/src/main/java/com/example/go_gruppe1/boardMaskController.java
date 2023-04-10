@@ -74,6 +74,8 @@ public class boardMaskController {
     private String player1Name;
     private String player2Name;
 
+    private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'};
+
     private void createFile(String oldFileName){
         try{
             String newFileName = oldFileName.endsWith(".txt") ?
@@ -280,7 +282,7 @@ public class boardMaskController {
         }
 
         //add board labelling
-        for (int row = 0; row < size; row++) {
+        for (int row = 0; row <= size; row++) {
             //numbers on the right
             Pane numberCell = new Pane();
             numberCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
@@ -291,25 +293,43 @@ public class boardMaskController {
             number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
             number.setStyle("-fx-text-fill: #C4A484");
             board.setHalignment(number, HPos.RIGHT);
-            board.setValignment(number, VPos.CENTER);
+            board.setValignment(number, VPos.TOP);
             number.setStyle("-fx-font-size: 15");
+            number.translateYProperty().bind(numberCell.heightProperty().divide(4).multiply(-1));
+
+            if(row == size) {
+                number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+                number.setStyle("-fx-text-fill: #C4A484");
+                board.setHalignment(number, HPos.RIGHT);
+                board.setValignment(number, VPos.TOP);
+                number.setStyle("-fx-font-size: 15");
+            }
             board.add(number, size, row);
 
             //letters on the bottom
-            Pane letterCell = new Pane();
-            letterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
-            board.add(letterCell, row, size);
-
-            char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'};
+            if(row != size) {
+                Pane letterCell = new Pane();
+                letterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
+                board.add(letterCell, row, size);
+            }
 
             Label letter = new Label();
             letter.setText(String.valueOf(alphabet[row]));
             letter.setCenterShape(true);
             letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
             letter.setStyle("-fx-text-fill: #C4A484");
-            board.setHalignment(letter, HPos.CENTER);
+            board.setHalignment(letter, HPos.LEFT);
             board.setValignment(letter, VPos.BOTTOM);
             letter.setStyle("-fx-font-size: 15");
+            letter.translateXProperty().bind(numberCell.widthProperty().divide(8).multiply(-1));
+            if(row == size) {
+                letter.setText(String.valueOf(alphabet[size]));
+                letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+                letter.setStyle("-fx-text-fill: #C4A484");
+                board.setHalignment(letter, HPos.LEFT);
+                board.setValignment(letter, VPos.BOTTOM);
+                letter.setStyle("-fx-font-size: 15");
+            }
             board.add(letter, row, size);
         }
 
@@ -321,6 +341,28 @@ public class boardMaskController {
                 board.add(cell, row, col);
             }
         }
+
+        /*Pane numberAndLetterCell = new Pane();
+        numberAndLetterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
+        board.add(numberAndLetterCell, size, size);
+        Label letter = new Label();
+        letter.setText(String.valueOf(alphabet[size]));
+        letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        letter.setStyle("-fx-text-fill: #C4A484");
+        board.setHalignment(letter, HPos.LEFT);
+        board.setValignment(letter, VPos.BOTTOM);
+        letter.setStyle("-fx-font-size: 15");
+        board.add(letter, size, size);*/
+
+        /*Label number = new Label(String.valueOf(size + 1));
+        number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        number.setStyle("-fx-text-fill: #C4A484");
+        board.setHalignment(number, HPos.RIGHT);
+        board.setValignment(number, VPos.TOP);
+        number.setStyle("-fx-font-size: 15");
+        board.add(number, size, size);*/
+
+
 
         //initial start ... needs additional logic if handicaps are used
         modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
@@ -418,6 +460,19 @@ public class boardMaskController {
 
     public void setStone(Circle c) {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+
+        for(Node n : board.getChildren()) {
+            if(n instanceof Circle && n.equals(c)) {
+                System.out.println(board.getColumnIndex(n));
+                System.out.println(board.getRowIndex(n));
+                int col = board.getColumnIndex(n);
+                int row = board.getRowIndex(n) + 1;
+
+                System.out.print(row);
+                System.out.println(alphabet[col]);
+            }
+        }
+
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
             lastColor = Color.BLACK;
