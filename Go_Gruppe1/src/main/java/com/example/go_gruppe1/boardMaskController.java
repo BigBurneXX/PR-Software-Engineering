@@ -73,12 +73,16 @@ public class boardMaskController {
     private String player1Name;
     private String player2Name;
 
+<<<<<<< Updated upstream
     private int blackTrappedStones = 0;
 
     private int whiteTrappedStones = 0;
 
 
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'};
+=======
+    private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
+>>>>>>> Stashed changes
 
     private Stone[][] boardArray;
 
