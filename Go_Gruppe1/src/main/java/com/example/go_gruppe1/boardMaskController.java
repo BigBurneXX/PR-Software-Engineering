@@ -38,7 +38,7 @@ public class boardMaskController {
     private BorderPane topRegion;
 
     @FXML
-    private MenuItem fileSave, fileNewGame, fileLoadGame, fileRenameFile;
+    private MenuItem fileSave, fileLoadGame;
 
     @FXML
     private RadioMenuItem modePlay, modeNavigate;
@@ -73,16 +73,11 @@ public class boardMaskController {
     private String player1Name;
     private String player2Name;
 
-<<<<<<< Updated upstream
     private int blackTrappedStones = 0;
 
     private int whiteTrappedStones = 0;
 
-
-    private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'};
-=======
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
->>>>>>> Stashed changes
 
     private Stone[][] boardArray;
 
@@ -255,12 +250,9 @@ public class boardMaskController {
             }
         }
     }
-    private void displayTrappedStone(int numberTrapped, Label player){
+    private void displayTrappedStone(int numberTrapped, Label trappedLabel){
         if(numberTrapped >= 0){
-            if (player.getText().equals(player1Name))
-                blackTrapped.setText("Trapped: " + numberTrapped);
-            else
-                whiteTrapped.setText("Trapped: " + numberTrapped);
+            trappedLabel.setText("Trapped: " + numberTrapped);
         }
         else
             System.out.println("Invalid trapped stones input -> number of trapped stones cannot be < 0");
@@ -505,7 +497,7 @@ public class boardMaskController {
     }
 
     private void addStoneToBoardArray(int col, int row){
-        Stone stone = new Stone(lastColor, row, col);
+        Stone stone = new Stone(lastColor);//, row, col);
         boardArray[row][col] = stone;
 
         //sets liberties for the stone above
@@ -517,7 +509,14 @@ public class boardMaskController {
                 upperNeighbour.changeLiberty(-1);
                 if(upperNeighbour.isDead())
                     deleteStone((row - 1), col);
+            } else {
+                boardArray[row][col] = upperNeighbour;
+
+                //stone.changeLiberty(-1);
+                //.changeLiberty(-1);
+                //stone.addToGroup(upperNeighbour);
             }
+            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
         }
 
         //sets liberties for the stone to the right
@@ -530,6 +529,7 @@ public class boardMaskController {
                 if(rightNeighbour.isDead())
                     deleteStone(row, (col + 1));
             }
+            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
         }
 
         //sets liberties for the stone underneath
@@ -542,6 +542,7 @@ public class boardMaskController {
                 if(lowerNeighbour.isDead())
                     deleteStone((row + 1), row);
             }
+            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
         }
 
         //sets liberties for the stone to the left
@@ -554,19 +555,26 @@ public class boardMaskController {
                 if(leftNeighbour.isDead())
                     deleteStone(row, (row - 1));
             }
+            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
         }
+        if(stone.getLiberties() == 0)
+            deleteStone(row, col);
     }
 
     protected void deleteStone(int row, int col){
         if(boardArray[row][col].getColour() == Color.BLACK)
-            displayTrappedStone(++blackTrappedStones, pl1);
+            displayTrappedStone(++blackTrappedStones, blackTrapped);
         else
-            displayTrappedStone(++whiteTrappedStones, pl2);
+            displayTrappedStone(++whiteTrappedStones, whiteTrapped);
         boardArray[row][col] = null;
-        boardArray[row-1][col].changeLiberty(1);
-        boardArray[row][col+1].changeLiberty(1);
-        boardArray[row-1][col].changeLiberty(1);
-        boardArray[row][col-1].changeLiberty(1);
+        if(boardArray[row-1][col] != null)
+            boardArray[row-1][col].changeLiberty(1);
+        if(boardArray[row][col+1] != null)
+            boardArray[row][col+1].changeLiberty(1);
+        if(boardArray[row+1][col] != null)
+            boardArray[row+1][col].changeLiberty(1);
+        if(boardArray[row][col-1] != null)
+            boardArray[row][col-1].changeLiberty(1);
 
         for(Node n : board.getChildren()) {
             if(n instanceof Circle c && board.getColumnIndex(n) == col && board.getRowIndex(n) == row) {
