@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="starting with the deleting of trapped stones (not fully functional yet)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/Stone.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/Stone.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" afterDir="false" />
-    </list>
+    <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="starting with the deleting of trapped stones (not fully functional yet)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -93,6 +89,7 @@
       <workItem from="1681135674453" duration="87000" />
       <workItem from="1681140858327" duration="8024000" />
       <workItem from="1681293729629" duration="3297000" />
+      <workItem from="1681663308375" duration="275000" />
     </task>
     <task id="LOCAL-00001" summary="starting with the deleting of trapped stones (not fully functional yet)">
       <created>1681149268725</created>
