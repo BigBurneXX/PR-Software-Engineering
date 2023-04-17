@@ -465,6 +465,28 @@ public class boardMaskController {
         GridPane.setHalignment(resign, HPos.RIGHT);
         resign.setTextAlignment(TextAlignment.CENTER);
 
+        //resign logic
+        resign.setOnMouseClicked(e -> {
+            if(lastColor == Color.BLACK) {
+                modeAndMoveDisplay.setText(pl1.getText() + " resigned! - " + pl2.getText() + " won!");
+            } else {
+                modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
+            }
+
+            /*try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            try {
+                switchToInputMask();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }*/
+
+        });
+
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
         //createFile("");
@@ -475,8 +497,6 @@ public class boardMaskController {
 
         for(Node n : board.getChildren()) {
             if(n instanceof Circle && n.equals(c)) {
-                System.out.println(board.getColumnIndex(n));
-                System.out.println(board.getRowIndex(n));
                 int col = board.getColumnIndex(n);
                 int row = board.getRowIndex(n) + 1;
                 //addStoneToBoardArray(board.getColumnIndex(n), board.getRowIndex(n));
