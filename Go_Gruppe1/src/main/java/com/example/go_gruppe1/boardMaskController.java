@@ -85,13 +85,10 @@ public class boardMaskController {
         try{
             String newFileName = oldFileName.endsWith(".txt") ?
                     oldFileName.substring(0, oldFileName.length() -4) + "_1.txt" : player1Name + "_" + player2Name + ".txt";
-            File outputFile = new File(newFileName);
+            outputFile = new File(newFileName);
             if (outputFile.createNewFile()) {
-                FileWriter fileWriter = new FileWriter(outputFile);
-                fileWriter.write(player1Name + " vs. " + player2Name);
-                fileWriter.write("\nBoard size: " + boardSize);
-                fileWriter.write("\n" + komiBoard.getText());
-                fileWriter.close();
+                String startInfo = player1Name + " vs. " + player2Name + "\nBoardSize: " + boardSize + "\n" + komiBoard.getText();
+                writeToPosition(startInfo);
                 System.out.println("File " + outputFile.getName() + " created.");
             }else {
                 System.out.println("File " + outputFile.getName() + " already exists!");
@@ -103,6 +100,15 @@ public class boardMaskController {
         }
     }
 
+    private void writeToPosition(String data){
+        try {
+            FileWriter writer = new FileWriter(outputFile.getName(), true);
+            writer.append(data);
+            writer.close();
+        }catch (IOException e){
+            System.out.println("something went wrong when writing to the outputfile");
+        }
+    }
     public void onRenameFileClick(){
         File f = new File(renameFileName.getText() + ".txt");
         if(outputFile.renameTo(f)){
@@ -451,6 +457,7 @@ public class boardMaskController {
                 modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
                 lastColor = Color.BLACK;
             }
+            writeToPosition("\npassed");
         });
 
 
@@ -475,7 +482,7 @@ public class boardMaskController {
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
             }
-
+            writeToPosition("\nresigned");
             /*try {
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
@@ -492,7 +499,7 @@ public class boardMaskController {
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
-        //createFile("");
+        createFile("");
     }
 
     public void setStone(Circle c) {
@@ -500,11 +507,14 @@ public class boardMaskController {
 
         for(Node n : board.getChildren()) {
             if(n instanceof Circle && n.equals(c)) {
-                int col = board.getColumnIndex(n);
-                int row = board.getRowIndex(n) + 1;
+                String stonePosition = "\n" + board.getRowIndex(n) + alphabet[board.getColumnIndex(n)];
+                writeToPosition(stonePosition);
+                System.out.print(stonePosition);
+                //int col = board.getColumnIndex(n);
+                //int row = board.getRowIndex(n) + 1;
                 //addStoneToBoardArray(board.getColumnIndex(n), board.getRowIndex(n));
-                System.out.print(row);
-                System.out.println(alphabet[col]);
+                //System.out.print(row);
+                //System.out.println(alphabet[col]);
             }
         }
 
