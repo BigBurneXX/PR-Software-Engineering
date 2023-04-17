@@ -395,10 +395,13 @@ public class boardMaskController {
                 modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
                 modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
 
+                //color for hovering
+                Color hoverBlack = Color.valueOf("#00000070");
+                Color hoverWhite = Color.valueOf("#FFFFFF70");
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
                     if(modePlay.isSelected()) {
-                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
+                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
                             setStone(circle);
                     }
                 });
@@ -410,9 +413,9 @@ public class boardMaskController {
                     if(modePlay.isSelected()) {
                         if (circle.getFill() == Color.TRANSPARENT) {
                             if (lastColor == Color.BLACK)
-                                circle.setFill(Color.valueOf("#000001"));
+                                circle.setFill(hoverBlack);
                             else
-                                circle.setFill(Color.SNOW);
+                                circle.setFill(hoverWhite);
                         }
                     }
                 });
@@ -420,7 +423,7 @@ public class boardMaskController {
                 //when the mouse is no longer hovering over the circle the colour is removed
                 circle.setOnMouseExited(e -> {
                     if(modePlay.isSelected()) {
-                        if (circle.getFill() == Color.SNOW || circle.getFill().equals(Color.valueOf("#000001")))
+                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
                             circle.setFill(Color.TRANSPARENT);
                     }
                 });
