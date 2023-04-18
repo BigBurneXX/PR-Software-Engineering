@@ -1,0 +1,7 @@
+Player 1 vs. Player 2
+BoardSize: 9
+Komi: 0
+2D
+3E
+0A
+2B

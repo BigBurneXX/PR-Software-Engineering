@@ -1,0 +1,11 @@
+Player 1 vs. Player 2
+BoardSize: 9
+Komi: 0
+5E
+4F
+3D
+3C
+passed
+resigned
+resigned
+2F

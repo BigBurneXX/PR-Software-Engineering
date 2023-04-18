@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="starting with the deleting of trapped stones (not fully functional yet)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/MainGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,9 +97,7 @@
       <workItem from="1681663308375" duration="275000" />
       <workItem from="1681729949958" duration="803000" />
       <workItem from="1681735479245" duration="116000" />
-      <workItem from="1681746960790" duration="163000" />
-      <workItem from="1681747173018" duration="633000" />
-      <workItem from="1681766650448" duration="1940000" />
+      <workItem from="1681798966980" duration="963000" />
     </task>
     <task id="LOCAL-00001" summary="starting with the deleting of trapped stones (not fully functional yet)">
       <created>1681149268725</created>
