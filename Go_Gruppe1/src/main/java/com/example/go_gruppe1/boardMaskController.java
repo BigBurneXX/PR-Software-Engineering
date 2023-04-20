@@ -17,10 +17,10 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 public class boardMaskController {
@@ -38,7 +38,7 @@ public class boardMaskController {
     private BorderPane topRegion;
 
     @FXML
-    private MenuItem fileSave, fileLoadGame;
+    private MenuItem fileSave;
 
     @FXML
     private RadioMenuItem modePlay, modeNavigate;
@@ -65,9 +65,8 @@ public class boardMaskController {
     @FXML
     private Polygon leftArrow, rightArrow;
 
-    private File outputFile;
-
-    private Button pass, resign;
+    @FXML
+    private Button passButton, resignButton;
 
     private int boardSize;
     private String player1Name;
@@ -81,93 +80,27 @@ public class boardMaskController {
 
     private Stone[][] boardArray;
 
-    private void createFile(String oldFileName){
-        try{
-            String newFileName = oldFileName.endsWith(".txt") ?
-                    oldFileName.substring(0, oldFileName.length() -4) + "_1.txt" : player1Name + "_" + player2Name + ".txt";
-            outputFile = new File(newFileName);
-            if (outputFile.createNewFile()) {
-                String startInfo = player1Name + " vs. " + player2Name + "\nBoardSize: " + boardSize + "\n" + komiBoard.getText();
-                writeToPosition(startInfo);
-                System.out.println("File " + outputFile.getName() + " created.");
-            }else {
-                System.out.println("File " + outputFile.getName() + " already exists!");
-                createFile(outputFile.getName());
-            }
-        } catch (IOException e ){
-            System.out.println("File " + outputFile.getName() + " creation failed!");
-            e.printStackTrace();
-        }
-    }
+    private final FileControl fileControl = new FileControl();
 
-    private void writeToPosition(String data){
-        try {
-            FileWriter writer = new FileWriter(outputFile.getName(), true);
-            writer.append(data);
-            writer.close();
-        }catch (IOException e){
-            System.out.println("something went wrong when writing to the outputfile");
-        }
-    }
     public void onRenameFileClick(){
-        File f = new File(renameFileName.getText() + ".txt");
-        if(outputFile.renameTo(f)){
-            sampleSolutionDisplay.setText("File successfully renamed!");
-            System.out.println("The name of the output file has successfully been changed to " + outputFile.getName());
-        } else {
-            System.out.println("Renaming unsuccessfully, check if a file with the same name already exists in the selected directory and try again");
-            sampleSolutionDisplay.setText("Renaming unsuccessfully, check if a file with the same name already exists in the selected directory and try again");
+        //file functionality is disabled for now
+        //fileControl.renameFile(renameFileName.getText());
+    }
+
+    public void onLoadFileClick(){
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            //file functionality is disabled for now
+            //fileControl.loadFile(selectedFile);
         }
-    }
-
-    protected void setSize(double width, double height) {
-        boardPane.setPrefHeight(height);
-        boardPane.setPrefWidth(width);
-    }
-
-    public void onModeNavigateClick() {
-        modeAndMoveDisplay.setText("Navigate mode activated");
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
-        modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
-
-        // create leftArrow
-        leftArrow = new Polygon(
-                0.0, 0.0,
-                -30.0, 15.0,
-                0.0, 30.0
-        );
-        leftArrow.setFill(Color.web("#483C32"));
-        leftArrow.setStrokeWidth(1.5);
-
-        // add leftArrow to leftRegion
-        leftRegion.getChildren().add(leftArrow);
-        leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
-        leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
-
-        // create rightArrow
-        rightArrow = new Polygon(
-                0.0, 0.0,
-                30.0, 15.0,
-                0.0, 30.0
-        );
-        rightArrow.setFill(Color.web("#483C32"));
-        rightArrow.setStrokeWidth(1.5);
-
-        // add leftArrow to leftRegion
-        rightRegion.getChildren().add(rightArrow);
-        rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
-        rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
-
-        leftArrow.setScaleX(2);
-        leftArrow.setScaleY(2);
-
-        rightArrow.setScaleX(2);
-        rightArrow.setScaleY(2);
     }
 
     public void onModePlayClick() {
-        leftRegion.getChildren().clear();
-        rightRegion.getChildren().clear();
+        leftArrow.setVisible(false);
+        rightArrow.setVisible(false);
+        passButton.setVisible(false);
+        resignButton.setVisible(false);
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
 
@@ -176,6 +109,26 @@ public class boardMaskController {
         } else {
             modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
+    }
+
+    public void onModeNavigateClick() {
+        leftArrow.setVisible(true);
+        rightArrow.setVisible(true);
+        passButton.setVisible(true);
+        resignButton.setVisible(true);
+        modeAndMoveDisplay.setText("Navigate mode activated");
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
+        modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
+    }
+
+    //first all ActionEventControllers then other controllers
+    protected void setSampleSolutionDisplay(String text){
+        sampleSolutionDisplay.setText(text);
+    }
+
+    protected void setSize(double width, double height) {
+        boardPane.setPrefHeight(height);
+        boardPane.setPrefWidth(width);
     }
 
     private double getWidth() {
@@ -206,6 +159,7 @@ public class boardMaskController {
         displayHandicaps(handicaps);
         displayTrappedStone(0, blackTrapped);
         displayTrappedStone(0, whiteTrapped);
+        onModePlayClick();
         modePlay.setSelected(true);
         this.boardSize = boardSize;
         boardArray = new Stone[boardSize][boardSize];
@@ -213,13 +167,11 @@ public class boardMaskController {
     }
 
     private void displayPlayerNames(String p1, String p2) {
-        p1 = p1.isEmpty() ? "Player 1" : p1;
-        p2 = p2.isEmpty() ? "Player 2" : p2;
+        player1Name = p1.isEmpty() ? "Player 1" : p1;
+        player2Name = p2.isEmpty() ? "Player 2" : p2;
 
-        pl1.setText(p1 + " (Black)");
-        pl2.setText(p2 + " (White)");
-        player1Name = p1;
-        player2Name = p2;
+        pl1.setText(player1Name + " (Black)");
+        pl2.setText(player2Name + " (White)");
     }
 
     private void displayKomi(String komiAdvantage) {
@@ -256,6 +208,7 @@ public class boardMaskController {
             }
         }
     }
+
     private void displayTrappedStone(int numberTrapped, Label trappedLabel){
         if(numberTrapped >= 0){
             trappedLabel.setText("Trapped: " + numberTrapped);
@@ -299,57 +252,7 @@ public class boardMaskController {
             board.getRowConstraints().add(rowConstraints);
         }
 
-        //add board labelling
-        for (int row = 0; row <= size; row++) {
-            //numbers on the right
-            Pane numberCell = new Pane();
-            numberCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
-            board.add(numberCell, size, row);
-
-            Label number = new Label(String.valueOf(row + 1));
-            number.setCenterShape(true);
-            number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-            number.setStyle("-fx-text-fill: #C4A484");
-            board.setHalignment(number, HPos.RIGHT);
-            board.setValignment(number, VPos.TOP);
-            number.setStyle("-fx-font-size: 15");
-            number.translateYProperty().bind(numberCell.heightProperty().divide(4).multiply(-1));
-
-            if(row == size) {
-                number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-                number.setStyle("-fx-text-fill: #C4A484");
-                board.setHalignment(number, HPos.RIGHT);
-                board.setValignment(number, VPos.TOP);
-                number.setStyle("-fx-font-size: 15");
-            }
-            board.add(number, size, row);
-
-            //letters on the bottom
-            if(row != size) {
-                Pane letterCell = new Pane();
-                letterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
-                board.add(letterCell, row, size);
-            }
-
-            Label letter = new Label();
-            letter.setText(String.valueOf(alphabet[row]));
-            letter.setCenterShape(true);
-            letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-            letter.setStyle("-fx-text-fill: #C4A484");
-            board.setHalignment(letter, HPos.LEFT);
-            board.setValignment(letter, VPos.BOTTOM);
-            letter.setStyle("-fx-font-size: 15");
-            letter.translateXProperty().bind(numberCell.widthProperty().divide(8).multiply(-1));
-            if(row == size) {
-                letter.setText(String.valueOf(alphabet[size]));
-                letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-                letter.setStyle("-fx-text-fill: #C4A484");
-                board.setHalignment(letter, HPos.LEFT);
-                board.setValignment(letter, VPos.BOTTOM);
-                letter.setStyle("-fx-font-size: 15");
-            }
-            board.add(letter, row, size);
-        }
+        boardLabelling();
 
         //add color to board
         for (int row = 0; row < size; row++) {
@@ -436,20 +339,108 @@ public class boardMaskController {
             }
         }
 
-        pass = new Button("PASS");
-        pass.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-        pass.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
-        pass.setMinWidth(70);
-        pass.setPrefWidth(70);
-        pass.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
-        pass.setOnMouseEntered(e -> pass.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
-        pass.setOnMouseExited(e -> pass.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
-        topGrid.add(pass, 1, 3);
-        GridPane.setHalignment(pass, HPos.LEFT);
-        pass.setTextAlignment(TextAlignment.CENTER);
+        drawNavigationArrows();
+        drawPassButton();
+        drawResignButton();
+
+        //creating output file
+        //For now creating a file is deactivated, otherwise there would be too much files created while coding
+        //fileControl.createFile(this, "", player1Name, player2Name, boardSize, komiBoard.getText());
+    }
+
+    private void boardLabelling(){
+        for (int row = 0; row <= boardSize; row++) {
+            //numbers on the right
+            Pane numberCell = new Pane();
+            numberCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
+            board.add(numberCell, boardSize, row);
+
+            Label number = new Label(String.valueOf(row + 1));
+            number.setCenterShape(true);
+            number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+            number.setStyle("-fx-text-fill: #C4A484");
+            board.setHalignment(number, HPos.RIGHT);
+            board.setValignment(number, VPos.TOP);
+            number.setStyle("-fx-font-size: 15");
+            number.translateYProperty().bind(numberCell.heightProperty().divide(4).multiply(-1));
+
+            if(row == boardSize) {
+                number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+                number.setStyle("-fx-text-fill: #C4A484");
+                board.setHalignment(number, HPos.RIGHT);
+                board.setValignment(number, VPos.TOP);
+                number.setStyle("-fx-font-size: 15");
+            }
+            board.add(number, boardSize, row);
+
+            //letters on the bottom
+            if(row != boardSize) {
+                Pane letterCell = new Pane();
+                letterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
+                board.add(letterCell, row, boardSize);
+            }
+
+            Label letter = new Label();
+            letter.setText(String.valueOf(alphabet[row]));
+            letter.setCenterShape(true);
+            letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+            letter.setStyle("-fx-text-fill: #C4A484");
+            board.setHalignment(letter, HPos.LEFT);
+            board.setValignment(letter, VPos.BOTTOM);
+            letter.setStyle("-fx-font-size: 15");
+            letter.translateXProperty().bind(numberCell.widthProperty().divide(8).multiply(-1));
+            if(row == boardSize) {
+                letter.setText(String.valueOf(alphabet[boardSize]));
+                letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+                letter.setStyle("-fx-text-fill: #C4A484");
+                board.setHalignment(letter, HPos.LEFT);
+                board.setValignment(letter, VPos.BOTTOM);
+                letter.setStyle("-fx-font-size: 15");
+            }
+            board.add(letter, row, boardSize);
+        }
+    }
+
+    //should be improved (code for left and right are very similiar
+    private void drawNavigationArrows(){
+        leftArrow.setFill(Color.web("#483C32"));
+        leftArrow.setStrokeWidth(1.5);
+
+        // add leftArrow to leftRegion
+        //leftRegion.getChildren().add(leftArrow);
+        leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
+        leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
+
+        // create rightArrow
+        rightArrow.setFill(Color.web("#483C32"));
+        rightArrow.setStrokeWidth(1.5);
+
+        // add leftArrow to leftRegion
+        rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
+        rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
+
+        leftArrow.setScaleX(2);
+        leftArrow.setScaleY(2);
+
+        rightArrow.setScaleX(2);
+        rightArrow.setScaleY(2);
+    }
+
+    private void drawPassButton(){
+        passButton.setText("PASS");
+        passButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
+        passButton.setMinWidth(70);
+        passButton.setPrefWidth(70);
+        passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
+        passButton.setOnMouseEntered(e -> passButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
+        passButton.setOnMouseExited(e -> passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        //topGrid.add(passButton, 1, 3);
+        GridPane.setHalignment(passButton, HPos.LEFT);
+        passButton.setTextAlignment(TextAlignment.CENTER);
 
         //pass logic
-        pass.setOnMouseClicked(e -> {
+        passButton.setOnMouseClicked(e -> {
             if(lastColor == Color.BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
                 lastColor = Color.WHITE;
@@ -457,32 +448,35 @@ public class boardMaskController {
                 modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
                 lastColor = Color.BLACK;
             }
-            writeToPosition("\npassed");
+            //file functionality is disabled for now
+            //fileControl.writeToPosition("\npassed");
         });
+    }
 
-
-        resign = new Button("RESIGN");
-        resign.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-        resign.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
-        resign.setMinWidth(70);
-        resign.setPrefWidth(70);
-        resign.setAlignment(Pos.CENTER_LEFT);
-        resign.setTextAlignment(TextAlignment.CENTER);
-        resign.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
-        resign.setOnMouseEntered(e -> resign.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
-        resign.setOnMouseExited(e -> resign.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
-        topGrid.add(resign, 1, 3);
-        GridPane.setHalignment(resign, HPos.RIGHT);
-        resign.setTextAlignment(TextAlignment.CENTER);
+    private void drawResignButton(){
+        resignButton.setText("RESIGN");
+        resignButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        resignButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
+        resignButton.setMinWidth(70);
+        resignButton.setPrefWidth(70);
+        resignButton.setAlignment(Pos.CENTER_LEFT);
+        resignButton.setTextAlignment(TextAlignment.CENTER);
+        resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
+        resignButton.setOnMouseEntered(e -> resignButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
+        resignButton.setOnMouseExited(e -> resignButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        //topGrid.add(resignButton, 1, 3);
+        GridPane.setHalignment(resignButton, HPos.RIGHT);
+        resignButton.setTextAlignment(TextAlignment.CENTER);
 
         //resign logic
-        resign.setOnMouseClicked(e -> {
+        resignButton.setOnMouseClicked(e -> {
             if(lastColor == Color.BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " resigned! - " + pl2.getText() + " won!");
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
             }
-            writeToPosition("\nresigned");
+            //file functionality is disabled for now
+            //fileControl.writeToPosition("\nresigned");
             /*try {
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
@@ -496,10 +490,6 @@ public class boardMaskController {
             }*/
 
         });
-
-        //creating output file
-        //For now creating a file is deactivated, otherwise there would be too much files created while coding
-        createFile("");
     }
 
     public void setStone(Circle c) {
@@ -508,7 +498,7 @@ public class boardMaskController {
         for(Node n : board.getChildren()) {
             if(n instanceof Circle && n.equals(c)) {
                 String stonePosition = "\n" + board.getRowIndex(n) + alphabet[board.getColumnIndex(n)];
-                writeToPosition(stonePosition);
+                //fileControl.writeToPosition(stonePosition);
                 System.out.print(stonePosition);
                 //int col = board.getColumnIndex(n);
                 //int row = board.getRowIndex(n) + 1;

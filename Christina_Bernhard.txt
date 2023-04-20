@@ -1,7 +1,0 @@
-Christina vs. Bernhard
-BoardSize: 11
-Komi: 5.0
-4E
-4H
-passed
-resigned

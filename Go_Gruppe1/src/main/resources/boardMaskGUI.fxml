@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -109,6 +110,8 @@
                      <Font name="Baskerville Old Face" size="20.0" />
                   </font>
                </Text>
+               <Button fx:id="passButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               <Button fx:id="resignButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             </GridPane>
          </center>
          <top>
@@ -116,14 +119,13 @@
                <Menu mnemonicParsing="false" text="File">
                   <MenuItem fx:id="fileSave" mnemonicParsing="false" text="Save" />
                   <MenuItem mnemonicParsing="false" onAction="#switchToInputMask" text="New game" />
-                  <MenuItem fx:id="fileLoadGame" mnemonicParsing="false" text="Load game" />
+                  <MenuItem mnemonicParsing="false" onAction="#onLoadFileClick" text="Load game" />
                   <Menu mnemonicParsing="false" text="Rename file">
                      <MenuItem mnemonicParsing="false">
                         <graphic>
                            <HBox minHeight="22.0" minWidth="200.0" prefHeight="22.0" prefWidth="210.0">
-                              <TextField fx:id="renameFileName" promptText="Enter new file name"/>
-                              <Button mnemonicParsing="false" onAction="#onRenameFileClick"
-                                      text="Rename"/>
+                              <TextField fx:id="renameFileName" promptText="Enter new file name" />
+                              <Button mnemonicParsing="false" onAction="#onRenameFileClick" text="Rename" />
                            </HBox>
                         </graphic>
                      </MenuItem>
@@ -148,9 +150,13 @@
       </VBox>
    </bottom>
    <left>
-      <Pane fx:id="leftRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="leftRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <Polygon fx:id="leftArrow" fill="DODGERBLUE" points="0.0, 0.0, -30.0, 15.0, 0.0, 30.0" stroke="BLACK" strokeType="INSIDE" />
+      </Pane>
    </left>
    <right>
-      <Pane fx:id="rightRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="rightRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <Polygon fx:id="rightArrow" fill="DODGERBLUE" points="0.0, 0.0, 30.0, 15.0, 0.0, 30.0" stroke="BLACK" strokeType="INSIDE" />
+      </Pane>
    </right>
 </BorderPane>
