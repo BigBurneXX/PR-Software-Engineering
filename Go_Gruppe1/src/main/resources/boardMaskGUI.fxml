@@ -110,14 +110,17 @@
                      <Font name="Baskerville Old Face" size="20.0" />
                   </font>
                </Text>
-               <Button fx:id="passButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-               <Button fx:id="resignButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               <Button fx:id="passButton" minWidth="70.0" mnemonicParsing="false" prefWidth="70.0" style="-fx-border-color: #483C32; -fx-background-color: transparent; -fx-text-fill: #483C32;" text="PASS" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3">
+                  <font>
+                     <Font name="Baskerville Old Face" size="13.0" />
+                  </font></Button>
+               <Button fx:id="resignButton" minWidth="70.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32;" text="RESIGN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
             </GridPane>
          </center>
          <top>
             <MenuBar BorderPane.alignment="CENTER">
                <Menu mnemonicParsing="false" text="File">
-                  <MenuItem fx:id="fileSave" mnemonicParsing="false" text="Save" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveFileClick" text="Save" />
                   <MenuItem mnemonicParsing="false" onAction="#switchToInputMask" text="New game" />
                   <MenuItem mnemonicParsing="false" onAction="#onLoadFileClick" text="Load game" />
                   <Menu mnemonicParsing="false" text="Rename file">
@@ -151,12 +154,12 @@
    </bottom>
    <left>
       <Pane fx:id="leftRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <Polygon fx:id="leftArrow" fill="DODGERBLUE" points="0.0, 0.0, -30.0, 15.0, 0.0, 30.0" stroke="BLACK" strokeType="INSIDE" />
+         <Polygon fx:id="leftArrow" fill="#483c32" layoutX="-1.0" layoutY="15.0" points="0.0, 0.0, -30.0, 15.0, 0.0, 30.0" scaleX="2.0" scaleY="2.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="1.5" />
       </Pane>
    </left>
    <right>
       <Pane fx:id="rightRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <Polygon fx:id="rightArrow" fill="DODGERBLUE" points="0.0, 0.0, 30.0, 15.0, 0.0, 30.0" stroke="BLACK" strokeType="INSIDE" />
+         <Polygon fx:id="rightArrow" fill="#483c32" layoutX="7.0" layoutY="15.0" points="0.0, 0.0, 30.0, 15.0, 0.0, 30.0" scaleX="2.0" scaleY="2.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="1.5" />
       </Pane>
    </right>
 </BorderPane>

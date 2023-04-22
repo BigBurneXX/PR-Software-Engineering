@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -16,7 +15,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -36,9 +34,6 @@ public class boardMaskController {
 
     @FXML
     private BorderPane topRegion;
-
-    @FXML
-    private MenuItem fileSave;
 
     @FXML
     private RadioMenuItem modePlay, modeNavigate;
@@ -82,11 +77,19 @@ public class boardMaskController {
 
     private final FileControl fileControl = new FileControl();
 
+    @FXML
+    public void onSaveFileClick(){
+        //file functionality is disabled for now
+        //fileControl.saveFile();
+    }
+
+    @FXML
     public void onRenameFileClick(){
         //file functionality is disabled for now
         //fileControl.renameFile(renameFileName.getText());
     }
 
+    @FXML
     public void onLoadFileClick(){
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(null);
@@ -96,6 +99,7 @@ public class boardMaskController {
         }
     }
 
+    @FXML
     public void onModePlayClick() {
         leftArrow.setVisible(false);
         rightArrow.setVisible(false);
@@ -111,6 +115,7 @@ public class boardMaskController {
         }
     }
 
+    @FXML
     public void onModeNavigateClick() {
         leftArrow.setVisible(true);
         rightArrow.setVisible(true);
@@ -163,8 +168,7 @@ public class boardMaskController {
         modePlay.setSelected(true);
         this.boardSize = boardSize;
         boardLogicControl = new BoardLogicControl(this, boardSize);
-        //boardArray = new Stone[boardSize][boardSize];
-        drawBoard(boardSize);
+        drawBoard();
     }
 
     private void displayPlayerNames(String p1, String p2) {
@@ -219,8 +223,7 @@ public class boardMaskController {
     }
 
     //initially, play mode is displayed
-    private void drawBoard(int size) {
-        boardSize = size;
+    private void drawBoard() {
         //set padding, so stones are not covered by top region
         board.setPadding(new Insets(20, 0, 0, 0));
 
@@ -243,21 +246,21 @@ public class boardMaskController {
         //create grid
         board.getColumnConstraints().clear();
         board.getRowConstraints().clear();
-        for (int i = 0; i <= size; i++) {
+        for (int i = 0; i <= boardSize; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
-            colConstraints.setPercentWidth(100.0 / size);
+            colConstraints.setPercentWidth(100.0 / boardSize);
             board.getColumnConstraints().add(colConstraints);
 
             RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setPercentHeight(100.0 / size);
+            rowConstraints.setPercentHeight(100.0 / boardSize);
             board.getRowConstraints().add(rowConstraints);
         }
 
         boardLabelling();
 
         //add color to board
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
+        for (int row = 0; row < boardSize; row++) {
+            for (int col = 0; col < boardSize; col++) {
                 Pane cell = new Pane();
                 cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
                 board.add(cell, row, col);
@@ -284,61 +287,11 @@ public class boardMaskController {
         number.setStyle("-fx-font-size: 15");
         board.add(number, size, size);*/
 
-
+        addStones();
 
         //initial start ... needs additional logic if handicaps are used
         modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
-
-        //add circles for stones
-        for (int row = 0; row <= size; row++) {
-            for (int col = 0; col <= size; col++) {
-                Circle circle = new Circle(10, Color.TRANSPARENT);
-                board.add(circle, row, col);
-
-                //make stones resizable and adjust x and y properties
-                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size).divide(4));
-                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 2.4).multiply(-1));
-                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.6).divide(size * 3.9).multiply(-1));
-
-                //initial start ... needs additional logic if handicaps are used
-                modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
-                modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
-
-                //color for hovering
-                Color hoverBlack = Color.valueOf("#00000070");
-                Color hoverWhite = Color.valueOf("#FFFFFF70");
-                //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
-                circle.setOnMouseClicked(e -> {
-                    if(modePlay.isSelected()) {
-                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
-                            setStone(circle);
-                    }
-                });
-
-                //when the mouse is hovering over a transparent circle this circle is coloured white or black
-                //side note: these colours are a little different from the white and black that a circle is filled with
-                //           when clicked so that .equals will return false
-                circle.setOnMouseEntered(e -> {
-                    if(modePlay.isSelected()) {
-                        if (circle.getFill() == Color.TRANSPARENT) {
-                            if (lastColor == Color.BLACK)
-                                circle.setFill(hoverBlack);
-                            else
-                                circle.setFill(hoverWhite);
-                        }
-                    }
-                });
-
-                //when the mouse is no longer hovering over the circle the colour is removed
-                circle.setOnMouseExited(e -> {
-                    if(modePlay.isSelected()) {
-                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
-                            circle.setFill(Color.TRANSPARENT);
-                    }
-                });
-            }
-        }
 
         drawNavigationArrows();
         drawPassButton();
@@ -402,38 +355,74 @@ public class boardMaskController {
         }
     }
 
+
+    //add circles for stones
+    private void addStones() {
+        for (int row = 0; row <= boardSize; row++) {
+            for (int col = 0; col <= boardSize; col++) {
+                Circle circle = new Circle(10, Color.TRANSPARENT);
+                board.add(circle, row, col);
+
+                //make stones resizable and adjust x and y properties
+                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.6).divide(boardSize).divide(4));
+                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(boardSize * 2.4).multiply(-1));
+                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.6).divide(boardSize * 3.9).multiply(-1));
+
+                //initial start ... needs additional logic if handicaps are used
+                modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+                modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+
+                //color for hovering
+                Color hoverBlack = Color.valueOf("#00000070");
+                Color hoverWhite = Color.valueOf("#FFFFFF70");
+                //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
+                circle.setOnMouseClicked(e -> {
+                    if (modePlay.isSelected()) {
+                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
+                            setStone(circle);
+                    }
+                });
+
+                //when the mouse is hovering over a transparent circle this circle is coloured white or black
+                //side note: these colours are a little different from the white and black that a circle is filled with
+                //           when clicked so that .equals will return false
+                circle.setOnMouseEntered(e -> {
+                    if (modePlay.isSelected()) {
+                        if (circle.getFill() == Color.TRANSPARENT) {
+                            if (lastColor == Color.BLACK)
+                                circle.setFill(hoverBlack);
+                            else
+                                circle.setFill(hoverWhite);
+                        }
+                    }
+                });
+
+                //when the mouse is no longer hovering over the circle the colour is removed
+                circle.setOnMouseExited(e -> {
+                    if (modePlay.isSelected()) {
+                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
+                            circle.setFill(Color.TRANSPARENT);
+                    }
+                });
+            }
+        }
+    }
+
     //should be improved (code for left and right are very similar)
     private void drawNavigationArrows(){
-        leftArrow.setFill(Color.web("#483C32"));
-        leftArrow.setStrokeWidth(1.5);
-
         leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
         leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
 
-        rightArrow.setFill(Color.web("#483C32"));
-        rightArrow.setStrokeWidth(1.5);
-
         rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
         rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
-
-        leftArrow.setScaleX(2);
-        leftArrow.setScaleY(2);
-
-        rightArrow.setScaleX(2);
-        rightArrow.setScaleY(2);
     }
 
     private void drawPassButton(){
-        passButton.setText("PASS");
         passButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-        passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
-        passButton.setMinWidth(70);
-        passButton.setPrefWidth(70);
         passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
+
         passButton.setOnMouseEntered(e -> passButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
         passButton.setOnMouseExited(e -> passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
-        GridPane.setHalignment(passButton, HPos.LEFT);
-        passButton.setTextAlignment(TextAlignment.CENTER);
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
@@ -450,19 +439,10 @@ public class boardMaskController {
     }
 
     private void drawResignButton(){
-        resignButton.setText("RESIGN");
         resignButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-        resignButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32");
-        resignButton.setMinWidth(70);
-        resignButton.setPrefWidth(70);
-        resignButton.setAlignment(Pos.CENTER_LEFT);
-        resignButton.setTextAlignment(TextAlignment.CENTER);
         resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
         resignButton.setOnMouseEntered(e -> resignButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
         resignButton.setOnMouseExited(e -> resignButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
-        //topGrid.add(resignButton, 1, 3);
-        GridPane.setHalignment(resignButton, HPos.RIGHT);
-        resignButton.setTextAlignment(TextAlignment.CENTER);
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
@@ -471,21 +451,9 @@ public class boardMaskController {
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
             }
-            //file functionality is disabled for now
-            //fileControl.writeToPosition("\nresigned");
-            /*try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-
-            try {
-                switchToInputMask();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }*/
-
         });
+        //file functionality is disabled for now
+        //fileControl.writeToPosition("\nresigned");
     }
 
     public void setStone(Circle c) {
@@ -523,22 +491,12 @@ public class boardMaskController {
         else
             displayTrappedStone(++whiteTrappedStones, whiteTrapped);
 
+        //finds the circle for every position of stoneGroup toDelete and sets the visibility to TRANSPARENT
         for (Position p : toDelete.getPosition())
             for(Node n : board.getChildren())
                 if(n instanceof Circle c && board.getColumnIndex(n) == p.col() && board.getRowIndex(n) == p.row())
                     c.setFill(Color.TRANSPARENT);
     }
-
-    /*public boolean isFirstStone() {
-        for (Node node : board.getChildren()) {
-            if (node instanceof Circle) {
-                if(!((Circle) node).getFill().equals(Color.TRANSPARENT)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }*/
 }
 
 
