@@ -78,7 +78,7 @@ public class boardMaskController {
 
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
 
-    private Stone[][] boardArray;
+    private BoardLogicControl boardLogicControl;
 
     private final FileControl fileControl = new FileControl();
 
@@ -162,7 +162,8 @@ public class boardMaskController {
         onModePlayClick();
         modePlay.setSelected(true);
         this.boardSize = boardSize;
-        boardArray = new Stone[boardSize][boardSize];
+        boardLogicControl = new BoardLogicControl(this, boardSize);
+        //boardArray = new Stone[boardSize][boardSize];
         drawBoard(boardSize);
     }
 
@@ -401,21 +402,17 @@ public class boardMaskController {
         }
     }
 
-    //should be improved (code for left and right are very similiar
+    //should be improved (code for left and right are very similar)
     private void drawNavigationArrows(){
         leftArrow.setFill(Color.web("#483C32"));
         leftArrow.setStrokeWidth(1.5);
 
-        // add leftArrow to leftRegion
-        //leftRegion.getChildren().add(leftArrow);
         leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
         leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
 
-        // create rightArrow
         rightArrow.setFill(Color.web("#483C32"));
         rightArrow.setStrokeWidth(1.5);
 
-        // add leftArrow to leftRegion
         rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
         rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
 
@@ -435,7 +432,6 @@ public class boardMaskController {
         passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
         passButton.setOnMouseEntered(e -> passButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
         passButton.setOnMouseExited(e -> passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
-        //topGrid.add(passButton, 1, 3);
         GridPane.setHalignment(passButton, HPos.LEFT);
         passButton.setTextAlignment(TextAlignment.CENTER);
 
@@ -497,12 +493,14 @@ public class boardMaskController {
 
         for(Node n : board.getChildren()) {
             if(n instanceof Circle && n.equals(c)) {
-                String stonePosition = "\n" + board.getRowIndex(n) + alphabet[board.getColumnIndex(n)];
+                int row = board.getRowIndex(n);
+                int col = board.getColumnIndex(n);
+                String stonePosition = "\n" + row + alphabet[col];
+                //boardLogicControl.setStone(lastColor, row, col);
                 //fileControl.writeToPosition(stonePosition);
                 System.out.print(stonePosition);
                 //int col = board.getColumnIndex(n);
                 //int row = board.getRowIndex(n) + 1;
-                //addStoneToBoardArray(board.getColumnIndex(n), board.getRowIndex(n));
                 //System.out.print(row);
                 //System.out.println(alphabet[col]);
             }
@@ -519,91 +517,16 @@ public class boardMaskController {
         }
     }
 
-    private void addStoneToBoardArray(int col, int row){
-        Stone stone = new Stone(lastColor);//, row, col);
-        boardArray[row][col] = stone;
-
-        //sets liberties for the stone above
-        if(!(row - 1 < 0)){
-            Stone upperNeighbour = boardArray[row-1][col];
-            if(upperNeighbour == null)
-                stone.changeLiberty(1);
-            else if(upperNeighbour.getColour() != lastColor) {
-                upperNeighbour.changeLiberty(-1);
-                if(upperNeighbour.isDead())
-                    deleteStone((row - 1), col);
-            } else {
-                boardArray[row][col] = upperNeighbour;
-
-                //stone.changeLiberty(-1);
-                //.changeLiberty(-1);
-                //stone.addToGroup(upperNeighbour);
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
-        }
-
-        //sets liberties for the stone to the right
-        if(col + 1 < boardSize){
-            Stone rightNeighbour = boardArray[row][col+1];
-            if(rightNeighbour == null)
-                stone.changeLiberty(1);
-            else if(rightNeighbour.getColour() != lastColor) {
-                rightNeighbour.changeLiberty(-1);
-                if(rightNeighbour.isDead())
-                    deleteStone(row, (col + 1));
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
-        }
-
-        //sets liberties for the stone underneath
-        if (row + 1 < boardSize) {
-            Stone lowerNeighbour = boardArray[row + 1][col];
-            if (lowerNeighbour == null)
-                stone.changeLiberty(1);
-            else if (lowerNeighbour.getColour() != lastColor) {
-                lowerNeighbour.changeLiberty(-1);
-                if(lowerNeighbour.isDead())
-                    deleteStone((row + 1), row);
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
-        }
-
-        //sets liberties for the stone to the left
-        if(!(col - 1 < 0)){
-            Stone leftNeighbour = boardArray[row][col-1];
-            if(leftNeighbour == null)
-                stone.changeLiberty(1);
-            else if(leftNeighbour.getColour() != lastColor){
-                leftNeighbour.changeLiberty(-1);
-                if(leftNeighbour.isDead())
-                    deleteStone(row, (row - 1));
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + stone.getLiberties() + " liberties.");
-        }
-        if(stone.getLiberties() == 0)
-            deleteStone(row, col);
-    }
-
-    protected void deleteStone(int row, int col){
-        if(boardArray[row][col].getColour() == Color.BLACK)
+    protected void deleteStoneGroup(StoneGroup toDelete){
+        if(toDelete.getColour() == Color.BLACK)
             displayTrappedStone(++blackTrappedStones, blackTrapped);
         else
             displayTrappedStone(++whiteTrappedStones, whiteTrapped);
-        boardArray[row][col] = null;
-        if(boardArray[row-1][col] != null)
-            boardArray[row-1][col].changeLiberty(1);
-        if(boardArray[row][col+1] != null)
-            boardArray[row][col+1].changeLiberty(1);
-        if(boardArray[row+1][col] != null)
-            boardArray[row+1][col].changeLiberty(1);
-        if(boardArray[row][col-1] != null)
-            boardArray[row][col-1].changeLiberty(1);
 
-        for(Node n : board.getChildren()) {
-            if(n instanceof Circle c && board.getColumnIndex(n) == col && board.getRowIndex(n) == row) {
-                c.setFill(Color.TRANSPARENT);
-            }
-        }
+        for (Position p : toDelete.getPosition())
+            for(Node n : board.getChildren())
+                if(n instanceof Circle c && board.getColumnIndex(n) == p.col() && board.getRowIndex(n) == p.row())
+                    c.setFill(Color.TRANSPARENT);
     }
 
     /*public boolean isFirstStone() {
