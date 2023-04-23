@@ -546,7 +546,7 @@ public class boardMaskController {
                 //boardLogicControl.setStoneToList(lastColor, row, col);
                 //boardLogicControl.setStone(lastColor, row, col);
                 //fileControl.writeToPosition(stonePosition);
-                System.out.println(" " + (row+1) + alphabet[col]);
+                System.out.println(" " + (row) + alphabet[col-1]);
                 //int col = board.getColumnIndex(n);
                 //int row = board.getRowIndex(n) + 1;
                 //System.out.print(row);
