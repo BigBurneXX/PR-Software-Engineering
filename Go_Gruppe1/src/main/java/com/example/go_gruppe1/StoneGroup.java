@@ -39,7 +39,6 @@ public class StoneGroup {
     }
 
     private void isDead() {
-        //should return all positions to be deleted!
         boardLogicControl.deleteStone(this);
     }
 
