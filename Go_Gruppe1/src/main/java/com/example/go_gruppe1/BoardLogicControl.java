@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BoardLogicControl {
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
@@ -71,15 +72,6 @@ public class BoardLogicControl {
         }
     }
 
-    private StoneGroup searchForStone(int row, int col){
-        for (StoneGroup s: stoneList) {
-            for (Position p: s.getPosition())
-                if (p.row() == row && p.col() == col)
-                    return s;
-        }
-        return null;
-    }
-
     private StoneGroup searchForStone(Position toFind){
         for (StoneGroup s: stoneList) {
             for (Position p: s.getPosition())
@@ -93,15 +85,16 @@ public class BoardLogicControl {
         if(neighbour == null){
             if(isPartOfGroup){
                 StoneGroup libertyToAdd = searchForStone(toAddPosition);
-                libertyToAdd.addFreeField(neighbourPosition);
+                Objects.requireNonNull(libertyToAdd).addFreeField(neighbourPosition);
             } else {
                 toAdd.addFreeField(neighbourPosition);
             }
-            //if neighbour has the same colour the current stone should be added to the neighbours group
+            //if neighbour has the same colour as the current stone it should be added to the neighbours group
         }else if(neighbour.getColour() == toAdd.getColour()) {
+            //check if the current stone group (toAdd) is already part of a group
             if(isPartOfGroup) {
                 StoneGroup listToCombine = searchForStone(toAddPosition);
-                neighbour.addPositions(listToCombine.getPosition());
+                neighbour.addPositions(Objects.requireNonNull(listToCombine).getPosition());
                 neighbour.addFreeFields(listToCombine.getFreeFields());
                 stoneList.remove(listToCombine);
             } else {
@@ -114,7 +107,7 @@ public class BoardLogicControl {
                 isSuicide = true;
                 System.out.println("This is suicide!!");
             }
-        //if neighbour has the opposite colour to the current stone a liberty should be taken
+        //if neighbour has the opposite colour of the current stone a liberty should be taken
         } else {
             neighbour.removeFreeField(toAddPosition);
         }
@@ -125,30 +118,35 @@ public class BoardLogicControl {
         System.out.println("Something is getting deleted!!");
         for (Position p: toDelete.getPosition()) {
             //upper neighbour
-            //System.out.println("upper");
             StoneGroup neighbour = searchForStone((p.row()-1), (p.col()));
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
                 neighbour.addFreeField(p.row(), p.col());
 
             //right neighbour
-            //System.out.println("right");
             neighbour = searchForStone(p.row(), (p.col()+1));
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
                 neighbour.addFreeField(p.row(), p.col());
 
             //lower neighbour
-            //System.out.println("lower");
             neighbour = searchForStone((p.row()+1), p.col());
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
                 neighbour.addFreeField(p.row(), p.col());
 
             //left neighbour
-            //System.out.println("left");
             neighbour = searchForStone(p.row(), (p.col()-1));
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
                 neighbour.addFreeField(p.row(), p.col());
         }
         stoneList.remove(toDelete);
         controller.deleteStoneGroup(toDelete);
+    }
+
+    private StoneGroup searchForStone(int row, int col){
+        for (StoneGroup s: stoneList) {
+            for (Position p: s.getPosition())
+                if (p.row() == row && p.col() == col)
+                    return s;
+        }
+        return null;
     }
 }
