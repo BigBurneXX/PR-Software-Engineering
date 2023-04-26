@@ -21,6 +21,8 @@ public class MainGUI extends Application {
         //stage.getIcons().add(icon);
         stage.setScene(inputMask);
         stage.show();
+
+
     }
 
     public static void main(String[] args) {

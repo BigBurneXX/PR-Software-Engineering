@@ -9,6 +9,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -77,6 +79,12 @@ public class boardMaskController {
 
     private final FileControl fileControl = new FileControl();
 
+ Changes-by-Ivan
+    private boolean isGameOver = false;
+    private int passTurnCounter = 0;
+
+
+ main
     @FXML
     public void onSaveFileClick(){
         //file functionality is disabled for now
@@ -169,6 +177,18 @@ public class boardMaskController {
         this.boardSize = boardSize;
         boardLogicControl = new BoardLogicControl(this, boardSize);
         drawBoard();
+ Changes-by-Ivan
+
+        boardPane.requestFocus();
+
+        boardPane.setOnMouseClicked(e -> {
+            boardPane.requestFocus();
+        });
+
+        handleKeyboardEvents();
+
+
+ main
     }
 
     private void displayPlayerNames(String p1, String p2) {
@@ -257,6 +277,111 @@ public class boardMaskController {
         }
 
         boardLabelling();
+Changes-by-Ivan
+
+        //add color to board
+        for (int row = 0; row < boardSize; row++) {
+            for (int col = 0; col < boardSize; col++) {
+                Pane cell = new Pane();
+                cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
+                board.add(cell, row, col);
+            }
+        }
+
+        /*Pane numberAndLetterCell = new Pane();
+        numberAndLetterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
+        board.add(numberAndLetterCell, size, size);
+        Label letter = new Label();
+        letter.setText(String.valueOf(alphabet[size]));
+        letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        letter.setStyle("-fx-text-fill: #C4A484");
+        board.setHalignment(letter, HPos.LEFT);
+        board.setValignment(letter, VPos.BOTTOM);
+        letter.setStyle("-fx-font-size: 15");
+        board.add(letter, size, size);*/
+
+        /*Label number = new Label(String.valueOf(size + 1));
+        number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        number.setStyle("-fx-text-fill: #C4A484");
+        board.setHalignment(number, HPos.RIGHT);
+        board.setValignment(number, VPos.TOP);
+        number.setStyle("-fx-font-size: 15");
+        board.add(number, size, size);*/
+
+        addStones();
+
+        updateCurrentCell(board, currentRow, currentCol);
+
+        // Add the keyboard event handler
+        board.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            int newRow = currentRow;
+            int newCol = currentCol;
+
+            if (e.getCode() == KeyCode.UP) {
+                newRow = newRow > 0 ? newRow - 1 : newRow;
+            } else if (e.getCode() == KeyCode.DOWN) {
+                newRow = newRow < boardSize - 1 ? newRow + 1 : newRow;
+            } else if (e.getCode() == KeyCode.LEFT) {
+                newCol = newCol > 0 ? newCol - 1 : newCol;
+            } else if (e.getCode() == KeyCode.RIGHT) {
+                newCol = newCol < boardSize - 1 ? newCol + 1 : newCol;
+            } else if (e.getCode() == KeyCode.SPACE || e.getCode() == KeyCode.ENTER) {
+                Node node = getNodeFromGridPane(board, currentCol, currentRow);
+                if (node instanceof Circle) {
+                    setStone((Circle) node);
+                }
+            }
+
+            if (newRow != currentRow || newCol != currentCol) {
+                updateCurrentCell(board, newRow, newCol);
+            }
+
+            e.consume();
+        });
+
+
+        //initial start ... needs additional logic if handicaps are used
+        modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+
+        drawNavigationArrows();
+        drawPassButton();
+        drawResignButton();
+
+        //creating output file
+        //For now creating a file is deactivated, otherwise there would be too much files created while coding
+        //fileControl.createFile(this, "", player1Name, player2Name, boardSize, komiBoard.getText());
+
+
+    }
+
+    private void boardLabelling(){
+        for (int row = 0; row <= boardSize; row++) {
+            //numbers on the right
+            Pane numberCell = new Pane();
+            numberCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
+            board.add(numberCell, boardSize, row);
+
+            Label number = new Label(String.valueOf(row + 1));
+            number.setCenterShape(true);
+            number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+            number.setStyle("-fx-text-fill: #C4A484");
+            board.setHalignment(number, HPos.RIGHT);
+            board.setValignment(number, VPos.TOP);
+            number.setStyle("-fx-font-size: 15");
+            number.translateYProperty().bind(numberCell.heightProperty().divide(4).multiply(-1));
+
+            if(row == boardSize) {
+                number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+                number.setStyle("-fx-text-fill: #C4A484");
+                board.setHalignment(number, HPos.RIGHT);
+                board.setValignment(number, VPos.TOP);
+                number.setStyle("-fx-font-size: 15");
+            }
+            board.add(number, boardSize, row);
+
+            //letters on the bottom
+            if(row != boardSize) {
 
         //add color to board
         for (int col = 1; col < boardSize; col++) {
@@ -403,6 +528,7 @@ public class boardMaskController {
 
             //letters on the bottom
             /*if(row != boardSize) {
+ main
                 Pane letterCell = new Pane();
                 letterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
                 board.add(letterCell, row, boardSize);
@@ -416,7 +542,11 @@ public class boardMaskController {
             board.setHalignment(letter, HPos.LEFT);
             board.setValignment(letter, VPos.BOTTOM);
             letter.setStyle("-fx-font-size: 15");
+ Changes-by-Ivan
+            letter.translateXProperty().bind(numberCell.widthProperty().divide(8).multiply(-1));
+
             letter.translateXProperty().bind(rightNumberCell.widthProperty().divide(8).multiply(-1));
+ main
             if(row == boardSize) {
                 letter.setText(String.valueOf(alphabet[boardSize]));
                 letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
@@ -425,17 +555,27 @@ public class boardMaskController {
                 board.setValignment(letter, VPos.BOTTOM);
                 letter.setStyle("-fx-font-size: 15");
             }
+ Changes-by-Ivan
+            board.add(letter, row, boardSize);
+        }
+
             board.add(letter, row, boardSize);*/
         //}
 
 
+ main
     }
 
 
     //add circles for stones
     private void addStones() {
+ Changes-by-Ivan
+        for (int row = 0; row <= boardSize; row++) {
+            for (int col = 0; col <= boardSize; col++) {
+
         for (int row = 1; row <= boardSize; row++) {
             for (int col = 1; col <= boardSize; col++) {
+ main
                 Circle circle = new Circle(10, Color.TRANSPARENT);
                 board.add(circle, row, col);
 
@@ -488,6 +628,7 @@ public class boardMaskController {
     private void drawNavigationArrows(){
         leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
         leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
+ Changes-by-Ivan
 
         rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
         rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
@@ -497,17 +638,41 @@ public class boardMaskController {
         passButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
         passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
 
+
+
+        rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
+        rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
+    }
+
+    private void drawPassButton(){
+        passButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
+        passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
+
+ main
         passButton.setOnMouseEntered(e -> passButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
         passButton.setOnMouseExited(e -> passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
+ Changes-by-Ivan
+            passTurnCounter++;
+            if (passTurnCounter >= 2) {
+                isGameOver = true;
+            }
+
+            if (lastColor == Color.WHITE) {
+
             if(lastColor == Color.BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
                 lastColor = Color.WHITE;
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
+ main
                 lastColor = Color.BLACK;
+                modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+            } else {
+                lastColor = Color.WHITE;
+                modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
             }
             //file functionality is disabled for now
             //fileControl.writeToPosition("\npassed");
@@ -527,13 +692,39 @@ public class boardMaskController {
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
             }
+ Changes-by-Ivan
+            //file functionality is disabled for now
+            //fileControl.writeToPosition("\nresigned");
+            isGameOver = true; // Move this line inside the setOnMouseClicked event handler
+        });
+
         });
         //file functionality is disabled for now
         //fileControl.writeToPosition("\nresigned");
+ main
     }
+
 
     public void setStone(Circle c) {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+ Changes-by-Ivan
+
+        for(Node n : board.getChildren()) {
+            if(n instanceof Circle && n.equals(c)) {
+                int row = board.getRowIndex(n);
+                int col = board.getColumnIndex(n);
+                String stonePosition = "\n" + row + alphabet[col];
+                //boardLogicControl.setStone(lastColor, row, col);
+                //fileControl.writeToPosition(stonePosition);
+                System.out.print(stonePosition);
+                //int col = board.getColumnIndex(n);
+                //int row = board.getRowIndex(n) + 1;
+                //System.out.print(row);
+                //System.out.println(alphabet[col]);
+            }
+        }
+        passTurnCounter = 0;
+
         int row = -1;
         int col = -1;
         for(Node n : board.getChildren()) {
@@ -548,6 +739,7 @@ public class boardMaskController {
                 System.out.println(" " + (row) + alphabet[col-1]);
             }
         }
+ main
 
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
@@ -560,7 +752,72 @@ public class boardMaskController {
             lastColor = Color.WHITE;
             modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
+        if (isGameOver) {
+            checkWinCondition();
+        }
     }
+
+ Changes-by-Ivan
+
+    protected void deleteStoneGroup(StoneGroup toDelete){
+        int stonesCaptured = toDelete.getPosition().size();
+        if(toDelete.getColour() == Color.BLACK) {
+            blackTrappedStones += stonesCaptured;
+            displayTrappedStone(blackTrappedStones, blackTrapped);
+        } else {
+            whiteTrappedStones += stonesCaptured;
+            displayTrappedStone(whiteTrappedStones, whiteTrapped);
+        }
+
+        //finds the circle for every position of stoneGroup toDelete and sets the visibility to TRANSPARENT
+        for (Position p : toDelete.getPosition())
+            for(Node n : board.getChildren())
+                if(n instanceof Circle c && board.getColumnIndex(n) == p.col() && board.getRowIndex(n) == p.row())
+                    c.setFill(Color.TRANSPARENT);
+    }
+
+
+    private void checkWinCondition() {
+        int player1Points = blackTrappedStones;
+        int player2Points = whiteTrappedStones;
+
+        // Check for a win condition
+        if (player1Points > player2Points) {
+            showWinDialog(pl1.getText(), player1Points, player2Points);
+        } else if (player1Points < player2Points) {
+            showWinDialog(pl2.getText(), player1Points, player2Points);
+        } else {
+            showDrawDialog(player1Points, player2Points);
+        }
+    }
+
+
+    private void showWinDialog(String winner, int player1Points, int player2Points) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(winner + " wins!");
+        alert.setContentText("Player 1 Points: " + player1Points + "\nPlayer 2 Points: " + player2Points);
+        alert.showAndWait();
+    }
+
+    private void showDrawDialog(int player1Points, int player2Points) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText("It's a draw!");
+        alert.setContentText("Player 1 Points: " + player1Points + "\nPlayer 2 Points: " + player2Points);
+        alert.showAndWait();
+    }
+    private int currentRow = 0;
+    private int currentCol = 0;
+
+    private void updateCurrentCell(GridPane board, int newRow, int newCol) {
+        Node oldNode = getNodeFromGridPane(board, currentCol, currentRow);
+        if (oldNode instanceof Circle) {
+            Circle oldCircle = (Circle) oldNode;
+            if (oldCircle.getFill() == Color.TRANSPARENT) {
+                oldCircle.setStroke(null);
+            }
+        }
 
     protected void deleteStoneGroup(StoneGroup toDelete){
         if(toDelete.getColour() == Color.BLACK)
@@ -578,5 +835,63 @@ public class boardMaskController {
         }
     }
 }
+ main
 
+        currentRow = newRow;
+        currentCol = newCol;
+
+        Node newNode = getNodeFromGridPane(board, currentCol, currentRow);
+        if (newNode instanceof Circle) {
+            Circle newCircle = (Circle) newNode;
+            if (newCircle.getFill() == Color.TRANSPARENT) {
+                newCircle.setStroke(Color.RED);
+                newCircle.setStrokeWidth(2);
+            }
+        }
+    }
+
+    private Node getNodeFromGridPane(GridPane gridPane, int col, int row) {
+        for (Node node : gridPane.getChildren()) {
+            if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    public void handleKeyboardEvents() {
+        boardPane.setOnKeyPressed(e -> {
+            int newRow = currentRow;
+            int newCol = currentCol;
+            switch (e.getCode()) {
+                case UP:
+                    newRow = Math.max(0, currentRow - 1);
+                    break;
+                case DOWN:
+                    newRow = Math.min(boardSize - 1, currentRow + 1);
+                    break;
+                case LEFT:
+                    newCol = Math.max(0, currentCol - 1);
+                    break;
+                case RIGHT:
+                    newCol = Math.min(boardSize - 1, currentCol + 1);
+                    break;
+                case ENTER:
+                    Node node = getNodeFromGridPane(board, currentCol, currentRow);
+                    if (node instanceof Circle) {
+                        Circle circle = (Circle) node;
+                        if (circle.getFill() == Color.TRANSPARENT) {
+                            setStone(circle);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            updateCurrentCell(board, newRow, newCol);
+        });
+        boardPane.requestFocus();
+    }
+
+}
 
