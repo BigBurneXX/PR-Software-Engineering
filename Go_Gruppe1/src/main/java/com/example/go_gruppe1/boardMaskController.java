@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -16,8 +15,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -537,29 +534,29 @@ public class boardMaskController {
 
     public void setStone(Circle c) {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
-
+        int row = -1;
+        int col = -1;
         for(Node n : board.getChildren()) {
             if(n instanceof Circle && n.equals(c)) {
-                int row = board.getRowIndex(n);
-                int col = board.getColumnIndex(n);
+                row = board.getRowIndex(n);
+                col = board.getColumnIndex(n);
                 String stonePosition = "\n" + row + alphabet[col];
-                //boardLogicControl.setStoneToList(lastColor, row, col);
+                //boardLogicControl.setStoneToList(lastColor, row-1, col-1);
                 //boardLogicControl.setStone(lastColor, row, col);
                 //fileControl.writeToPosition(stonePosition);
+                System.out.println();
                 System.out.println(" " + (row) + alphabet[col-1]);
-                //int col = board.getColumnIndex(n);
-                //int row = board.getRowIndex(n) + 1;
-                //System.out.print(row);
-                //System.out.println(alphabet[col]);
             }
         }
 
         if(lastColor == Color.WHITE){
             c.setFill(lastColor);
+            boardLogicControl.setStoneToList(lastColor, row-1, col-1);
             lastColor = Color.BLACK;
             modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         } else {
             c.setFill(lastColor);
+            boardLogicControl.setStoneToList(lastColor, row-1, col-1);
             lastColor = Color.WHITE;
             modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
@@ -572,10 +569,13 @@ public class boardMaskController {
             displayTrappedStone(++whiteTrappedStones, whiteTrapped);
 
         //finds the circle for every position of stoneGroup toDelete and sets the visibility to TRANSPARENT
-        for (Position p : toDelete.getPosition())
-            for(Node n : board.getChildren())
-                if(n instanceof Circle c && board.getColumnIndex(n) == p.col() && board.getRowIndex(n) == p.row())
+        for (Position p : toDelete.getPosition()) {
+            //System.out.println("to delete: " + (p.row()+1) + alphabet[p.col()]);
+            for (Node n : board.getChildren())
+                if (n instanceof Circle c && board.getRowIndex(n) == (p.row()+1) && board.getColumnIndex(n) == (p.col()+1)) {
                     c.setFill(Color.TRANSPARENT);
+                }
+        }
     }
 }
 

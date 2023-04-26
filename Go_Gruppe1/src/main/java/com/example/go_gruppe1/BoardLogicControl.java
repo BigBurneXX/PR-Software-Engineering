@@ -6,20 +6,72 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardLogicControl {
-    private final StoneGroup[][] board;
-
-    private List<StoneGroup> stoneList = new ArrayList<>();
+    private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
+    private final List<StoneGroup> stoneList = new ArrayList<>();
     private final int size;
     private final boardMaskController controller;
+
+    private boolean isSuicide = false;
+
+    private boolean isPartOfGroup;
     protected BoardLogicControl(boardMaskController controller, int boardSize) {
         this.controller = controller;
-        board = new StoneGroup[boardSize+1][boardSize+1];
         size = boardSize;
     }
 
+    protected void setStoneToList(Color colour, int row, int col){
+        StoneGroup toAdd = new StoneGroup(this, colour, row, col);
+        Position toAddPosition = new Position(row, col);
+        StoneGroup neighbour;
+        isPartOfGroup = false;
+
+        //check upper neighbour
+        System.out.println("upper");
+        if(row > 0 && !isSuicide){
+            neighbour = searchForStone(row-1, col);
+            checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row-1,col));
+        }
+
+        //check right neighbour
+        System.out.println("right");
+        if(col + 1 < size && !isSuicide){
+            neighbour = searchForStone(row, col+1);
+            checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row,col+1));
+        }
+
+        //check lower neighbour
+        System.out.println("lower");
+        if (row + 1 < size && !isSuicide) {
+            neighbour = searchForStone(row+1,col);
+            checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row+1,col));
+        }
+
+        //check left neighbour
+        System.out.println("left");
+        if(col > 0 && !isSuicide){
+            neighbour = searchForStone(row, col-1);
+            checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row,col-1));
+        }
+
+        if(searchForStone(row, col) == null)
+            if(toAdd.getFreeFields().size() == 0)
+                deleteStone(toAdd);
+            else if(!isSuicide)
+                stoneList.add(toAdd);
+
+        //prints all position per stone group and their free field position
+        for(StoneGroup s: stoneList){
+            System.out.println(s.getColour() + ", " +  s.getFreeFields().size());
+            for(Position p: s.getPosition())
+                System.out.print(" " + (p.row()+1) + alphabet[p.col()]);
+            System.out.println();
+            for(Position p: s.getFreeFields())
+                System.out.print(" " + (p.row()+1) + alphabet[p.col()]);
+            System.out.println();
+        }
+    }
+
     private StoneGroup searchForStone(int row, int col){
-        if(stoneList == null)
-            return null;
         for (StoneGroup s: stoneList) {
             for (Position p: s.getPosition())
                 if (p.row() == row && p.col() == col)
@@ -27,195 +79,76 @@ public class BoardLogicControl {
         }
         return null;
     }
-    protected void setStoneToList(Color colour, int row, int col){
-        StoneGroup toAdd = new StoneGroup(this, colour, row, col);
-        StoneGroup neighbour;
 
-        //check upper neighbour
-        if(row - 1 > 0){
-            neighbour = searchForStone(row-1, col);
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-                neighbour.addPosition(row, col);
-            } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
+    private StoneGroup searchForStone(Position toFind){
+        for (StoneGroup s: stoneList) {
+            for (Position p: s.getPosition())
+                if (p.equals(toFind))
+                    return s;
         }
-
-        //check right neighbour
-        if(col + 1 < size){
-            neighbour = searchForStone(row, col+1);
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+1) + ", " + (col+2) + " has " + toAdd.getLiberties() + " liberties.");
-                neighbour.addPosition(row, col);
-            } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+1) + ", " + (col+2) + " has " + toAdd.getLiberties() + " liberties.");
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-        }
-
-        //check lower neighbour
-        if (row + 1 < size) {
-            neighbour = searchForStone(row+1,col);
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+1) + ", " + (col+2) + " has " + toAdd.getLiberties() + " liberties.");
-                neighbour.addPosition(row, col);
-            } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+2) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-        }
-
-        //check left neighbour
-        if(col - 1 > 0){
-            neighbour = searchForStone(row, col-1);
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+1) + ", " + (col) + " has " + toAdd.getLiberties() + " liberties.");
-                neighbour.addPosition(row, col);
-            } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+1) + ", " + (col) + " has " + toAdd.getLiberties() + " liberties.");
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-        }
-
-        if(searchForStone(row, col) == null)
-            stoneList.add(toAdd);
-        for(int i = 0; i < size; i++) {
-            System.out.print(i + " ");
-            for (int j = 0; j < size; j++){
-                StoneGroup print = searchForStone(i, j);
-                System.out.print(print == null ? "null" : print.getColour());
-                //System.out.print(board[i][j].getColour() + " ");
-            }
-            System.out.println();
-        }
-        for(StoneGroup s: stoneList){
-            System.out.println(s.getColour());
-            for(Position p: s.getPosition())
-                System.out.print(" " + p.row() + p.col());
-            System.out.println();
-        }
+        return null;
     }
-    protected void setStone(Color colour, int row, int col){
-        StoneGroup toAdd = new StoneGroup(this, colour, row, col);
-        StoneGroup neighbour;
-        boolean isPartOfGroup = false;
 
-        //check upper neighbour
-        if(row - 1 > 0){
-            neighbour = board[row-1][col];
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-                isPartOfGroup = true;
+    private void checkNeighbour(StoneGroup toAdd, Position toAddPosition, StoneGroup neighbour, Position neighbourPosition){
+        if(neighbour == null){
+            if(isPartOfGroup){
+                StoneGroup libertyToAdd = searchForStone(toAddPosition);
+                libertyToAdd.addFreeField(neighbourPosition);
             } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
+                toAdd.addFreeField(neighbourPosition);
             }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
+            //if neighbour has the same colour the current stone should be added to the neighbours group
+        }else if(neighbour.getColour() == toAdd.getColour()) {
             if(isPartOfGroup) {
-                neighbour.addPosition(row, col);
-            }
-        }
-
-        //check right neighbour
-        if(col + 1 < size){
-            neighbour = board[row][col+1];
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
-                isPartOfGroup = true;
+                StoneGroup listToCombine = searchForStone(toAddPosition);
+                neighbour.addPositions(listToCombine.getPosition());
+                neighbour.addFreeFields(listToCombine.getFreeFields());
+                stoneList.remove(listToCombine);
             } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+1) + ", " + (col+2) + " has " + toAdd.getLiberties() + " liberties.");
-            }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-        }
-
-        //check lower neighbour
-        if (row + 1 < size) {
-            neighbour = board[row + 1][col];
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
+                neighbour.addPosition(toAddPosition);
+                neighbour.addFreeFields(toAdd.getFreeFields());
                 isPartOfGroup = true;
-            } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+2) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
             }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
-        }
-
-        //check left neighbour
-        if(col - 1 > 0){
-            neighbour = board[row][col-1];
-            if(neighbour == null)
-                toAdd.addLiberty();
-            else if(neighbour.getColour() == colour) {
-                isPartOfGroup = true;
-            } else {
-                neighbour.takeLiberty();
-                System.out.println("Stone at " + (row+1) + ", " + (col) + " has " + toAdd.getLiberties() + " liberties.");
+            neighbour.removeFreeField(toAddPosition);
+            if(searchForStone(toAddPosition) == null) {
+                isSuicide = true;
+                System.out.println("This is suicide!!");
             }
-            System.out.println("Stone at " + (row+1) + ", " + (col+1) + " has " + toAdd.getLiberties() + " liberties.");
+        //if neighbour has the opposite colour to the current stone a liberty should be taken
+        } else {
+            neighbour.removeFreeField(toAddPosition);
         }
-        board[row][col] = toAdd;
-        for(int i = 0; i < board.length; i++) {
-            System.out.print(i + " ");
-            for (int j = 0; j < board[i].length; j++){
-                System.out.print(board[i][j] == null ? "null" : board[i][j].getColour());
-                //System.out.print(board[i][j].getColour() + " ");
-            }
-            System.out.println();
-        }
+        System.out.println("Stone at " + (toAddPosition.row()+1) + alphabet[toAddPosition.col()] + " has " + toAdd.getFreeFields().size() + " liberties.");
     }
 
     protected void deleteStone(StoneGroup toDelete){
+        System.out.println("Something is getting deleted!!");
         for (Position p: toDelete.getPosition()) {
-            //StoneGroup stoneToDelete = board[p.row()][p.col()];
-
             //upper neighbour
-            StoneGroup neighbour = board[p.row()-1][p.col()];
+            //System.out.println("upper");
+            StoneGroup neighbour = searchForStone((p.row()-1), (p.col()));
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addLiberty();
+                neighbour.addFreeField(p.row(), p.col());
 
             //right neighbour
-            neighbour = board[p.row()][p.col()+1];
+            //System.out.println("right");
+            neighbour = searchForStone(p.row(), (p.col()+1));
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addLiberty();
+                neighbour.addFreeField(p.row(), p.col());
 
             //lower neighbour
-            neighbour = board[p.row()+1][p.col()];
+            //System.out.println("lower");
+            neighbour = searchForStone((p.row()+1), p.col());
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addLiberty();
+                neighbour.addFreeField(p.row(), p.col());
 
             //left neighbour
-            neighbour = board[p.row()][p.col()-1];
+            //System.out.println("left");
+            neighbour = searchForStone(p.row(), (p.col()-1));
             if(neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addLiberty();
-
-            //deleting stone at position p
-            board[p.row()][p.col()] = null;
+                neighbour.addFreeField(p.row(), p.col());
         }
+        stoneList.remove(toDelete);
         controller.deleteStoneGroup(toDelete);
     }
 }
