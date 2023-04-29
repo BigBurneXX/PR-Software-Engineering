@@ -71,6 +71,8 @@ public class boardMaskController {
 
     private int whiteTrappedStones = 0;
 
+    private int handicaps = 0;
+
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
 
     private BoardLogicControl boardLogicControl;
@@ -159,6 +161,7 @@ public class boardMaskController {
     }
 
     protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize){
+        this.boardSize = boardSize;
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
@@ -191,7 +194,7 @@ public class boardMaskController {
             komiBoard.setText("Komi: 0");
             if(!komiAdvantage.isEmpty()) {
                 sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> handicaps set to 0");
-                System.out.println("Invalid komi input -> handicaps set to 0");
+                System.out.println("Invalid komi input -> komi set to 0");
             }
         }
     }
@@ -199,12 +202,22 @@ public class boardMaskController {
     private void displayHandicaps(String handicaps) {
         //only numeric values can be entered
         try {
-            int d = Integer.parseInt(handicaps);
-            System.out.println(d);
+            this.handicaps = Integer.parseInt(handicaps);
+            System.out.println(this.handicaps);
             //only values greater than 0 are valid
-            handicapsBoard.setText("Handicaps: " +
-                    (d < 0 ? "0" : d)
-            );
+            if(boardSize == 9 || boardSize == 13) {
+                if (this.handicaps < 0 || this.handicaps > 5) {
+                    handicapsBoard.setText("Handicaps: " + "0");
+                } else {
+                    handicapsBoard.setText("Handicaps: " + this.handicaps);
+                }
+            } else if(boardSize == 19) {
+                if (this.handicaps < 0 || this.handicaps > 9) {
+                    handicapsBoard.setText("Handicaps: " + "0");
+                } else {
+                    handicapsBoard.setText("Handicaps: " + this.handicaps);
+                }
+            }
         } catch (NumberFormatException nfe) {
             handicapsBoard.setText("Handicaps: 0");
             if(!handicaps.isEmpty()) {
@@ -267,36 +280,9 @@ public class boardMaskController {
             }
         }
 
-        /*Pane numberAndLetterCell = new Pane();
-        numberAndLetterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
-        board.add(numberAndLetterCell, size, size);
-        Label letter = new Label();
-        letter.setText(String.valueOf(alphabet[size]));
-        letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-        letter.setStyle("-fx-text-fill: #C4A484");
-        board.setHalignment(letter, HPos.LEFT);
-        board.setValignment(letter, VPos.BOTTOM);
-        letter.setStyle("-fx-font-size: 15");
-        board.add(letter, size, size);*/
-
-        /*Label number = new Label(String.valueOf(size + 1));
-        number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-        number.setStyle("-fx-text-fill: #C4A484");
-        board.setHalignment(number, HPos.RIGHT);
-        board.setValignment(number, VPos.TOP);
-        number.setStyle("-fx-font-size: 15");
-        board.add(number, size, size);*/
-
         addStones();
 
-        //initial start - still needs handicap logic
-        if(Integer.parseInt(handicapsBoard.getText().substring(handicapsBoard.getText().length()-1)) <= 0) {
-            //modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
-            //lastColor = Color.BLACK;
-        } else {
-            modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
-        }
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+        drawHandicaps();
 
         drawNavigationArrows();
         drawPassButton();
@@ -349,23 +335,6 @@ public class boardMaskController {
                 board.add(leftNumberCell, 0, i);
             }
 
-
-            //add A in left column since the pane also is created in the left column
-            /*if(i == boardSize) {
-                Label A = new Label();
-                A.setText(String.valueOf(alphabet[0]));
-                A.setCenterShape(true);
-                A.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-                A.setStyle("-fx-text-fill: #C4A484");
-                board.setHalignment(A, HPos.RIGHT);
-                board.setValignment(A, VPos.BOTTOM);
-                A.setStyle("-fx-font-size: 15");
-                A.translateXProperty().bind(leftNumberCell.widthProperty().divide(8));
-                board.add(A, 0, i);
-            }*/
-
-
-
             if(i < boardSize) {
                 Label letter = new Label();
                 letter.setText(String.valueOf(alphabet[i]));
@@ -382,53 +351,6 @@ public class boardMaskController {
 
         }
 
-
-
-
-
-            /*if(row != boardSize) {
-                Label number = new Label(String.valueOf(row + 1));
-                number.setCenterShape(true);
-                number.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-                number.setStyle("-fx-text-fill: #C4A484");
-                board.setHalignment(number, HPos.RIGHT);
-                board.setValignment(number, VPos.BOTTOM);
-                number.setStyle("-fx-font-size: 15");
-                number.translateYProperty().bind(rightNumberCell.heightProperty().divide(4).multiply(-1));
-                //board.add(number, boardSize, row + 1);
-                rightNumberCell.getChildren().add(number);
-
-            }*/
-
-
-            //letters on the bottom
-            /*if(row != boardSize) {
-                Pane letterCell = new Pane();
-                letterCell.setStyle("-fx-background-color:  #F2F3F5; -fx-border-color: transparent");
-                board.add(letterCell, row, boardSize);
-            }
-
-            Label letter = new Label();
-            letter.setText(String.valueOf(alphabet[row]));
-            letter.setCenterShape(true);
-            letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-            letter.setStyle("-fx-text-fill: #C4A484");
-            board.setHalignment(letter, HPos.LEFT);
-            board.setValignment(letter, VPos.BOTTOM);
-            letter.setStyle("-fx-font-size: 15");
-            letter.translateXProperty().bind(rightNumberCell.widthProperty().divide(8).multiply(-1));
-            if(row == boardSize) {
-                letter.setText(String.valueOf(alphabet[boardSize]));
-                letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-                letter.setStyle("-fx-text-fill: #C4A484");
-                board.setHalignment(letter, HPos.LEFT);
-                board.setValignment(letter, VPos.BOTTOM);
-                letter.setStyle("-fx-font-size: 15");
-            }
-            board.add(letter, row, boardSize);*/
-        //}
-
-
     }
 
 
@@ -440,12 +362,17 @@ public class boardMaskController {
                 board.add(circle, row, col);
 
                 //make stones resizable and adjust x and y properties
-                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.6).divide(boardSize).divide(4));
+                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4));
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(boardSize * 2.4).multiply(-1));
-                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.6).divide(boardSize * 3.9).multiply(-1));
+                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
 
                 //initial start ... needs additional logic if handicaps are used
-                modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+                if(handicaps <= 0) {
+                    modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+                } else {
+                    modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
+                    lastColor = Color.WHITE;
+                }
                 modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
 
                 //color for hovering
@@ -482,6 +409,57 @@ public class boardMaskController {
                 });
             }
         }
+    }
+
+    private void drawHandicaps() {
+        if(boardSize == 9) {
+            for(Node n : board.getChildren()) {
+                if(n instanceof Circle) {
+                    int row = board.getRowIndex(n);
+                    int col = board.getColumnIndex(n);
+
+                    if(handicaps >= 1) {
+                        if(row == 3 && col == 7) {
+                            Circle c = (Circle)n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if(handicaps >= 2) {
+                        if(row == 7 && col == 3) {
+                            Circle c = (Circle)n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if(handicaps >= 3) {
+                        if(row == 7 && col == 7) {
+                            Circle c = (Circle)n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if(handicaps >= 4) {
+                        if(row == 3 && col == 3) {
+                            Circle c = (Circle)n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if(handicaps == 5) {
+                        if(row == 5 && col == 5) {
+                            Circle c = (Circle)n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
     }
 
     //should be improved (code for left and right are very similar)

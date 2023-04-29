@@ -40,11 +40,9 @@ public class inputMaskController {
         stage.show();
     }
 
-    private int getBoardSize() {
+    public int getBoardSize() {
         if (size9.isSelected()) {
             return 9;
-        } else if (size11.isSelected()) {
-            return 11;
         } else if (size13.isSelected()) {
             return 13;
         } else {
