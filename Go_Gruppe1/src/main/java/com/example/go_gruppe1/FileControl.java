@@ -16,13 +16,8 @@ public class FileControl {
             String newFileName = oldFileName.endsWith(".txt") ?
                     oldFileName.endsWith("_" + (fileNameCounter-1) + ".txt") ?
                             oldFileName.substring(0, oldFileName.length() - (5 + String.valueOf((fileNameCounter-1)).length())) + "_" + fileNameCounter + ".txt" :
- Changes-by-Ivan
                             oldFileName.substring(0, oldFileName.length() -4) + "_" + fileNameCounter + ".txt":
                     player1Name + "_" + player2Name + ".txt";
-
-                    oldFileName.substring(0, oldFileName.length() -4) + "_" + fileNameCounter + ".txt":
-                            player1Name + "_" + player2Name + ".txt";
- main
             outputFile = new File(newFileName);
             if (outputFile.createNewFile()) {
                 String startInfo = player1Name + " vs. " + player2Name + "\nBoardSize: " + boardSize + "\n" + komi;
@@ -67,8 +62,4 @@ public class FileControl {
     protected void saveFile(){
 
     }
- Changes-by-Ivan
 }
-
-}
- main
