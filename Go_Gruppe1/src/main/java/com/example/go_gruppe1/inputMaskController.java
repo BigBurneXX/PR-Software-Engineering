@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class inputMaskController {
     private GridPane inputPane;
 
     @FXML
-    private RadioButton size9, size11, size13, size19;
+    private RadioButton size9, size13, size19;
 
     @FXML
     private ToggleGroup boardSize;
@@ -31,12 +32,16 @@ public class inputMaskController {
         Parent root = loader.load();
 
         boardMaskController boardMask = loader.getController();
-        boardMask.setSize(getWidth(), getHeight());
+        boardMask.setSize(this.getWidth(), this.getHeight());
+        System.out.println(this.getWidth());
+        System.out.println(this.getHeight());
         boardMask.initiateDisplay(player1.getText(), player2.getText(), komi.getText(), handicaps.getText(), getBoardSize());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setMinWidth(600);
+        stage.setMinHeight(650);
         stage.show();
     }
 
@@ -61,5 +66,6 @@ public class inputMaskController {
     protected void setSize(double width, double height) {
         inputPane.setPrefHeight(height);
         inputPane.setPrefWidth(width);
+        inputPane.setMinSize(600, 580);
     }
 }

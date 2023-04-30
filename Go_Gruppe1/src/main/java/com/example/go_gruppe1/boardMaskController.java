@@ -80,19 +80,19 @@ public class boardMaskController {
     private final FileControl fileControl = new FileControl();
 
     @FXML
-    public void onSaveFileClick(){
+    public void onSaveFileClick() {
         //file functionality is disabled for now
         //fileControl.saveFile();
     }
 
     @FXML
-    public void onRenameFileClick(){
+    public void onRenameFileClick() {
         //file functionality is disabled for now
         //fileControl.renameFile(renameFileName.getText());
     }
 
     @FXML
-    public void onLoadFileClick(){
+    public void onLoadFileClick() {
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
@@ -105,12 +105,12 @@ public class boardMaskController {
     public void onModePlayClick() {
         leftArrow.setVisible(false);
         rightArrow.setVisible(false);
-        passButton.setVisible(false);
-        resignButton.setVisible(false);
+        passButton.setVisible(true);
+        resignButton.setVisible(true);
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
 
-        if(lastColor == Color.BLACK) {
+        if (lastColor == Color.BLACK) {
             modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         } else {
             modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
@@ -121,21 +121,22 @@ public class boardMaskController {
     public void onModeNavigateClick() {
         leftArrow.setVisible(true);
         rightArrow.setVisible(true);
-        passButton.setVisible(true);
-        resignButton.setVisible(true);
+        passButton.setVisible(false);
+        resignButton.setVisible(false);
         modeAndMoveDisplay.setText("Navigate mode activated");
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
     }
 
     //first all ActionEventControllers then other controllers
-    protected void setSampleSolutionDisplay(String text){
+    protected void setSampleSolutionDisplay(String text) {
         sampleSolutionDisplay.setText(text);
     }
 
     protected void setSize(double width, double height) {
         boardPane.setPrefHeight(height);
         boardPane.setPrefWidth(width);
+        boardPane.setMinSize(600, 580);
     }
 
     private double getWidth() {
@@ -152,15 +153,19 @@ public class boardMaskController {
 
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
+        System.out.println(this.getWidth());
+        System.out.println(this.getHeight());
 
         Node source = topRegion.getTop();
         Stage stage = (Stage) source.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setMinWidth(600);
+        stage.setMinHeight(650);
         stage.show();
     }
 
-    protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize){
+    protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize) {
         this.boardSize = boardSize;
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
@@ -192,7 +197,7 @@ public class boardMaskController {
             );
         } catch (NumberFormatException nfe) {
             komiBoard.setText("Komi: 0");
-            if(!komiAdvantage.isEmpty()) {
+            if (!komiAdvantage.isEmpty()) {
                 sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> handicaps set to 0");
                 System.out.println("Invalid komi input -> komi set to 0");
             }
@@ -205,33 +210,34 @@ public class boardMaskController {
             this.handicaps = Integer.parseInt(handicaps);
             System.out.println(this.handicaps);
             //only values greater than 0 are valid
-            if(boardSize == 9 || boardSize == 13) {
+            if (boardSize == 9 || boardSize == 13) {
                 if (this.handicaps < 0 || this.handicaps > 5) {
                     handicapsBoard.setText("Handicaps: " + "0");
+                    this.handicaps = 0;
                 } else {
                     handicapsBoard.setText("Handicaps: " + this.handicaps);
                 }
-            } else if(boardSize == 19) {
+            } else if (boardSize == 19) {
                 if (this.handicaps < 0 || this.handicaps > 9) {
                     handicapsBoard.setText("Handicaps: " + "0");
+                    this.handicaps = 0;
                 } else {
                     handicapsBoard.setText("Handicaps: " + this.handicaps);
                 }
             }
         } catch (NumberFormatException nfe) {
             handicapsBoard.setText("Handicaps: 0");
-            if(!handicaps.isEmpty()) {
+            if (!handicaps.isEmpty()) {
                 sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> handicaps set to 0");
                 System.out.println("Invalid handicap input -> handicaps set to 0");
             }
         }
     }
 
-    private void displayTrappedStone(int numberTrapped, Label trappedLabel){
-        if(numberTrapped >= 0){
+    private void displayTrappedStone(int numberTrapped, Label trappedLabel) {
+        if (numberTrapped >= 0) {
             trappedLabel.setText("Trapped: " + numberTrapped);
-        }
-        else
+        } else
             System.out.println("Invalid trapped stones input -> number of trapped stones cannot be < 0");
     }
 
@@ -293,7 +299,7 @@ public class boardMaskController {
         //fileControl.createFile(this, "", player1Name, player2Name, boardSize, komiBoard.getText());
     }
 
-    private void boardLabelling(){
+    private void boardLabelling() {
         //add color and labelling but without borders
         for (int i = 0; i <= boardSize; i++) {
             //top color
@@ -302,7 +308,7 @@ public class boardMaskController {
             board.add(topLetterCell, i, 0);
 
             //right color
-            if(i != 0 && i != boardSize) {
+            if (i != 0 && i != boardSize) {
                 Pane rightCell = new Pane();
                 rightCell.setStyle("-fx-background-color:  #C4A484");
                 board.add(rightCell, boardSize, i);
@@ -314,7 +320,7 @@ public class boardMaskController {
             board.add(bottomLetterCell, i, boardSize);
 
             //right labelling
-            if(i != 0) {
+            if (i != 0) {
                 Label rightNumberCell = new Label();
                 rightNumberCell.setText(String.valueOf(i));
                 rightNumberCell.setCenterShape(true);
@@ -329,13 +335,13 @@ public class boardMaskController {
             }
 
             //left color
-            if(i != 0 && i != boardSize) {
+            if (i != 0 && i != boardSize) {
                 Pane leftNumberCell = new Pane();
                 leftNumberCell.setStyle("-fx-background-color:  #C4A484");
                 board.add(leftNumberCell, 0, i);
             }
 
-            if(i < boardSize) {
+            if (i < boardSize) {
                 Label letter = new Label();
                 letter.setText(String.valueOf(alphabet[i]));
                 letter.setCenterShape(true);
@@ -367,7 +373,7 @@ public class boardMaskController {
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
 
                 //initial start ... needs additional logic if handicaps are used
-                if(handicaps <= 0) {
+                if (handicaps <= 0) {
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
                 } else {
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
@@ -412,58 +418,157 @@ public class boardMaskController {
     }
 
     private void drawHandicaps() {
-        if(boardSize == 9) {
-            for(Node n : board.getChildren()) {
-                if(n instanceof Circle) {
-                    int row = board.getRowIndex(n);
-                    int col = board.getColumnIndex(n);
+        for (Node n : board.getChildren()) {
+            if (n instanceof Circle) {
+                int row = board.getRowIndex(n);
+                int col = board.getColumnIndex(n);
 
-                    if(handicaps >= 1) {
-                        if(row == 3 && col == 7) {
-                            Circle c = (Circle)n;
+                if(boardSize == 9) {
+                    if (handicaps >= 1) {
+                        if (row == 3 && col == 7) {
+                            Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if(handicaps >= 2) {
-                        if(row == 7 && col == 3) {
-                            Circle c = (Circle)n;
+                    if (handicaps >= 2) {
+                        if (row == 7 && col == 3) {
+                            Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if(handicaps >= 3) {
-                        if(row == 7 && col == 7) {
-                            Circle c = (Circle)n;
+                    if (handicaps >= 3) {
+                        if (row == 7 && col == 7) {
+                            Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if(handicaps >= 4) {
-                        if(row == 3 && col == 3) {
-                            Circle c = (Circle)n;
+                    if (handicaps >= 4) {
+                        if (row == 3 && col == 3) {
+                            Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if(handicaps == 5) {
-                        if(row == 5 && col == 5) {
-                            Circle c = (Circle)n;
+                    if (handicaps == 5) {
+                        if (row == 5 && col == 5) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+                } else if(boardSize == 13) {
+                    if (handicaps >= 1) {
+                        if (row == 4 && col == 10) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 2) {
+                        if (row == 10 && col == 4) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 3) {
+                        if (row == 10 && col == 10) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 4) {
+                        if (row == 4 && col == 4) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps == 5) {
+                        if (row == 7 && col == 7) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+                } else {
+                    if (handicaps >= 1) {
+                        if (row == 4 && col == 16) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 2) {
+                        if (row == 16 && col == 4) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 3) {
+                        if (row == 16 && col == 16) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 4) {
+                        if (row == 4 && col == 4) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 5) {
+                        if (row == 10 && col == 10) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 6) {
+                        if (row == 10 && col == 4) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 7) {
+                        if (row == 10 && col == 16) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps >= 8) {
+                        if (row == 4 && col == 10) {
+                            Circle c = (Circle) n;
+                            c.setFill(Color.BLACK);
+                        }
+                    }
+
+                    if (handicaps == 9) {
+                        if (row == 16 && col == 10) {
+                            Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
                 }
+
+
+
             }
         }
-
-
 
 
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
     }
 
     //should be improved (code for left and right are very similar)
-    private void drawNavigationArrows(){
+    private void drawNavigationArrows() {
         leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
         leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
 
@@ -471,7 +576,7 @@ public class boardMaskController {
         rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
     }
 
-    private void drawPassButton(){
+    private void drawPassButton() {
         passButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
         passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
 
@@ -480,7 +585,7 @@ public class boardMaskController {
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
-            if(lastColor == Color.BLACK) {
+            if (lastColor == Color.BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
                 lastColor = Color.WHITE;
             } else {
@@ -492,7 +597,7 @@ public class boardMaskController {
         });
     }
 
-    private void drawResignButton(){
+    private void drawResignButton() {
         resignButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
         resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
         resignButton.setOnMouseEntered(e -> resignButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
@@ -500,7 +605,7 @@ public class boardMaskController {
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
-            if(lastColor == Color.BLACK) {
+            if (lastColor == Color.BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " resigned! - " + pl2.getText() + " won!");
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
@@ -514,8 +619,8 @@ public class boardMaskController {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         int row = -1;
         int col = -1;
-        for(Node n : board.getChildren()) {
-            if(n instanceof Circle && n.equals(c)) {
+        for (Node n : board.getChildren()) {
+            if (n instanceof Circle && n.equals(c)) {
                 row = board.getRowIndex(n);
                 col = board.getColumnIndex(n);
                 String stonePosition = "\n" + row + alphabet[col];
@@ -523,25 +628,25 @@ public class boardMaskController {
                 //boardLogicControl.setStone(lastColor, row, col);
                 //fileControl.writeToPosition(stonePosition);
                 System.out.println();
-                System.out.println(" " + (row) + alphabet[col-1]);
+                System.out.println(" " + (row) + alphabet[col - 1]);
             }
         }
 
-        if(lastColor == Color.WHITE){
+        if (lastColor == Color.WHITE) {
             c.setFill(lastColor);
-            boardLogicControl.setStoneToList(lastColor, row-1, col-1);
+            boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
             lastColor = Color.BLACK;
             modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         } else {
             c.setFill(lastColor);
-            boardLogicControl.setStoneToList(lastColor, row-1, col-1);
+            boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
             lastColor = Color.WHITE;
             modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
     }
 
-    protected void deleteStoneGroup(StoneGroup toDelete){
-        if(toDelete.getColour() == Color.BLACK)
+    protected void deleteStoneGroup(StoneGroup toDelete) {
+        if (toDelete.getColour() == Color.BLACK)
             displayTrappedStone(++blackTrappedStones, blackTrapped);
         else
             displayTrappedStone(++whiteTrappedStones, whiteTrapped);
@@ -550,7 +655,7 @@ public class boardMaskController {
         for (Position p : toDelete.getPosition()) {
             //System.out.println("to delete: " + (p.row()+1) + alphabet[p.col()]);
             for (Node n : board.getChildren())
-                if (n instanceof Circle c && board.getRowIndex(n) == (p.row()+1) && board.getColumnIndex(n) == (p.col()+1)) {
+                if (n instanceof Circle c && board.getRowIndex(n) == (p.row() + 1) && board.getColumnIndex(n) == (p.col() + 1)) {
                     c.setFill(Color.TRANSPARENT);
                 }
         }

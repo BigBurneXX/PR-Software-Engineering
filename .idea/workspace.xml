@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="starting with the deleting of trapped stones (not fully functional yet)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/MainGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/MainGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/boardMaskController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/inputMaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/inputMaskController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/boardMaskGUI.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/inputMaskGUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/resources/inputMaskGUI.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,6 +112,7 @@
       <workItem from="1682438724129" duration="3772000" />
       <workItem from="1682499267422" duration="9336000" />
       <workItem from="1682797708271" duration="5425000" />
+      <workItem from="1682842893108" duration="7607000" />
     </task>
     <task id="LOCAL-00001" summary="starting with the deleting of trapped stones (not fully functional yet)">
       <created>1681149268725</created>
@@ -154,6 +157,15 @@
           <properties class="java.lang.NullPointerException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/MainGUI.java</url>
+          <line>13</line>
+          <properties class="com.example.go_gruppe1.MainGUI" method="start">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
