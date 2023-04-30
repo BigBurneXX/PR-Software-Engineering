@@ -19,6 +19,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+import java.util.concurrent.TimeUnit;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,6 +86,17 @@ public class boardMaskController {
 
     private boolean isGameOver = false;
     private int passTurnCounter = 0;
+    
+    private Label timerLabel;
+    private long startTime;
+    private Timeline timerTimeline;
+
+    public void initialize() {
+        initTimer();
+        topGrid.add(timerLabel, 2, 0);
+        GridPane.setHalignment(timerLabel, HPos.CENTER);
+        GridPane.setValignment(timerLabel, VPos.CENTER);
+    }
 
 
     @FXML
@@ -656,6 +672,26 @@ public class boardMaskController {
             updateCurrentCell(board, newRow, newCol);
         });
         boardPane.requestFocus();
+    }
+    
+     private void initTimer() {
+        startTime = System.currentTimeMillis();
+        timerLabel = new Label("00:00");
+        timerLabel.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+
+        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
+        timerTimeline.setCycleCount(Animation.INDEFINITE);
+        timerTimeline.play();
+    }
+
+
+    private void updateTimer() {
+        long currentTime = System.currentTimeMillis();
+        long elapsedTime = currentTime - startTime;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(minutes);
+
+        timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
     }
 
 }
