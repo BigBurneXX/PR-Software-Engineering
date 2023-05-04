@@ -13,189 +13,154 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<GridPane fx:id="inputPane" prefHeight="581.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;"
-          xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="com.example.go_gruppe1.inputMaskController">
+
+<GridPane fx:id="inputPane" prefHeight="580.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.inputMaskController">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints maxHeight="125.40001525878907" minHeight="10.0" prefHeight="107.00000610351563"
-                        vgrow="SOMETIMES"/>
-        <RowConstraints maxHeight="68.5999969482422" minHeight="10.0" prefHeight="39.79999389648438" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints maxHeight="117.99997558593748" minHeight="10.0" prefHeight="117.19998779296873"
-                        vgrow="SOMETIMES"/>
-        <RowConstraints maxHeight="59.60001220703123" minHeight="10.0" prefHeight="11.600012207031227"
-                        vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="125.40001525878907" minHeight="10.0" prefHeight="107.00000610351563" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="68.5999969482422" minHeight="10.0" prefHeight="39.79999389648438" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="117.99997558593748" minHeight="10.0" prefHeight="117.19998779296873" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="59.60001220703123" minHeight="10.0" prefHeight="11.600012207031227" vgrow="SOMETIMES" />
     </rowConstraints>
-    <Label contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" text="GO" textAlignment="CENTER"
-           textFill="#703400" GridPane.columnIndex="3" GridPane.valignment="CENTER">
+    <Label contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" text="GO" textAlignment="CENTER" textFill="#703400" GridPane.columnIndex="3" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="54.0"/>
+          <Font name="Baskerville Old Face" size="54.0" />
         </font>
         <GridPane.margin>
-          <Insets/>
+          <Insets />
         </GridPane.margin>
     </Label>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Board Size:" GridPane.halignment="LEFT"
-          GridPane.rowIndex="1" GridPane.valignment="CENTER">
+    <Text fx:id="sizeText" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Board Size:" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="24.0"/>
+          <Font name="Baskerville Old Face" size="24.0" />
         </font>
         <GridPane.margin>
-          <Insets left="20.0"/>
+          <Insets left="20.0" />
         </GridPane.margin>
     </Text>
-    <RadioButton fx:id="size9" mnemonicParsing="false" selected="true" text="9x9" GridPane.columnIndex="3"
-                 GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+    <RadioButton fx:id="size9" mnemonicParsing="false" selected="true" text="9x9" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="15.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
+          <Insets right="20.0" />
         </GridPane.margin>
         <toggleGroup>
-          <ToggleGroup fx:id="boardSize"/>
+          <ToggleGroup fx:id="boardSize" />
         </toggleGroup>
     </RadioButton>
-    <RadioButton fx:id="size11" layoutX="266.0" layoutY="126.0" mnemonicParsing="false" text="11x11"
-                 toggleGroup="$boardSize" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+    <RadioButton fx:id="size13" layoutX="352.0" layoutY="126.0" mnemonicParsing="false" text="13x13" toggleGroup="$boardSize" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="15.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
+          <Insets right="20.0" />
         </GridPane.margin>
     </RadioButton>
-    <RadioButton fx:id="size13" layoutX="352.0" layoutY="126.0" mnemonicParsing="false" text="13x13"
-                 toggleGroup="$boardSize" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+    <RadioButton fx:id="size19" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" text="19x19" toggleGroup="$boardSize" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="15.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
+          <Insets right="20.0" />
         </GridPane.margin>
     </RadioButton>
-    <RadioButton fx:id="size19" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" text="19x19"
-                 toggleGroup="$boardSize" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Player Names:" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="24.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
-        </GridPane.margin>
-    </RadioButton>
-    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Player Names:" GridPane.halignment="LEFT"
-          GridPane.rowIndex="2" GridPane.valignment="CENTER">
-        <font>
-          <Font name="Baskerville Old Face" size="24.0"/>
-        </font>
-        <GridPane.margin>
-          <Insets left="20.0"/>
+          <Insets left="20.0" />
         </GridPane.margin>
     </Text>
-    <TextField fx:id="player1" layoutX="415.0" layoutY="172.0" minWidth="100.0" promptText="Black"
-               GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+    <TextField fx:id="player1" layoutX="415.0" layoutY="172.0" minWidth="100.0" promptText="Black" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="15.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
+          <Insets right="20.0" />
         </GridPane.margin>
     </TextField>
-    <TextField fx:id="player2" minWidth="100.0" promptText="White" GridPane.columnIndex="6" GridPane.halignment="RIGHT"
-               GridPane.rowIndex="2" GridPane.valignment="CENTER">
+    <TextField fx:id="player2" minWidth="100.0" promptText="White" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="15.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
+          <Insets right="20.0" />
         </GridPane.margin>
     </TextField>
-    <Text layoutX="50.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Komi:"
-          GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+    <Text layoutX="50.0" layoutY="192.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Komi:" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="24.0"/>
+          <Font name="Baskerville Old Face" size="24.0" />
         </font>
         <GridPane.margin>
-          <Insets left="20.0"/>
+          <Insets left="20.0" />
         </GridPane.margin>
     </Text>
-    <TextField fx:id="komi" layoutX="496.0" layoutY="172.0" minWidth="100.0" promptText="Komi" GridPane.columnIndex="6"
-               GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+    <TextField fx:id="komi" layoutX="496.0" layoutY="172.0" minWidth="100.0" promptText="Komi" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="15.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
+          <Insets right="20.0" />
         </GridPane.margin>
     </TextField>
-    <Text layoutX="50.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Number of Handicaps:"
-          GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+    <Text layoutX="50.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Number of Handicaps:" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="24.0"/>
+          <Font name="Baskerville Old Face" size="24.0" />
         </font>
         <GridPane.margin>
-          <Insets left="20.0"/>
+          <Insets left="20.0" />
         </GridPane.margin>
     </Text>
-    <TextField fx:id="handicaps" layoutX="496.0" layoutY="223.0" minWidth="100.0" promptText="Handicaps"
-               GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+    <TextField fx:id="handicaps" layoutX="496.0" layoutY="223.0" minWidth="100.0" promptText="Handicaps" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="15.0"/>
+          <Font name="Baskerville Old Face" size="15.0" />
         </font>
         <GridPane.margin>
-          <Insets right="20.0"/>
+          <Insets right="20.0" />
         </GridPane.margin>
     </TextField>
-    <Text layoutX="50.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Specify Time Rules:"
-          GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+    <Text layoutX="50.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Specify Time Rules:" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
         <font>
-          <Font name="Baskerville Old Face" size="24.0"/>
+          <Font name="Baskerville Old Face" size="24.0" />
         </font>
         <GridPane.margin>
-          <Insets left="20.0"/>
+          <Insets left="20.0" />
         </GridPane.margin>
     </Text>
-    <ButtonBar buttonMinWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6"
-               GridPane.valignment="BASELINE">
+    <ButtonBar buttonMinWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="BASELINE">
       <buttons>
-          <Button alignment="CENTER" contentDisplay="CENTER" minWidth="-Infinity" mnemonicParsing="false"
-                  prefHeight="38.0" prefWidth="152.0"
-                  style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Location ..."
-                  textAlignment="CENTER">
+          <Button alignment="CENTER" contentDisplay="CENTER" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="152.0" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Location ..." textAlignment="CENTER">
               <font>
-                  <Font name="Baskerville Old Face" size="20.0"/>
+                  <Font name="Baskerville Old Face" size="20.0" />
               </font>
           </Button>
-          <Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true"
-                  mnemonicParsing="false" onAction="#switchToBoardMask"
-                  style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start Game"
-                  textAlignment="CENTER">
+          <Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#switchToBoardMask" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start Game" textAlignment="CENTER">
               <font>
-                  <Font name="Baskerville Old Face" size="20.0"/>
+                  <Font name="Baskerville Old Face" size="20.0" />
               </font>
           </Button>
-          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false"
-                  style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Load Game"
-                  textAlignment="CENTER">
+          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Load Game" textAlignment="CENTER">
               <font>
-                  <Font name="Baskerville Old Face" size="20.0"/>
+                  <Font name="Baskerville Old Face" size="20.0" />
               </font>
           </Button>
       </buttons>
         <GridPane.margin>
-          <Insets bottom="15.0"/>
+          <Insets bottom="15.0" />
         </GridPane.margin>
     </ButtonBar>
 </GridPane>
