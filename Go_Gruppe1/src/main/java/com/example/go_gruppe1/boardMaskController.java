@@ -632,24 +632,25 @@ public class boardMaskController {
             }
         }
 
+        c.setFill(lastColor);
+        boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
         if (lastColor == Color.WHITE) {
-            c.setFill(lastColor);
-            boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
             lastColor = Color.BLACK;
             modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         } else {
-            c.setFill(lastColor);
-            boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
             lastColor = Color.WHITE;
             modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
         }
     }
 
     protected void deleteStoneGroup(StoneGroup toDelete) {
-        if (toDelete.getColour() == Color.BLACK)
-            displayTrappedStone(++blackTrappedStones, blackTrapped);
-        else
-            displayTrappedStone(++whiteTrappedStones, whiteTrapped);
+        if (toDelete.getColour() == Color.WHITE) {
+            blackTrappedStones += toDelete.getPosition().size();
+            displayTrappedStone(blackTrappedStones, blackTrapped);
+        }else {
+            whiteTrappedStones += toDelete.getPosition().size();
+            displayTrappedStone(whiteTrappedStones, whiteTrapped);
+        }
 
         //finds the circle for every position of stoneGroup toDelete and sets the visibility to TRANSPARENT
         for (Position p : toDelete.getPosition()) {

@@ -35,9 +35,14 @@ public class StoneGroup {
     protected void removeFreeField(Position pos){
         freeFields.remove(pos);
         if(freeFields.isEmpty())
-            isDead();
+            boardLogicControl.addToDelete(this);
+            //isDead();
     }
 
+    protected void checkIsDead(){
+        if(freeFields.isEmpty())
+            boardLogicControl.deleteStone(this);
+    }
     protected void addFreeFields(Set<Position> toAdd){
         freeFields.addAll(toAdd);
     }

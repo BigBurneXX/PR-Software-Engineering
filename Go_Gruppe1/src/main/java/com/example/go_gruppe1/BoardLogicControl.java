@@ -3,7 +3,9 @@ package com.example.go_gruppe1;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BoardLogicControl {
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
@@ -12,6 +14,8 @@ public class BoardLogicControl {
     private final boardMaskController controller;
 
     private boolean isSuicide = false;
+
+    private Set<StoneGroup> toDelete = new HashSet<>();
 
     private boolean isPartOfGroup;
     protected BoardLogicControl(boardMaskController controller, int boardSize) {
@@ -52,6 +56,9 @@ public class BoardLogicControl {
             neighbour = searchForStone(row, col-1);
             checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row,col-1));
         }
+
+        stonesToDelete();
+        toDelete.clear();
 
         if(searchForStone(row, col) == null)
             if(toAdd.getFreeFields().size() == 0)
@@ -118,7 +125,19 @@ public class BoardLogicControl {
         } else {
             neighbour.removeFreeField(toAddPosition);
         }
+        if(searchForStone(toAddPosition) != null)
+            searchForStone(toAddPosition).getFreeFields().stream().count();
         System.out.println("Stone at " + (toAddPosition.row()+1) + alphabet[toAddPosition.col()] + " has " + toAdd.getFreeFields().size() + " liberties.");
+    }
+
+    protected void addToDelete(StoneGroup addToDelete){
+        toDelete.add(addToDelete);
+    }
+
+    private void stonesToDelete(){
+        for(StoneGroup s: toDelete)
+            if(s.getFreeFields().isEmpty())
+                deleteStone(s);
     }
 
     protected void deleteStone(StoneGroup toDelete){
