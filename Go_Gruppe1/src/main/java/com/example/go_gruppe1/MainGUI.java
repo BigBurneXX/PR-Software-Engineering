@@ -20,6 +20,9 @@ public class MainGUI extends Application {
         //Image icon = new Image(new File("/src/main/java/com/example/go_gruppe1/go.png").toURI().toString());
         //stage.getIcons().add(icon);
         stage.setScene(inputMask);
+        //stage.sizeToScene();
+        stage.setMinWidth(600);
+        stage.setMinHeight(800);
         stage.show();
 
 
