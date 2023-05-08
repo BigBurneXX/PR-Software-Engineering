@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-Changes-by-Ivan
-    <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment="">
+    <list default="true" id="626e2a9d-57d9-4e9b-93d7-f4e452cfab3e" name="Changes" comment=""/>
       <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/BoardLogicControl.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Go_Gruppe1/src/main/java/com/example/go_gruppe1/FileControl.java" afterDir="false" />
@@ -58,18 +57,18 @@ Changes-by-Ivan
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-Changes-by-Ivan
+
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
 
     "WebServerToolWindowFactoryState": "false",
     "last_opened_file_path": "C:/Users/Acer/AppData/Local/SceneBuilder/SceneBuilder.exe",
- main
+
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-Changes-by-Ivan
+
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -77,7 +76,7 @@ Changes-by-Ivan
     "settings.editor.selected.configurable": "inlay.hints",
     "vue.rearranger.settings.migration": "true"
   }
-}]]></component>
+</project>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.example.go_gruppe1" />
@@ -86,7 +85,7 @@ Changes-by-Ivan
       <recent name="C:\!\!Studium\PR SE\PR-Software-Engineering\Go_Gruppe1\src" />
     </key>
   </component>
- main
+
   <component name="RunManager">
     <configuration name="MainGUI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.go_gruppe1.MainGUI" />
@@ -121,7 +120,7 @@ Changes-by-Ivan
       <workItem from="1681044984703" duration="2338000" />
       <workItem from="1681048906280" duration="540000" />
       <workItem from="1681054817685" duration="9149000" />
- Changes-by-Ivan
+
       <workItem from="1681117891970" duration="7631000" />
       <workItem from="1682164860635" duration="10078000" />
 
@@ -138,7 +137,7 @@ Changes-by-Ivan
       <workItem from="1682250379293" duration="4735000" />
       <workItem from="1682438724129" duration="3772000" />
       <workItem from="1682499267422" duration="9336000" />
- main
+
     </task>
     <task id="LOCAL-00001" summary="starting with the deleting of trapped stones (not fully functional yet)">
       <created>1681149268725</created>
