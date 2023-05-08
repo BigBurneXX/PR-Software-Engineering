@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -121,6 +122,10 @@ public class boardMaskController {
     public void onModeNavigateClick() {
         leftArrow.setVisible(true);
         rightArrow.setVisible(true);
+        //TODO logic for arrow clicks
+        /*rightArrow.setOnMouseClicked();
+        leftArrow.setOnMouseClicked();
+        */
         passButton.setVisible(false);
         resignButton.setVisible(false);
         modeAndMoveDisplay.setText("Navigate mode activated");
