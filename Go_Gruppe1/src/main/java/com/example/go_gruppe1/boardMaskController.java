@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -72,7 +71,8 @@ public class boardMaskController {
 
     private int whiteTrappedStones = 0;
 
-    private int handicaps = 0;
+    private int handicaps;
+    private double komi;
 
     private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
 
@@ -83,22 +83,24 @@ public class boardMaskController {
     @FXML
     public void onSaveFileClick() {
         //file functionality is disabled for now
-        //fileControl.saveFile();
+        fileControl.saveFile();
     }
 
     @FXML
     public void onRenameFileClick() {
         //file functionality is disabled for now
-        //fileControl.renameFile(renameFileName.getText());
+        fileControl.renameFile(renameFileName.getText());
     }
 
     @FXML
     public void onLoadFileClick() {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select a file");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
             //file functionality is disabled for now
-            //fileControl.loadFile(selectedFile);
+            fileControl.loadFile(selectedFile);
         }
     }
 
@@ -144,11 +146,11 @@ public class boardMaskController {
         boardPane.setMinSize(600, 580);
     }
 
-    private double getWidth() {
+    protected double getWidth() {
         return boardPane.getWidth();
     }
 
-    private double getHeight() {
+    protected double getHeight() {
         return boardPane.getHeight();
     }
 
@@ -170,6 +172,9 @@ public class boardMaskController {
         stage.show();
     }
 
+    protected void switchToNewGame(String player1Name, String player2Name, double komi, Long handicaps, Long boardSize) throws IOException{
+        /*load game*/
+    }
     protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize) {
         this.boardSize = boardSize;
         displayPlayerNames(player1Name, player2Name);
@@ -196,10 +201,9 @@ public class boardMaskController {
         //only numeric values can be entered
         try {
             double d = Double.parseDouble(komiAdvantage);
+            komi = d < 0 ? 0 : d;
             //only values greater than 0 are valid
-            komiBoard.setText("Komi: " +
-                    (d < 0 ? "0" : d)
-            );
+            komiBoard.setText("Komi: " + komi);
         } catch (NumberFormatException nfe) {
             komiBoard.setText("Komi: 0");
             if (!komiAdvantage.isEmpty()) {
@@ -294,14 +298,13 @@ public class boardMaskController {
         addStones();
 
         drawHandicaps();
-
         drawNavigationArrows();
         drawPassButton();
         drawResignButton();
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
-        //fileControl.createFile(this, "", player1Name, player2Name, boardSize, komiBoard.getText());
+        fileControl.createFile(this, "", player1Name, player2Name, boardSize, komi, handicaps);
     }
 
     private void boardLabelling() {
@@ -598,7 +601,7 @@ public class boardMaskController {
                 lastColor = Color.BLACK;
             }
             //file functionality is disabled for now
-            //fileControl.writeToPosition("\npassed");
+            fileControl.writeAction("passed");
         });
     }
 
@@ -615,9 +618,9 @@ public class boardMaskController {
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
             }
+            //file functionality is disabled for now
+            fileControl.writeAction("resigned");
         });
-        //file functionality is disabled for now
-        //fileControl.writeToPosition("\nresigned");
     }
 
     public void setStone(Circle c) {
@@ -628,10 +631,10 @@ public class boardMaskController {
             if (n instanceof Circle && n.equals(c)) {
                 row = board.getRowIndex(n);
                 col = board.getColumnIndex(n);
-                String stonePosition = "\n" + row + alphabet[col];
+                String stonePosition = String.valueOf(row-1) + String.valueOf(alphabet[col-1]);
                 //boardLogicControl.setStoneToList(lastColor, row-1, col-1);
                 //boardLogicControl.setStone(lastColor, row, col);
-                //fileControl.writeToPosition(stonePosition);
+                fileControl.writeMoves(stonePosition);
                 System.out.println();
                 System.out.println(" " + (row) + alphabet[col - 1]);
             }
