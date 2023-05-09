@@ -7,12 +7,10 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
@@ -123,16 +121,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#onSaveFileClick" text="Save" />
                   <MenuItem mnemonicParsing="false" onAction="#switchToInputMask" text="New game" />
                   <MenuItem mnemonicParsing="false" onAction="#onLoadFileClick" text="Load game" />
-                  <Menu mnemonicParsing="false" text="Rename file">
-                     <MenuItem mnemonicParsing="false">
-                        <graphic>
-                           <HBox minHeight="22.0" minWidth="200.0" prefHeight="22.0" prefWidth="210.0">
-                              <TextField fx:id="renameFileName" promptText="Enter new file name" />
-                              <Button mnemonicParsing="false" onAction="#onRenameFileClick" text="Rename" />
-                           </HBox>
-                        </graphic>
-                     </MenuItem>
-                  </Menu>
+                  <MenuItem fx:id="saveAs" mnemonicParsing="false" text="Unspecified Action" />
                </Menu>
                <Menu mnemonicParsing="false" text="Mode">
                   <RadioMenuItem fx:id="modePlay" mnemonicParsing="false" onAction="#onModePlayClick" text="Play">
