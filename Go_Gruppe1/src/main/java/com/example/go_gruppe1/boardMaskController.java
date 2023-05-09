@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import static javafx.scene.paint.Color.*;
+
 public class boardMaskController {
     /*
       ================================================================================================================
@@ -124,7 +126,7 @@ public class boardMaskController {
       ----------------------------------------------------------------------------------------------------------------
      */
     private Circle[][] circlesOfBoard;
-    private Color lastColor = Color.BLACK;
+    private Color lastColor = BLACK;
     private int blackTrappedStones = 0;
     private int whiteTrappedStones = 0;
 
@@ -140,13 +142,12 @@ public class boardMaskController {
      */
 
     public void onNewGameClick() throws IOException {
+        terminalInfo("Starting new game... \n[log end]");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
         Parent root = loader.load();
 
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
-        System.out.println("Width of window: " + this.getWidth());
-        System.out.println("Height of window: " + this.getHeight());
 
         Node source = topRegion.getTop();
         Stage stage = (Stage) source.getScene().getWindow();
@@ -159,12 +160,13 @@ public class boardMaskController {
 
     @FXML
     public void onSaveFileAsClick() {
-        //file functionality is disabled for now
+        terminalInfo("Saving file...");
         fileControl.saveFile();
     }
 
     @FXML
     public void onOpenFileClick() {
+        terminalInfo("Loading file... \n[log end]");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select a file");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
@@ -180,7 +182,8 @@ public class boardMaskController {
 
 
     public void onExitGameClick() {
-         Platform.exit();
+        terminalInfo("Exiting file... \n[log end]");
+        Platform.exit();
     }
 
     /*
@@ -193,6 +196,7 @@ public class boardMaskController {
 
     @FXML
     public void onModePlayClick() {
+        terminalInfo("play mode activated!");
         leftArrow.setVisible(false);
         rightArrow.setVisible(false);
         passButton.setVisible(true);
@@ -200,24 +204,21 @@ public class boardMaskController {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
 
-        if (lastColor == Color.BLACK) {
-            modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
-        } else {
-            modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
-        }
+        modeAndMoveDisplay.setText((lastColor == BLACK ? pl1.getText() : pl2.getText()) + "'s turn!");
     }
 
     @FXML
     public void onModeNavigateClick() {
+        terminalInfo("navigation mode activated!");
         leftArrow.setVisible(true);
         rightArrow.setVisible(true);
         //TODO logic for arrow clicks
         /*rightArrow.setOnMouseClicked();
-        leftArrow.setOnMouseClicked();
-        */
+          leftArrow.setOnMouseClicked();*/
+
         passButton.setVisible(false);
         resignButton.setVisible(false);
-        modeAndMoveDisplay.setText("Navigate mode activated");
+        modeAndMoveDisplay.setText("Navigation mode activated");
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
     }
@@ -232,6 +233,7 @@ public class boardMaskController {
 
     protected void setSampleSolutionDisplay(String text) {
         sampleSolutionDisplay.setText(text);
+        terminalInfo("sample solution display set to" + text);
     }
 
     protected void setSize(double width, double height) {
@@ -258,6 +260,7 @@ public class boardMaskController {
      */
     protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize) {
         BOARD_SIZE = boardSize;
+        terminalInfo("starting a new game\nboard size set to: " + boardSize);
         boardLogicControl = new BoardLogicControl(this, boardSize);
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
@@ -276,21 +279,25 @@ public class boardMaskController {
 
         pl1.setText(PLAYER1NAME + " (Black)");
         pl2.setText(PLAYER2NAME + " (White)");
+        terminalInfo("player1 set to: " + PLAYER1NAME + "\nplayer2 set to: " + PLAYER2NAME);
     }
 
     private void displayKomi(String komiAdvantage) {
         //only numeric values can be entered
         try {
             double d = Double.parseDouble(komiAdvantage);
-            KOMI = d < 0 ? 0 : d;
             //only values greater than 0 are valid
+            KOMI = d < 0 ? 0 : d;
             komiBoard.setText("Komi: " + KOMI);
+            terminalInfo("komi: " + KOMI);
         } catch (NumberFormatException nfe) {
-            komiBoard.setText("Komi: 0");
+            KOMI = 0;
+            komiBoard.setText("Komi: " + KOMI);
             if (!komiAdvantage.isEmpty()) {
-                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> handicaps set to 0");
-                System.out.println("Invalid komi input -> komi set to 0");
+                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> komi set to 0");
+                terminalInfo("invalid komi input");
             }
+            terminalInfo("komi set to: " + KOMI);
         }
     }
 
@@ -298,7 +305,6 @@ public class boardMaskController {
         //only numeric values can be entered
         try {
             HANDICAPS = Integer.parseInt(handicaps);
-            System.out.println(HANDICAPS);
             //only values greater than 0 are valid
             if (BOARD_SIZE == 9 || BOARD_SIZE == 13) {
                 if (HANDICAPS < 0 || HANDICAPS > 5) {
@@ -315,20 +321,21 @@ public class boardMaskController {
                     handicapsBoard.setText("Handicaps: " + HANDICAPS);
                 }
             }
+            terminalInfo("handicaps: " + HANDICAPS);
         } catch (NumberFormatException nfe) {
-            handicapsBoard.setText("Handicaps: 0");
+            HANDICAPS = 0;
+            handicapsBoard.setText("Handicaps: " + HANDICAPS);
             if (!handicaps.isEmpty()) {
                 sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> handicaps set to 0");
-                System.out.println("Invalid handicap input -> handicaps set to 0");
+                terminalInfo("invalid handicap input");
             }
+            terminalInfo("handicaps set to: " + HANDICAPS);
         }
     }
 
     private void displayTrappedStone(int numberTrapped, Label trappedLabel) {
-        if (numberTrapped >= 0) {
             trappedLabel.setText("Trapped: " + numberTrapped);
-        } else
-            System.out.println("Invalid trapped stones input -> number of trapped stones cannot be < 0");
+            terminalInfo(trappedLabel.getId() + " set to " + numberTrapped);
     }
 
 
@@ -468,7 +475,7 @@ public class boardMaskController {
     private void addCirclesToBoard() {
         for (int row = 1; row <= BOARD_SIZE; row++) {
             for (int col = 1; col <= BOARD_SIZE; col++) {
-                Circle circle = new Circle(10, Color.TRANSPARENT);
+                Circle circle = new Circle(10, TRANSPARENT);
                 board.add(circle, row, col);
                 circlesOfBoard[row][col] = circle;
 
@@ -482,20 +489,20 @@ public class boardMaskController {
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
                 } else {
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
-                    lastColor = Color.WHITE;
+                    lastColor = WHITE;
                 }
                 modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
 
                 //color for hovering
-                Color hoverBlack = Color.valueOf("#00000070");
-                Color hoverWhite = Color.valueOf("#FFFFFF70");
+                final Color HOVER_BLACK = Color.valueOf("#00000070");
+                final Color HOVER_WHITE = Color.valueOf("#FFFFFF70");
 
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
-                    if (modePlay.isSelected()) {
-                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
+                    if (modePlay.isSelected())
+                        if (circle.getFill() == HOVER_WHITE || circle.getFill() == HOVER_BLACK)
                             setStone(circle);
-                    }
+
                 });
 
                 //when the mouse is hovering over a transparent circle this circle is coloured white or black
@@ -503,11 +510,11 @@ public class boardMaskController {
                 //           when clicked so that .equals will return false
                 circle.setOnMouseEntered(e -> {
                     if (modePlay.isSelected()) {
-                        if (circle.getFill() == Color.TRANSPARENT) {
-                            if (lastColor == Color.BLACK)
-                                circle.setFill(hoverBlack);
+                        if (circle.getFill() == TRANSPARENT) {
+                            if (lastColor == BLACK)
+                                circle.setFill(HOVER_BLACK);
                             else
-                                circle.setFill(hoverWhite);
+                                circle.setFill(HOVER_WHITE);
                         }
                     }
                 });
@@ -515,8 +522,8 @@ public class boardMaskController {
                 //when the mouse is no longer hovering over the circle the colour is removed
                 circle.setOnMouseExited(e -> {
                     if (modePlay.isSelected()) {
-                        if (circle.getFill() == hoverWhite || circle.getFill() == hoverBlack)
-                            circle.setFill(Color.TRANSPARENT);
+                        if (circle.getFill() == HOVER_WHITE || circle.getFill() == HOVER_BLACK)
+                            circle.setFill(TRANSPARENT);
                     }
                 });
             }
@@ -534,47 +541,47 @@ public class boardMaskController {
         int midValue = BOARD_SIZE/2 + 1;
 
         if (HANDICAPS >= 1) {
-            circlesOfBoard[lowerValue][higherValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, lowerValue - 1, higherValue - 1);
+            circlesOfBoard[lowerValue][higherValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, lowerValue - 1, higherValue - 1);
         }
         if (HANDICAPS >= 2) {
-            circlesOfBoard[higherValue][lowerValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, higherValue - 1, lowerValue - 1);
+            circlesOfBoard[higherValue][lowerValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, higherValue - 1, lowerValue - 1);
         }
 
         if (HANDICAPS >= 3) {
-            circlesOfBoard[higherValue][higherValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, higherValue - 1, higherValue - 1);
+            circlesOfBoard[higherValue][higherValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, higherValue - 1, higherValue - 1);
         }
 
         if (HANDICAPS >= 4) {
-            circlesOfBoard[lowerValue][lowerValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, lowerValue - 1, lowerValue - 1);
+            circlesOfBoard[lowerValue][lowerValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, lowerValue - 1, lowerValue - 1);
         }
 
         if (HANDICAPS >= 5) {
-            circlesOfBoard[midValue][midValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, midValue - 1, midValue - 1);
+            circlesOfBoard[midValue][midValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, midValue - 1, midValue - 1);
         }
 
         if (HANDICAPS >= 6) {
-            circlesOfBoard[midValue][lowerValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, midValue - 1, lowerValue - 1);
+            circlesOfBoard[midValue][lowerValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, midValue - 1, lowerValue - 1);
         }
 
         if (HANDICAPS >= 7) {
-            circlesOfBoard[midValue][higherValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, midValue - 1, higherValue - 1);
+            circlesOfBoard[midValue][higherValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, midValue - 1, higherValue - 1);
         }
 
         if (HANDICAPS >= 8) {
-            circlesOfBoard[lowerValue][midValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, lowerValue - 1, midValue - 1);
+            circlesOfBoard[lowerValue][midValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, lowerValue - 1, midValue - 1);
         }
 
         if (HANDICAPS == 9) {
-            circlesOfBoard[higherValue][midValue].setFill(Color.BLACK);
-            boardLogicControl.setStoneToList(Color.BLACK, higherValue - 1, midValue - 1);
+            circlesOfBoard[higherValue][midValue].setFill(BLACK);
+            boardLogicControl.setStoneToList(BLACK, higherValue - 1, midValue - 1);
         }
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
     }
@@ -595,12 +602,12 @@ public class boardMaskController {
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
-            if (lastColor == Color.BLACK) {
+            if (lastColor == BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
-                lastColor = Color.WHITE;
+                lastColor = WHITE;
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
-                lastColor = Color.BLACK;
+                lastColor = BLACK;
             }
             //file functionality is disabled for now
             fileControl.writeAction("passed");
@@ -614,7 +621,7 @@ public class boardMaskController {
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
-            if (lastColor == Color.BLACK) {
+            if (lastColor == BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " resigned! - " + pl2.getText() + " won!");
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
@@ -652,32 +659,34 @@ public class boardMaskController {
 
     public void setStone(Circle c) {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
-        int row = -1;
-        int col = -1;
+        int row;
+        int col;
         for (Node n : board.getChildren()) {
             if (n instanceof Circle && n.equals(c)) {
                 row = GridPane.getRowIndex(n);
                 col = GridPane.getColumnIndex(n);
                 String stonePosition = (row-1) + "" + (ALPHABET[col-1]);
                 fileControl.writeMoves(stonePosition);
-                System.out.println();
-                System.out.println(" " + (row) + ALPHABET[col - 1]);
+                terminalInfo("Stone placed at: " + row + ALPHABET[col-1]);
+                circlesOfBoard[row][col] = c;
+                c.setFill(lastColor);
+                boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
+
+                if (lastColor == WHITE) {
+                    lastColor = BLACK;
+                    modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+                } else {
+                    lastColor = WHITE;
+                    modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
+                }
+                break;
             }
         }
-
-        c.setFill(lastColor);
-        boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
-        if (lastColor == Color.WHITE) {
-            lastColor = Color.BLACK;
-            modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
-        } else {
-            lastColor = Color.WHITE;
-            modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
-        }
+        terminalInfo("Error: System was unable to located circle!");
     }
 
     protected void deleteStoneGroup(StoneGroup toDelete) {
-        if (toDelete.getColour() == Color.WHITE) {
+        if (toDelete.getColour() == WHITE) {
             blackTrappedStones += toDelete.getPosition().size();
             displayTrappedStone(blackTrappedStones, blackTrapped);
         }else {
@@ -687,8 +696,25 @@ public class boardMaskController {
 
         //finds the circle for every position of stoneGroup toDelete and sets the visibility to TRANSPARENT
         for (Position p : toDelete.getPosition()) {
-            //System.out.println("to delete: " + (p.row()+1) + alphabet[p.col()]);
-            circlesOfBoard[p.row()+1][p.col()+1].setFill(Color.TRANSPARENT);
+            Circle c = circlesOfBoard[p.row()+1][p.col()+1];
+            if(c.getFill() == TRANSPARENT)
+                terminalInfo("Error: no stone found at " + (p.row()+1) + ALPHABET[p.col()]);
+            else {
+                circlesOfBoard[p.row() + 1][p.col() + 1].setFill(TRANSPARENT);
+                terminalInfo("Stone deleted: " + (p.row() + 1) + ALPHABET[p.col()]);
+            }
         }
+    }
+
+    /*
+      ================================================================================================================
+
+                                            other system functions
+
+      ================================================================================================================
+     */
+
+    private void terminalInfo(String data){
+        System.out.println(data);
     }
 }
