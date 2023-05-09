@@ -3,6 +3,7 @@ package com.example.go_gruppe1;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -27,83 +28,143 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class boardMaskController {
+    /*
+      ================================================================================================================
+
+                                            GUI component declaration
+
+      ================================================================================================================
+     */
 
     @FXML
-    public ToggleGroup mode;
+    private GridPane board;
 
-
-    @FXML
-    private Label modeAndMoveDisplay, sampleSolutionDisplay;
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                            upper region - GUI component declaration
+      ----------------------------------------------------------------------------------------------------------------
+     */
 
     @FXML
     private BorderPane topRegion;
-
+    @FXML
+    public ToggleGroup mode;
+    @FXML
+    private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped, timerBlack, timerWhite;
+    @FXML
+    private Button passButton, resignButton;
     @FXML
     private RadioMenuItem modePlay, modeNavigate;
 
-    @FXML
-    private BorderPane boardPane;
-
-    @FXML
-    private GridPane board, topGrid;
-    @FXML
-    private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped;
-
-    @FXML
-    private VBox bottomRegion;
-
-    @FXML
-    private StackPane circlePane;
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                        left and right region - GUI component declaration
+      ----------------------------------------------------------------------------------------------------------------
+     */
 
     @FXML
     private Pane leftRegion, rightRegion;
-
-    private Color lastColor = Color.BLACK;
-
     @FXML
     private Polygon leftArrow, rightArrow;
 
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                            center region - GUI component declaration
+      ----------------------------------------------------------------------------------------------------------------
+     */
+
     @FXML
-    private Button passButton, resignButton;
+    private BorderPane boardPane;
+    @FXML
+    private StackPane circlePane;
 
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                            bottom region - GUI component declaration
+      ----------------------------------------------------------------------------------------------------------------
+     */
 
+    @FXML
+    private VBox bottomRegion;
+    @FXML
+    private Label modeAndMoveDisplay, sampleSolutionDisplay;
 
-    private int boardSize;
-    private String player1Name;
-    private String player2Name;
+    /*
+      ================================================================================================================
 
-    private int blackTrappedStones = 0;
+                                            logic component declaration
 
-    private int whiteTrappedStones = 0;
+      ================================================================================================================
+     */
 
-    private int handicaps;
-    private double komi;
-
-    private final char[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
-
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                        controllers
+      ----------------------------------------------------------------------------------------------------------------
+     */
     private BoardLogicControl boardLogicControl;
-
     private final FileControl fileControl = new FileControl();
 
-    private Label timerLabel;
-    private long startTime;
-    private Timeline timerTimeline;
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                        constants
+      ----------------------------------------------------------------------------------------------------------------
+     */
+    private final char[] ALPHABET = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
+    private int BOARD_SIZE;
+    private String PLAYER1NAME;
+    private String PLAYER2NAME;
+    private int HANDICAPS;
+    private double KOMI;
+    private long START_TIME;
 
-    public void initialize() {
-        initTimer();
-        topGrid.add(timerLabel, 2, 0);
-        GridPane.setHalignment(timerLabel, HPos.CENTER);
-        GridPane.setValignment(timerLabel, VPos.CENTER);
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                        global variables
+      ----------------------------------------------------------------------------------------------------------------
+     */
+
+    private Color lastColor = Color.BLACK;
+    private int blackTrappedStones = 0;
+    private int whiteTrappedStones = 0;
+
+
+
+
+    /*
+      ================================================================================================================
+
+                                            file onActionMethods
+
+      ================================================================================================================
+     */
+
+    public void onNewGameClick() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
+        Parent root = loader.load();
+
+        inputMaskController inputMask = loader.getController();
+        inputMask.setSize(getWidth(), getHeight());
+        System.out.println(this.getWidth());
+        System.out.println(this.getHeight());
+
+        Node source = topRegion.getTop();
+        Stage stage = (Stage) source.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setMinWidth(600);
+        stage.setMinHeight(650);
+        stage.show();
     }
 
     @FXML
-    public void onSaveFileClick() {
+    public void onSaveFileAsClick() {
         //file functionality is disabled for now
         fileControl.saveFile();
     }
 
     @FXML
-    public void onLoadFileClick() {
+    public void onOpenFileClick() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select a file");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
@@ -113,6 +174,22 @@ public class boardMaskController {
             fileControl.loadFile(selectedFile);
         }
     }
+    protected void switchToNewGame(String player1Name, String player2Name, double komi, Long handicaps, Long boardSize) throws IOException{
+        /*load game*/
+    }
+
+
+    public void onExitGameClick() {
+         Platform.exit();
+    }
+
+    /*
+      ================================================================================================================
+
+                                            mode onActionMethods
+
+      ================================================================================================================
+     */
 
     @FXML
     public void onModePlayClick() {
@@ -145,7 +222,14 @@ public class boardMaskController {
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
     }
 
-    //first all ActionEventControllers then other controllers
+    /*
+      ================================================================================================================
+
+                                            getter and setter
+
+      ================================================================================================================
+     */
+
     protected void setSampleSolutionDisplay(String text) {
         sampleSolutionDisplay.setText(text);
     }
@@ -164,29 +248,17 @@ public class boardMaskController {
         return boardPane.getHeight();
     }
 
-    public void switchToInputMask() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
-        Parent root = loader.load();
 
-        inputMaskController inputMask = loader.getController();
-        inputMask.setSize(getWidth(), getHeight());
-        System.out.println(this.getWidth());
-        System.out.println(this.getHeight());
+    /*
+      ================================================================================================================
 
-        Node source = topRegion.getTop();
-        Stage stage = (Stage) source.getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setMinWidth(600);
-        stage.setMinHeight(650);
-        stage.show();
-    }
+                                            initialize methods
 
-    protected void switchToNewGame(String player1Name, String player2Name, double komi, Long handicaps, Long boardSize) throws IOException{
-        /*load game*/
-    }
+      ================================================================================================================
+     */
     protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize) {
-        this.boardSize = boardSize;
+        BOARD_SIZE = boardSize;
+        boardLogicControl = new BoardLogicControl(this, boardSize);
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
@@ -194,26 +266,24 @@ public class boardMaskController {
         displayTrappedStone(0, whiteTrapped);
         onModePlayClick();
         modePlay.setSelected(true);
-        this.boardSize = boardSize;
-        boardLogicControl = new BoardLogicControl(this, boardSize);
         drawBoard();
     }
 
     private void displayPlayerNames(String p1, String p2) {
-        player1Name = p1.isEmpty() ? "Player 1" : p1;
-        player2Name = p2.isEmpty() ? "Player 2" : p2;
+        PLAYER1NAME = p1.isEmpty() ? "Player 1" : p1;
+        PLAYER2NAME = p2.isEmpty() ? "Player 2" : p2;
 
-        pl1.setText(player1Name + " (Black)");
-        pl2.setText(player2Name + " (White)");
+        pl1.setText(PLAYER1NAME + " (Black)");
+        pl2.setText(PLAYER2NAME + " (White)");
     }
 
     private void displayKomi(String komiAdvantage) {
         //only numeric values can be entered
         try {
             double d = Double.parseDouble(komiAdvantage);
-            komi = d < 0 ? 0 : d;
+            KOMI = d < 0 ? 0 : d;
             //only values greater than 0 are valid
-            komiBoard.setText("Komi: " + komi);
+            komiBoard.setText("Komi: " + KOMI);
         } catch (NumberFormatException nfe) {
             komiBoard.setText("Komi: 0");
             if (!komiAdvantage.isEmpty()) {
@@ -226,22 +296,22 @@ public class boardMaskController {
     private void displayHandicaps(String handicaps) {
         //only numeric values can be entered
         try {
-            this.handicaps = Integer.parseInt(handicaps);
-            System.out.println(this.handicaps);
+            HANDICAPS = Integer.parseInt(handicaps);
+            System.out.println(HANDICAPS);
             //only values greater than 0 are valid
-            if (boardSize == 9 || boardSize == 13) {
-                if (this.handicaps < 0 || this.handicaps > 5) {
+            if (BOARD_SIZE == 9 || BOARD_SIZE == 13) {
+                if (HANDICAPS < 0 || HANDICAPS > 5) {
                     handicapsBoard.setText("Handicaps: " + "0");
-                    this.handicaps = 0;
+                    HANDICAPS = 0;
                 } else {
-                    handicapsBoard.setText("Handicaps: " + this.handicaps);
+                    handicapsBoard.setText("Handicaps: " + HANDICAPS);
                 }
-            } else if (boardSize == 19) {
-                if (this.handicaps < 0 || this.handicaps > 9) {
+            } else if (BOARD_SIZE == 19) {
+                if (HANDICAPS < 0 || HANDICAPS > 9) {
                     handicapsBoard.setText("Handicaps: " + "0");
-                    this.handicaps = 0;
+                    HANDICAPS = 0;
                 } else {
-                    handicapsBoard.setText("Handicaps: " + this.handicaps);
+                    handicapsBoard.setText("Handicaps: " + HANDICAPS);
                 }
             }
         } catch (NumberFormatException nfe) {
@@ -284,21 +354,21 @@ public class boardMaskController {
         //create grid
         board.getColumnConstraints().clear();
         board.getRowConstraints().clear();
-        for (int i = 0; i <= boardSize; i++) {
+        for (int i = 0; i <= BOARD_SIZE; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
-            colConstraints.setPercentWidth(100.0 / boardSize);
+            colConstraints.setPercentWidth(100.0 / BOARD_SIZE);
             board.getColumnConstraints().add(colConstraints);
 
             RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setPercentHeight(100.0 / boardSize);
+            rowConstraints.setPercentHeight(100.0 / BOARD_SIZE);
             board.getRowConstraints().add(rowConstraints);
         }
 
         boardLabelling();
 
         //add color to board
-        for (int col = 1; col < boardSize; col++) {
-            for (int row = 1; row < boardSize; row++) {
+        for (int col = 1; col < BOARD_SIZE; col++) {
+            for (int row = 1; row < BOARD_SIZE; row++) {
                 Pane cell = new Pane();
                 cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
                 board.add(cell, col, row);
@@ -311,31 +381,32 @@ public class boardMaskController {
         drawNavigationArrows();
         drawPassButton();
         drawResignButton();
+        initTimer();
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
-        fileControl.createFile(this, "", player1Name, player2Name, boardSize, komi, handicaps);
+        fileControl.createFile(this, "", PLAYER1NAME, PLAYER2NAME, BOARD_SIZE, KOMI, HANDICAPS);
     }
 
     private void boardLabelling() {
         //add color and labelling but without borders
-        for (int i = 0; i <= boardSize; i++) {
+        for (int i = 0; i <= BOARD_SIZE; i++) {
             //top color
             Pane topLetterCell = new Pane();
             topLetterCell.setStyle("-fx-background-color:  #C4A484");
             board.add(topLetterCell, i, 0);
 
             //right color
-            if (i != 0 && i != boardSize) {
+            if (i != 0 && i != BOARD_SIZE) {
                 Pane rightCell = new Pane();
                 rightCell.setStyle("-fx-background-color:  #C4A484");
-                board.add(rightCell, boardSize, i);
+                board.add(rightCell, BOARD_SIZE, i);
             }
 
             //bottom color
             Pane bottomLetterCell = new Pane();
             bottomLetterCell.setStyle("-fx-background-color:  #C4A484");
-            board.add(bottomLetterCell, i, boardSize);
+            board.add(bottomLetterCell, i, BOARD_SIZE);
 
             //right labelling
             if (i != 0) {
@@ -344,32 +415,32 @@ public class boardMaskController {
                 rightNumberCell.setCenterShape(true);
                 rightNumberCell.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
                 rightNumberCell.setStyle("-fx-text-fill: #483C32; -fx-font-size: 15");
-                board.setHalignment(rightNumberCell, HPos.RIGHT);
-                board.setValignment(rightNumberCell, VPos.TOP);
+                GridPane.setHalignment(rightNumberCell, HPos.RIGHT);
+                GridPane.setValignment(rightNumberCell, VPos.TOP);
                 rightNumberCell.translateYProperty().bind(rightNumberCell.heightProperty().divide(2).multiply(-1));
                 topLetterCell.toBack();
                 bottomLetterCell.toBack();
-                board.add(rightNumberCell, boardSize, i);
+                board.add(rightNumberCell, BOARD_SIZE, i);
             }
 
             //left color
-            if (i != 0 && i != boardSize) {
+            if (i != 0 && i != BOARD_SIZE) {
                 Pane leftNumberCell = new Pane();
                 leftNumberCell.setStyle("-fx-background-color:  #C4A484");
                 board.add(leftNumberCell, 0, i);
             }
 
-            if (i < boardSize) {
+            if (i < BOARD_SIZE) {
                 Label letter = new Label();
-                letter.setText(String.valueOf(alphabet[i]));
+                letter.setText(String.valueOf(ALPHABET[i]));
                 letter.setCenterShape(true);
                 letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
                 letter.setStyle("-fx-text-fill: #C4A484");
-                board.setHalignment(letter, HPos.RIGHT);
-                board.setValignment(letter, VPos.BOTTOM);
+                GridPane.setHalignment(letter, HPos.RIGHT);
+                GridPane.setValignment(letter, VPos.BOTTOM);
                 letter.setStyle("-fx-font-size: 15");
                 letter.translateXProperty().bind(bottomLetterCell.widthProperty().multiply(-0.8));
-                board.add(letter, i + 1, boardSize);
+                board.add(letter, i + 1, BOARD_SIZE);
             }
 
 
@@ -380,18 +451,18 @@ public class boardMaskController {
 
     //add circles for stones
     private void addStones() {
-        for (int row = 1; row <= boardSize; row++) {
-            for (int col = 1; col <= boardSize; col++) {
+        for (int row = 1; row <= BOARD_SIZE; row++) {
+            for (int col = 1; col <= BOARD_SIZE; col++) {
                 Circle circle = new Circle(10, Color.TRANSPARENT);
                 board.add(circle, row, col);
 
                 //make stones resizable and adjust x and y properties
-                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4));
-                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(boardSize * 2.4).multiply(-1));
-                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
+                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE).divide(4));
+                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(BOARD_SIZE * 2.4).multiply(-1));
+                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE * 3.9).multiply(-1));
 
                 //initial start ... needs additional logic if handicaps are used
-                if (handicaps <= 0) {
+                if (HANDICAPS <= 0) {
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
                 } else {
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
@@ -438,137 +509,137 @@ public class boardMaskController {
     private void drawHandicaps() {
         for (Node n : board.getChildren()) {
             if (n instanceof Circle) {
-                int row = board.getRowIndex(n);
-                int col = board.getColumnIndex(n);
+                int row = GridPane.getRowIndex(n);
+                int col = GridPane.getColumnIndex(n);
 
-                if(boardSize == 9) {
-                    if (handicaps >= 1) {
+                if(BOARD_SIZE == 9) {
+                    if (HANDICAPS >= 1) {
                         if (row == 3 && col == 7) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 2) {
+                    if (HANDICAPS >= 2) {
                         if (row == 7 && col == 3) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 3) {
+                    if (HANDICAPS >= 3) {
                         if (row == 7 && col == 7) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 4) {
+                    if (HANDICAPS >= 4) {
                         if (row == 3 && col == 3) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps == 5) {
+                    if (HANDICAPS == 5) {
                         if (row == 5 && col == 5) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
-                } else if(boardSize == 13) {
-                    if (handicaps >= 1) {
+                } else if(BOARD_SIZE == 13) {
+                    if (HANDICAPS >= 1) {
                         if (row == 4 && col == 10) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 2) {
+                    if (HANDICAPS >= 2) {
                         if (row == 10 && col == 4) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 3) {
+                    if (HANDICAPS >= 3) {
                         if (row == 10 && col == 10) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 4) {
+                    if (HANDICAPS >= 4) {
                         if (row == 4 && col == 4) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps == 5) {
+                    if (HANDICAPS == 5) {
                         if (row == 7 && col == 7) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
                 } else {
-                    if (handicaps >= 1) {
+                    if (HANDICAPS >= 1) {
                         if (row == 4 && col == 16) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 2) {
+                    if (HANDICAPS >= 2) {
                         if (row == 16 && col == 4) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 3) {
+                    if (HANDICAPS >= 3) {
                         if (row == 16 && col == 16) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 4) {
+                    if (HANDICAPS >= 4) {
                         if (row == 4 && col == 4) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 5) {
+                    if (HANDICAPS >= 5) {
                         if (row == 10 && col == 10) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 6) {
+                    if (HANDICAPS >= 6) {
                         if (row == 10 && col == 4) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 7) {
+                    if (HANDICAPS >= 7) {
                         if (row == 10 && col == 16) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps >= 8) {
+                    if (HANDICAPS >= 8) {
                         if (row == 4 && col == 10) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
                         }
                     }
 
-                    if (handicaps == 9) {
+                    if (HANDICAPS == 9) {
                         if (row == 16 && col == 10) {
                             Circle c = (Circle) n;
                             c.setFill(Color.BLACK);
@@ -595,7 +666,6 @@ public class boardMaskController {
     }
 
     private void drawPassButton() {
-        passButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
         passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
 
         passButton.setOnMouseEntered(e -> passButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
@@ -616,7 +686,6 @@ public class boardMaskController {
     }
 
     private void drawResignButton() {
-        resignButton.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
         resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
         resignButton.setOnMouseEntered(e -> resignButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
         resignButton.setOnMouseExited(e -> resignButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
@@ -639,14 +708,12 @@ public class boardMaskController {
         int col = -1;
         for (Node n : board.getChildren()) {
             if (n instanceof Circle && n.equals(c)) {
-                row = board.getRowIndex(n);
-                col = board.getColumnIndex(n);
-                String stonePosition = String.valueOf(row-1) + String.valueOf(alphabet[col-1]);
-                //boardLogicControl.setStoneToList(lastColor, row-1, col-1);
-                //boardLogicControl.setStone(lastColor, row, col);
+                row = GridPane.getRowIndex(n);
+                col = GridPane.getColumnIndex(n);
+                String stonePosition = String.valueOf(row-1) + String.valueOf(ALPHABET[col-1]);
                 fileControl.writeMoves(stonePosition);
                 System.out.println();
-                System.out.println(" " + (row) + alphabet[col - 1]);
+                System.out.println(" " + (row) + ALPHABET[col - 1]);
             }
         }
 
@@ -674,18 +741,15 @@ public class boardMaskController {
         for (Position p : toDelete.getPosition()) {
             //System.out.println("to delete: " + (p.row()+1) + alphabet[p.col()]);
             for (Node n : board.getChildren())
-                if (n instanceof Circle c && board.getRowIndex(n) == (p.row() + 1) && board.getColumnIndex(n) == (p.col() + 1)) {
+                if (n instanceof Circle c && GridPane.getRowIndex(n) == (p.row() + 1) && GridPane.getColumnIndex(n) == (p.col() + 1))
                     c.setFill(Color.TRANSPARENT);
-                }
         }
     }
 
     private void initTimer() {
-        startTime = System.currentTimeMillis();
-        timerLabel = new Label("00:00");
-        timerLabel.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+        START_TIME = System.currentTimeMillis();
 
-        timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
+        Timeline timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
         timerTimeline.setCycleCount(Animation.INDEFINITE);
         timerTimeline.play();
     }
@@ -693,11 +757,12 @@ public class boardMaskController {
 
     private void updateTimer() {
         long currentTime = System.currentTimeMillis();
-        long elapsedTime = currentTime - startTime;
+        long elapsedTime = currentTime - START_TIME;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(minutes);
 
-        timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
+        timerBlack.setText(String.format("%02d:%02d", minutes, seconds));
+        timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
     }
 }
 
