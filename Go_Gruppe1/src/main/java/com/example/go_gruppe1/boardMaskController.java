@@ -123,7 +123,7 @@ public class boardMaskController {
                                         global variables
       ----------------------------------------------------------------------------------------------------------------
      */
-
+    private Circle[][] circlesOfBoard;
     private Color lastColor = Color.BLACK;
     private int blackTrappedStones = 0;
     private int whiteTrappedStones = 0;
@@ -145,8 +145,8 @@ public class boardMaskController {
 
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
-        System.out.println(this.getWidth());
-        System.out.println(this.getHeight());
+        System.out.println("Width of window: " + this.getWidth());
+        System.out.println("Height of window: " + this.getHeight());
 
         Node source = topRegion.getTop();
         Stage stage = (Stage) source.getScene().getWindow();
@@ -266,6 +266,7 @@ public class boardMaskController {
         displayTrappedStone(0, whiteTrapped);
         onModePlayClick();
         modePlay.setSelected(true);
+        circlesOfBoard = new Circle[BOARD_SIZE+1][BOARD_SIZE+1];
         drawBoard();
     }
 
@@ -330,6 +331,13 @@ public class boardMaskController {
             System.out.println("Invalid trapped stones input -> number of trapped stones cannot be < 0");
     }
 
+
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                        draw board and all elements in it
+      ----------------------------------------------------------------------------------------------------------------
+     */
+
     //initially, play mode is displayed
     private void drawBoard() {
         //set padding, so stones are not covered by top region
@@ -375,8 +383,7 @@ public class boardMaskController {
             }
         }
 
-        addStones();
-
+        addCirclesToBoard();
         drawHandicaps();
         drawNavigationArrows();
         drawPassButton();
@@ -387,6 +394,14 @@ public class boardMaskController {
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
         fileControl.createFile(this, "", PLAYER1NAME, PLAYER2NAME, BOARD_SIZE, KOMI, HANDICAPS);
     }
+
+    /*
+      ================================================================================================================
+
+                                            draw board helper functions
+
+      ================================================================================================================
+     */
 
     private void boardLabelling() {
         //add color and labelling but without borders
@@ -449,19 +464,20 @@ public class boardMaskController {
     }
 
 
-    //add circles for stones
-    private void addStones() {
+    //adding circles to all potential locations on the board
+    private void addCirclesToBoard() {
         for (int row = 1; row <= BOARD_SIZE; row++) {
             for (int col = 1; col <= BOARD_SIZE; col++) {
                 Circle circle = new Circle(10, Color.TRANSPARENT);
                 board.add(circle, row, col);
+                circlesOfBoard[row][col] = circle;
 
-                //make stones resizable and adjust x and y properties
+                //make stones resizable and adjust X and Y properties
                 circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE).divide(4));
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(BOARD_SIZE * 2.4).multiply(-1));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE * 3.9).multiply(-1));
 
-                //initial start ... needs additional logic if handicaps are used
+                //initial start
                 if (HANDICAPS <= 0) {
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
                 } else {
@@ -473,6 +489,7 @@ public class boardMaskController {
                 //color for hovering
                 Color hoverBlack = Color.valueOf("#00000070");
                 Color hoverWhite = Color.valueOf("#FFFFFF70");
+
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
                     if (modePlay.isSelected()) {
@@ -507,156 +524,61 @@ public class boardMaskController {
     }
 
     private void drawHandicaps() {
-        for (Node n : board.getChildren()) {
-            if (n instanceof Circle) {
-                int row = GridPane.getRowIndex(n);
-                int col = GridPane.getColumnIndex(n);
+        int dif;
+        if(BOARD_SIZE == 9)
+            dif = 2;
+        else
+            dif = 3;
+        int lowerValue = dif + 1;
+        int higherValue = BOARD_SIZE - dif;
+        int midValue = BOARD_SIZE/2 + 1;
 
-                if(BOARD_SIZE == 9) {
-                    if (HANDICAPS >= 1) {
-                        if (row == 3 && col == 7) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 2) {
-                        if (row == 7 && col == 3) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 3) {
-                        if (row == 7 && col == 7) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 4) {
-                        if (row == 3 && col == 3) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS == 5) {
-                        if (row == 5 && col == 5) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-                } else if(BOARD_SIZE == 13) {
-                    if (HANDICAPS >= 1) {
-                        if (row == 4 && col == 10) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 2) {
-                        if (row == 10 && col == 4) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 3) {
-                        if (row == 10 && col == 10) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 4) {
-                        if (row == 4 && col == 4) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS == 5) {
-                        if (row == 7 && col == 7) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-                } else {
-                    if (HANDICAPS >= 1) {
-                        if (row == 4 && col == 16) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 2) {
-                        if (row == 16 && col == 4) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 3) {
-                        if (row == 16 && col == 16) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 4) {
-                        if (row == 4 && col == 4) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 5) {
-                        if (row == 10 && col == 10) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 6) {
-                        if (row == 10 && col == 4) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 7) {
-                        if (row == 10 && col == 16) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS >= 8) {
-                        if (row == 4 && col == 10) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-
-                    if (HANDICAPS == 9) {
-                        if (row == 16 && col == 10) {
-                            Circle c = (Circle) n;
-                            c.setFill(Color.BLACK);
-                        }
-                    }
-                }
-
-
-
-            }
+        if (HANDICAPS >= 1) {
+            circlesOfBoard[lowerValue][higherValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, lowerValue - 1, higherValue - 1);
+        }
+        if (HANDICAPS >= 2) {
+            circlesOfBoard[higherValue][lowerValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, higherValue - 1, lowerValue - 1);
         }
 
+        if (HANDICAPS >= 3) {
+            circlesOfBoard[higherValue][higherValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, higherValue - 1, higherValue - 1);
+        }
 
+        if (HANDICAPS >= 4) {
+            circlesOfBoard[lowerValue][lowerValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, lowerValue - 1, lowerValue - 1);
+        }
+
+        if (HANDICAPS >= 5) {
+            circlesOfBoard[midValue][midValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, midValue - 1, midValue - 1);
+        }
+
+        if (HANDICAPS >= 6) {
+            circlesOfBoard[midValue][lowerValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, midValue - 1, lowerValue - 1);
+        }
+
+        if (HANDICAPS >= 7) {
+            circlesOfBoard[midValue][higherValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, midValue - 1, higherValue - 1);
+        }
+
+        if (HANDICAPS >= 8) {
+            circlesOfBoard[lowerValue][midValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, lowerValue - 1, midValue - 1);
+        }
+
+        if (HANDICAPS == 9) {
+            circlesOfBoard[higherValue][midValue].setFill(Color.BLACK);
+            boardLogicControl.setStoneToList(Color.BLACK, higherValue - 1, midValue - 1);
+        }
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
     }
 
-    //should be improved (code for left and right are very similar)
     private void drawNavigationArrows() {
         leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
         leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
@@ -702,6 +624,32 @@ public class boardMaskController {
         });
     }
 
+    private void initTimer() {
+        START_TIME = System.currentTimeMillis();
+        Timeline timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
+        timerTimeline.setCycleCount(Animation.INDEFINITE);
+        timerTimeline.play();
+    }
+
+
+    private void updateTimer() {
+        long currentTime = System.currentTimeMillis();
+        long elapsedTime = currentTime - START_TIME;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(minutes);
+
+        timerBlack.setText(String.format("%02d:%02d", minutes, seconds));
+        timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
+    }
+
+    /*
+      ================================================================================================================
+
+                                            other helper functions
+
+      ================================================================================================================
+     */
+
     public void setStone(Circle c) {
         modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
         int row = -1;
@@ -710,7 +658,7 @@ public class boardMaskController {
             if (n instanceof Circle && n.equals(c)) {
                 row = GridPane.getRowIndex(n);
                 col = GridPane.getColumnIndex(n);
-                String stonePosition = String.valueOf(row-1) + String.valueOf(ALPHABET[col-1]);
+                String stonePosition = (row-1) + "" + (ALPHABET[col-1]);
                 fileControl.writeMoves(stonePosition);
                 System.out.println();
                 System.out.println(" " + (row) + ALPHABET[col - 1]);
@@ -740,30 +688,7 @@ public class boardMaskController {
         //finds the circle for every position of stoneGroup toDelete and sets the visibility to TRANSPARENT
         for (Position p : toDelete.getPosition()) {
             //System.out.println("to delete: " + (p.row()+1) + alphabet[p.col()]);
-            for (Node n : board.getChildren())
-                if (n instanceof Circle c && GridPane.getRowIndex(n) == (p.row() + 1) && GridPane.getColumnIndex(n) == (p.col() + 1))
-                    c.setFill(Color.TRANSPARENT);
+            circlesOfBoard[p.row()+1][p.col()+1].setFill(Color.TRANSPARENT);
         }
     }
-
-    private void initTimer() {
-        START_TIME = System.currentTimeMillis();
-
-        Timeline timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
-        timerTimeline.setCycleCount(Animation.INDEFINITE);
-        timerTimeline.play();
-    }
-
-
-    private void updateTimer() {
-        long currentTime = System.currentTimeMillis();
-        long elapsedTime = currentTime - START_TIME;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(minutes);
-
-        timerBlack.setText(String.format("%02d:%02d", minutes, seconds));
-        timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
-    }
 }
-
-
