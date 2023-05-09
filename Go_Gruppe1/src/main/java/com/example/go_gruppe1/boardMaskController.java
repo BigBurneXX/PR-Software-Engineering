@@ -26,8 +26,6 @@ public class boardMaskController {
     @FXML
     public ToggleGroup mode;
 
-    @FXML
-    private TextField renameFileName;
 
     @FXML
     private Label modeAndMoveDisplay, sampleSolutionDisplay;
@@ -63,6 +61,8 @@ public class boardMaskController {
     @FXML
     private Button passButton, resignButton;
 
+
+
     private int boardSize;
     private String player1Name;
     private String player2Name;
@@ -84,12 +84,6 @@ public class boardMaskController {
     public void onSaveFileClick() {
         //file functionality is disabled for now
         fileControl.saveFile();
-    }
-
-    @FXML
-    public void onRenameFileClick() {
-        //file functionality is disabled for now
-        fileControl.renameFile(renameFileName.getText());
     }
 
     @FXML
