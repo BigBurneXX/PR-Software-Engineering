@@ -682,7 +682,7 @@ public class boardMaskController {
 
     private void initTimer() {
         startTime = System.currentTimeMillis();
-        timerLabel = new Label("00:00");
+        timerLabel = new Label("00:01");
         timerLabel.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
 
         timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
