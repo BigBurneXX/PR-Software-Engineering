@@ -29,8 +29,6 @@ public class FileControl {
                     player1Name + "_" + player2Name + ".json";
             outputFile = new File(newFileName);
             if (outputFile.createNewFile()) {
-                //String startInfo = player1Name + " vs. " + player2Name + "\nBoardSize: " + boardSize + "\n" + komi;
-                //writeToPosition(startInfo);
                 writeStartInfo(player1Name,player2Name,boardSize,komi, handicaps);
                 System.out.println("File " + outputFile.getName() + " created.");
             }else {
@@ -76,30 +74,18 @@ public class FileControl {
         }
     }
 
-    protected void renameFile(String newName){
-        File f = new File(newName + ".json");
-        if(outputFile.renameTo(f)){
-            controller.setSampleSolutionDisplay("File successfully renamed!");
-            System.out.println("\nThe name of the output file has successfully been changed to " + outputFile.getName());
-        } else {
-            System.out.println("Renaming unsuccessfully, check if a file with the same name already exists in the selected directory and try again");
-            controller.setSampleSolutionDisplay("Renaming unsuccessfully, check if a file with the same name already exists in the selected directory and try again");
-        }
-    }
-
     protected void loadFile(File newFile){
         JSONParser jsonParser = new JSONParser();
         try {
-            String fileContents = new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())));
+            String fileContents = new String(Files.readAllBytes(Paths.get(newFile.getAbsolutePath())));
             JSONObject jsonObject = (JSONObject) jsonParser.parse(fileContents);
-            controller.switchToNewGame((String) jsonObject.get("player1Name"), (String) jsonObject.get("player2Name"), (Double) jsonObject.get("komi"),
-                    (Long) jsonObject.get("handicaps"), (Long) jsonObject.get("boardSize"));
+            controller.switchToNewGame((String) jsonObject.get("player1Name"), (String) jsonObject.get("player2Name"), jsonObject.get("komi").toString(),
+                    jsonObject.get("handicaps").toString(), Long.valueOf((Long) jsonObject.get("boardSize")).intValue());
         } catch (ParseException | IOException e) {
             System.out.println("an IO Exception was thrown when trying to load file " + newFile.getName());
         }
     }
 
-    //TODO Save as
     protected void saveFile(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save to location");

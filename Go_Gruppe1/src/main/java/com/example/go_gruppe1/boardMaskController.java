@@ -77,8 +77,6 @@ public class boardMaskController {
 
     @FXML
     private BorderPane boardPane;
-    @FXML
-    private StackPane circlePane;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -176,10 +174,10 @@ public class boardMaskController {
             fileControl.loadFile(selectedFile);
         }
     }
-    protected void switchToNewGame(String player1Name, String player2Name, double komi, Long handicaps, Long boardSize) throws IOException{
-        /*load game*/
+    protected void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize) throws IOException{
+        System.out.println(player1Name + player2Name + komi + handicaps + boardSize);
+        initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize);
     }
-
 
     public void onExitGameClick() {
         terminalInfo("Exiting file... \n[log end]");
@@ -231,6 +229,7 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    //TODO sample solution
     protected void setSampleSolutionDisplay(String text) {
         sampleSolutionDisplay.setText(text);
         terminalInfo("sample solution display set to" + text);
