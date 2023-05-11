@@ -30,28 +30,28 @@ public class BoardLogicControl {
         isPartOfGroup = false;
 
         //check upper neighbour
-        System.out.println("upper");
+        //System.out.println("upper");
         if(row > 0 && !isSuicide){
             neighbour = searchForStone(row-1, col);
             checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row-1,col));
         }
 
         //check right neighbour
-        System.out.println("right");
+        //System.out.println("right");
         if(col + 1 < size && !isSuicide){
             neighbour = searchForStone(row, col+1);
             checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row,col+1));
         }
 
         //check lower neighbour
-        System.out.println("lower");
+        //System.out.println("lower");
         if (row + 1 < size && !isSuicide) {
             neighbour = searchForStone(row+1,col);
             checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row+1,col));
         }
 
         //check left neighbour
-        System.out.println("left");
+        //System.out.println("left");
         if(col > 0 && !isSuicide){
             neighbour = searchForStone(row, col-1);
             checkNeighbour(toAdd, toAddPosition, neighbour, new Position(row,col-1));

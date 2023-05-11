@@ -664,8 +664,7 @@ public class boardMaskController {
             if (n instanceof Circle && n.equals(c)) {
                 row = GridPane.getRowIndex(n);
                 col = GridPane.getColumnIndex(n);
-                String stonePosition = (row-1) + "" + (ALPHABET[col-1]);
-                fileControl.writeMoves(stonePosition);
+                //fileControl.writeMoves((row - 1), ALPHABET[col-1]);
                 terminalInfo("Stone placed at: " + row + ALPHABET[col-1]);
                 circlesOfBoard[row][col] = c;
                 c.setFill(lastColor);
@@ -680,8 +679,8 @@ public class boardMaskController {
                 }
                 break;
             }
+             //   terminalInfo("Error: System was unable to located circle!");
         }
-        terminalInfo("Error: System was unable to located circle!");
     }
 
     protected void deleteStoneGroup(StoneGroup toDelete) {
