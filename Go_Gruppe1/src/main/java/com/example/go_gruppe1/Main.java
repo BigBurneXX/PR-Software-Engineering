@@ -21,7 +21,7 @@ public class Main extends Application {
         stage.setScene(inputMask);
         //stage.sizeToScene();
         stage.setMinWidth(600);
-        stage.setMinHeight(800);
+        stage.setMinHeight(500);
         stage.show();
     }
 
