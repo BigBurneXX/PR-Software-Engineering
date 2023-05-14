@@ -1,6 +1,7 @@
 package com.example.go_gruppe1;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -9,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.io.IOException;
 
@@ -26,6 +28,8 @@ public class inputMaskController {
     @FXML
     private TextField player1, player2, komi, handicaps;
 
+
+
     public void switchToBoardMask(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/boardMaskGUI.fxml"));
         Parent root = loader.load();
@@ -41,6 +45,12 @@ public class inputMaskController {
         stage.setScene(scene);
         stage.setMinWidth(600);
         stage.setMinHeight(650);
+
+        //for larger boards, the window needs to be bigger
+        if(getBoardSize() == 19) {
+            stage.setMinHeight(800);
+        }
+
         stage.show();
     }
 
@@ -61,10 +71,21 @@ public class inputMaskController {
     private double getHeight() {
         return inputPane.getHeight();
     }
-
     protected void setSize(double width, double height) {
         inputPane.setPrefHeight(height);
         inputPane.setPrefWidth(width);
         inputPane.setMinSize(600, 580);
+    }
+
+    public void size19Clicked(ActionEvent event) {
+        handicaps.setPromptText("0 - 9");
+    }
+
+    public void size13Clicked(ActionEvent event) {
+        handicaps.setPromptText("0 - 5");
+    }
+
+    public void size9Clicked(ActionEvent event) {
+        handicaps.setPromptText("0 - 5");
     }
 }

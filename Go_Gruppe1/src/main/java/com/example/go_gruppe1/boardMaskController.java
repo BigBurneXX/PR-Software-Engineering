@@ -152,7 +152,7 @@ public class boardMaskController {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setMinWidth(600);
-        stage.setMinHeight(650);
+        stage.setMinHeight(500);
         stage.show();
     }
 
@@ -286,17 +286,20 @@ public class boardMaskController {
         try {
             double d = Double.parseDouble(komiAdvantage);
             //only values greater than 0 are valid
-            KOMI = d < 0 ? 0 : d;
+            KOMI = d < 0 || d > 9.5 ? 0 : d;
+            if(KOMI == 0) {
+                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> Komi set to 0");
+            }
             komiBoard.setText("Komi: " + KOMI);
             terminalInfo("komi: " + KOMI);
         } catch (NumberFormatException nfe) {
             KOMI = 0;
             komiBoard.setText("Komi: " + KOMI);
             if (!komiAdvantage.isEmpty()) {
-                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> komi set to 0");
-                terminalInfo("invalid komi input");
+                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> Komi set to 0");
+                terminalInfo("invalid Komi input");
             }
-            terminalInfo("komi set to: " + KOMI);
+            terminalInfo("Komi set to: " + KOMI);
         }
     }
 
@@ -309,6 +312,7 @@ public class boardMaskController {
                 if (HANDICAPS < 0 || HANDICAPS > 5) {
                     handicapsBoard.setText("Handicaps: " + "0");
                     HANDICAPS = 0;
+                    sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> Handicaps set to 0");
                 } else {
                     handicapsBoard.setText("Handicaps: " + HANDICAPS);
                 }
@@ -316,6 +320,7 @@ public class boardMaskController {
                 if (HANDICAPS < 0 || HANDICAPS > 9) {
                     handicapsBoard.setText("Handicaps: " + "0");
                     HANDICAPS = 0;
+                    sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> Handicaps set to 0");
                 } else {
                     handicapsBoard.setText("Handicaps: " + HANDICAPS);
                 }
@@ -325,7 +330,7 @@ public class boardMaskController {
             HANDICAPS = 0;
             handicapsBoard.setText("Handicaps: " + HANDICAPS);
             if (!handicaps.isEmpty()) {
-                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> handicaps set to 0");
+                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> Handicaps set to 0");
                 terminalInfo("invalid handicap input");
             }
             terminalInfo("handicaps set to: " + HANDICAPS);
@@ -395,6 +400,7 @@ public class boardMaskController {
         drawPassButton();
         drawResignButton();
         initTimer();
+        timeRule();
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
@@ -648,6 +654,9 @@ public class boardMaskController {
         timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
     }
 
+    private void timeRule() {
+        System.out.println(timerBlack.getText());
+    }
     /*
       ================================================================================================================
 
