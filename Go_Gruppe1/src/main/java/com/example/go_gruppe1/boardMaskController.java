@@ -116,7 +116,12 @@ public class boardMaskController {
     private String PLAYER2NAME;
     private int HANDICAPS;
     private double KOMI;
-    private long START_TIME;
+    private Timeline timerTimeline1;
+    private Timeline timerTimeline2;
+    private long START_TIME1;
+    private long START_TIME2;
+    private long elapsedTime1 = 0;
+    private long elapsedTime2 = 0;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -637,20 +642,35 @@ public class boardMaskController {
     }
 
     private void initTimer() {
-        START_TIME = System.currentTimeMillis();
-        Timeline timerTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
-        timerTimeline.setCycleCount(Animation.INDEFINITE);
-        timerTimeline.play();
+        timerTimeline1 = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer1()));
+        timerTimeline1.setCycleCount(Animation.INDEFINITE);
+
+        timerTimeline2 = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer2()));
+        timerTimeline2.setCycleCount(Animation.INDEFINITE);
     }
 
 
-    private void updateTimer() {
+    private void updateTimer1() {
         long currentTime = System.currentTimeMillis();
-        long elapsedTime = currentTime - START_TIME;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(minutes);
+        long elapsedTimeForTurn = currentTime - START_TIME1;
+        elapsedTime1 += elapsedTimeForTurn;
+        START_TIME1 = currentTime;  // update the start time
+
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime1);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime1) - TimeUnit.MINUTES.toSeconds(minutes);
 
         timerBlack.setText(String.format("%02d:%02d", minutes, seconds));
+    }
+
+    private void updateTimer2() {
+        long currentTime = System.currentTimeMillis();
+        long elapsedTimeForTurn = currentTime - START_TIME2;
+        elapsedTime2 += elapsedTimeForTurn;
+        START_TIME2 = currentTime;  // update the start time
+
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime2);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime2) - TimeUnit.MINUTES.toSeconds(minutes);
+
         timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
     }
 
@@ -683,9 +703,15 @@ public class boardMaskController {
                 if (lastColor == WHITE) {
                     lastColor = BLACK;
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
+                    timerTimeline2.stop();
+                    START_TIME1 = System.currentTimeMillis();
+                    timerTimeline1.play(); // start the timer for player 1
                 } else {
                     lastColor = WHITE;
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
+                    timerTimeline1.stop();
+                    START_TIME2 = System.currentTimeMillis();
+                    timerTimeline2.play(); // start the timer for player 2
                 }
                 break;
             }
