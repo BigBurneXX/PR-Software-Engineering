@@ -693,7 +693,7 @@ public class boardMaskController {
             if (n instanceof Circle && n.equals(c)) {
                 row = GridPane.getRowIndex(n);
                 col = GridPane.getColumnIndex(n);
-                //fileControl.writeMoves((row - 1), ALPHABET[col-1]);
+                fileControl.writeMoves((row - 1), ALPHABET[col-1]);
                 terminalInfo("Stone placed at: " + row + ALPHABET[col-1]);
                 circlesOfBoard[row][col] = c;
                 c.setFill(lastColor);
