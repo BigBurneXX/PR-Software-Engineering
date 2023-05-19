@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -39,7 +40,7 @@ public class boardMaskController {
      */
 
     @FXML
-    private GridPane board;
+    private GridPane board, infoPane;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ public class boardMaskController {
     @FXML
     public ToggleGroup mode;
     @FXML
-    private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped, timerBlack, timerWhite;
+    private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped, timerBlack, timerWhite, blackTimeLabel, whiteTimeLabel;
     @FXML
     private Button passButton, resignButton;
     @FXML
@@ -122,6 +123,9 @@ public class boardMaskController {
     private long START_TIME2;
     private long elapsedTime1 = 0;
     private long elapsedTime2 = 0;
+
+    protected int BYOYOMINUMBER = 0;
+    protected int BYOYOMITIME = 0;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -345,6 +349,32 @@ public class boardMaskController {
     private void displayTrappedStone(int numberTrapped, Label trappedLabel) {
             trappedLabel.setText("Trapped: " + numberTrapped);
             terminalInfo(trappedLabel.getId() + " set to " + numberTrapped);
+    }
+
+    protected void initiateTimeRules(String byoyomiNumber) {
+        try {
+            BYOYOMINUMBER = Integer.parseInt(byoyomiNumber);
+            if(BYOYOMINUMBER < 0) {
+                BYOYOMINUMBER = 0;
+                blackTimeLabel.setText("NO BYOYOMI");
+                blackTimeLabel.setAlignment(Pos.BOTTOM_LEFT);
+                timerBlack.setVisible(false);
+                whiteTimeLabel.setVisible(false);
+                timerWhite.setVisible(false);
+                System.out.println("Invalid input of number of Byoyomi");
+            } else {
+                blackTimeLabel.setText("Time Slots: " + BYOYOMINUMBER);
+                whiteTimeLabel.setText("Time Slots: " + BYOYOMINUMBER);
+                System.out.println("Number of Byoyomi Time Slots set to " + BYOYOMINUMBER);
+            }
+        } catch (NumberFormatException nfe) {
+            BYOYOMINUMBER = 0;
+            blackTimeLabel.setText("NO BYOYOMI");
+            infoPane.setValignment(blackTimeLabel, VPos.CENTER);
+            timerBlack.setVisible(false);
+            whiteTimeLabel.setVisible(false);
+            timerWhite.setVisible(false);
+        }
     }
 
 
