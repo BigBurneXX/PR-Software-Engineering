@@ -351,29 +351,37 @@ public class boardMaskController {
             terminalInfo(trappedLabel.getId() + " set to " + numberTrapped);
     }
 
-    protected void initiateTimeRules(String byoyomiNumber) {
+    protected void initiateTimeRules(String byoyomiNumber, String byoyomiTime) {
         try {
             BYOYOMINUMBER = Integer.parseInt(byoyomiNumber);
-            if(BYOYOMINUMBER < 0) {
+            BYOYOMITIME = Integer.parseInt(byoyomiTime);
+            if(BYOYOMINUMBER <= 0 || BYOYOMITIME < 30) {
                 BYOYOMINUMBER = 0;
+                BYOYOMITIME = 0;
                 blackTimeLabel.setText("NO BYOYOMI");
                 blackTimeLabel.setAlignment(Pos.BOTTOM_LEFT);
                 timerBlack.setVisible(false);
                 whiteTimeLabel.setVisible(false);
                 timerWhite.setVisible(false);
-                System.out.println("Invalid input of number of Byoyomi");
+                //timerTimeline2.playFrom("00:00:00");
+                terminalInfo("Invalid of Byoyomi");
             } else {
-                blackTimeLabel.setText("Time Slots: " + BYOYOMINUMBER);
-                whiteTimeLabel.setText("Time Slots: " + BYOYOMINUMBER);
-                System.out.println("Number of Byoyomi Time Slots set to " + BYOYOMINUMBER);
+                blackTimeLabel.setText(BYOYOMINUMBER + " time periods à " + BYOYOMITIME + " s");
+                whiteTimeLabel.setText(BYOYOMINUMBER + " time periods à " + BYOYOMITIME + " s");
+                terminalInfo("Number of Byoyomi time periods set to " + BYOYOMINUMBER);
+                terminalInfo("Time period duration: " + BYOYOMITIME);
             }
         } catch (NumberFormatException nfe) {
             BYOYOMINUMBER = 0;
+            BYOYOMITIME = 0;
             blackTimeLabel.setText("NO BYOYOMI");
             infoPane.setValignment(blackTimeLabel, VPos.CENTER);
             timerBlack.setVisible(false);
             whiteTimeLabel.setVisible(false);
             timerWhite.setVisible(false);
+            //timerTimeline2.playFrom("00:00:00");
+
+            terminalInfo("No or false byoyomi input");
         }
     }
 
@@ -435,7 +443,6 @@ public class boardMaskController {
         drawPassButton();
         drawResignButton();
         initTimer();
-        timeRule();
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
@@ -704,9 +711,6 @@ public class boardMaskController {
         timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
     }
 
-    private void timeRule() {
-        System.out.println(timerBlack.getText());
-    }
     /*
       ================================================================================================================
 
