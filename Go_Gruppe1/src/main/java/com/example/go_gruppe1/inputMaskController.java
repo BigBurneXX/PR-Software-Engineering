@@ -26,7 +26,7 @@ public class inputMaskController {
     private ToggleGroup boardSize;
 
     @FXML
-    private TextField player1, player2, komi, handicaps;
+    private TextField player1, player2, komi, handicaps, byoyomiNumber;
 
 
 
@@ -39,6 +39,7 @@ public class inputMaskController {
         System.out.println(this.getWidth());
         System.out.println(this.getHeight());
         boardMask.initiateDisplay(player1.getText(), player2.getText(), komi.getText(), handicaps.getText(), getBoardSize());
+        boardMask.initiateTimeRules(byoyomiNumber.getText());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);

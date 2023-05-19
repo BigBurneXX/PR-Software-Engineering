@@ -38,7 +38,7 @@
    <top>
       <BorderPane fx:id="topRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
-            <GridPane prefHeight="129.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" BorderPane.alignment="CENTER">
+            <GridPane fx:id="infoPane" prefHeight="129.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" BorderPane.alignment="CENTER">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -112,7 +112,10 @@
                   <font>
                      <Font name="Baskerville Old Face" size="13.0" />
                   </font></Button>
-               <Button fx:id="resignButton" minWidth="70.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32;" text="RESIGN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+               <Button fx:id="resignButton" minWidth="70.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32;" text="RESIGN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                  <font>
+                     <Font name="Baskerville Old Face" size="13.0" />
+                  </font></Button>
                <Label fx:id="timerWhite" alignment="CENTER" style="-fx-font-weight: bold;" text="&quot;00:00&quot;" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                   <font>
                      <Font name="Baskerville Old Face" size="15.0" />
@@ -121,6 +124,16 @@
                   <font>
                      <Font name="Baskerville Old Face" size="15.0" />
                   </font></Label>
+               <Label fx:id="blackTimeLabel" text="Time Slots" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                  <font>
+                     <Font name="Baskerville Old Face" size="13.0" />
+                  </font>
+               </Label>
+               <Label fx:id="whiteTimeLabel" layoutX="82.0" layoutY="60.0" text="Time Slots" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                  <font>
+                     <Font name="Baskerville Old Face" size="13.0" />
+                  </font>
+               </Label>
             </GridPane>
          </center>
          <top>
