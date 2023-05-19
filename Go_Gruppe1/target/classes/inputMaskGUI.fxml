@@ -162,7 +162,7 @@
           <Insets bottom="15.0" />
         </GridPane.margin>
     </ButtonBar>
-   <TextField fx:id="byoyomiNumber" minWidth="100.0" promptText="0 - ..." GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+   <TextField fx:id="byoyomiNumber" minWidth="100.0" promptText="1 - ..." GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
       <font>
          <Font name="Baskerville Old Face" size="15.0" />
       </font>
@@ -170,7 +170,7 @@
          <Insets right="20.0" />
       </GridPane.margin>
    </TextField>
-   <TextField fx:id="player21" minWidth="100.0" promptText="30 - ... sec" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+   <TextField fx:id="byoyomiTime" minWidth="100.0" promptText="30 - ... sec" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
       <font>
          <Font name="Baskerville Old Face" size="15.0" />
       </font>
