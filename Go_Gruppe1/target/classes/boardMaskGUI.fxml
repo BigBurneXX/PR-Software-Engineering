@@ -116,11 +116,11 @@
                   <font>
                      <Font name="Baskerville Old Face" size="13.0" />
                   </font></Button>
-               <Label fx:id="timerWhite" alignment="CENTER" style="-fx-font-weight: bold;" text="&quot;00:00&quot;" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+               <Label fx:id="timerWhite" alignment="CENTER" style="-fx-font-weight: bold;" text="00:00" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                   <font>
                      <Font name="Baskerville Old Face" size="15.0" />
                   </font></Label>
-               <Label fx:id="timerBlack" text="&quot;00:00&quot;" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+               <Label fx:id="timerBlack" text="00:00" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                   <font>
                      <Font name="Baskerville Old Face" size="15.0" />
                   </font></Label>
@@ -140,7 +140,7 @@
             <MenuBar BorderPane.alignment="CENTER">
                <Menu mnemonicParsing="false" text="File">
                   <MenuItem mnemonicParsing="false" onAction="#onNewGameClick" text="New..." />
-                  <MenuItem mnemonicParsing="false" onAction="#onSaveFileAsClick" text="SaveAs..." />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveFileAsClick" text="Save as..." />
                   <MenuItem mnemonicParsing="false" onAction="#onOpenFileClick" text="Open..." />
                   <MenuItem mnemonicParsing="false" onAction="#onExitGameClick" text="Exit" />
                </Menu>
