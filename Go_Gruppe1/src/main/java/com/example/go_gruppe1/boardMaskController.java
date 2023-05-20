@@ -26,6 +26,8 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static javafx.scene.paint.Color.*;
@@ -359,15 +361,14 @@ public class boardMaskController {
                 BYOYOMINUMBER = 0;
                 BYOYOMITIME = 0;
                 blackTimeLabel.setText("NO BYOYOMI");
-                blackTimeLabel.setAlignment(Pos.BOTTOM_LEFT);
+                infoPane.setValignment(blackTimeLabel, VPos.CENTER);
                 timerBlack.setVisible(false);
                 whiteTimeLabel.setVisible(false);
                 timerWhite.setVisible(false);
-                //timerTimeline2.playFrom("00:00:00");
                 terminalInfo("Invalid of Byoyomi");
             } else {
-                blackTimeLabel.setText(BYOYOMINUMBER + " time periods à " + BYOYOMITIME + " s");
-                whiteTimeLabel.setText(BYOYOMINUMBER + " time periods à " + BYOYOMITIME + " s");
+                blackTimeLabel.setText(BYOYOMINUMBER + " time period(s) à " + BYOYOMITIME + " s");
+                whiteTimeLabel.setText(BYOYOMINUMBER + " time period(s) à " + BYOYOMITIME + " s");
                 terminalInfo("Number of Byoyomi time periods set to " + BYOYOMINUMBER);
                 terminalInfo("Time period duration: " + BYOYOMITIME);
             }
@@ -379,7 +380,6 @@ public class boardMaskController {
             timerBlack.setVisible(false);
             whiteTimeLabel.setVisible(false);
             timerWhite.setVisible(false);
-            //timerTimeline2.playFrom("00:00:00");
 
             terminalInfo("No or false byoyomi input");
         }
@@ -443,6 +443,15 @@ public class boardMaskController {
         drawPassButton();
         drawResignButton();
         initTimer();
+        //immediately start timer for 1st player
+        if(HANDICAPS == 0) {
+            START_TIME1 = System.currentTimeMillis();
+            timerTimeline1.play();
+        } else {
+            START_TIME2 = System.currentTimeMillis();
+            timerTimeline2.play();
+        }
+
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
@@ -652,9 +661,19 @@ public class boardMaskController {
             if (lastColor == BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
                 lastColor = WHITE;
+                timerTimeline1.stop();
+                START_TIME2 = System.currentTimeMillis();
+                timerTimeline2.play();
+                System.out.println(passedSlotSeconds1());
+                elapsedTime1 = 0;
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
                 lastColor = BLACK;
+                timerTimeline2.stop();
+                START_TIME1 = System.currentTimeMillis();
+                timerTimeline1.play();
+                System.out.println(passedSlotSeconds2());
+                elapsedTime2 = 0;
             }
             //file functionality is disabled for now
             fileControl.writeAction("passed");
@@ -711,6 +730,25 @@ public class boardMaskController {
         timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
     }
 
+    private int passedSlotSeconds1() {
+        long elapsedTimeForTurn = System.currentTimeMillis() - START_TIME1;
+
+        int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime1);
+        return seconds;
+    }
+
+    private int passedSlotSeconds2() {
+        long elapsedTimeForTurn = System.currentTimeMillis() - START_TIME2;
+
+        int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime2);
+        return seconds;
+    }
+    private void initiateByoyomiRules() {
+        if(BYOYOMITIME != 0 && BYOYOMINUMBER != 0) {
+            //TODO stop game when time slots are used
+        }
+    }
+
     /*
       ================================================================================================================
 
@@ -739,12 +777,16 @@ public class boardMaskController {
                     timerTimeline2.stop();
                     START_TIME1 = System.currentTimeMillis();
                     timerTimeline1.play(); // start the timer for player 1
+                    System.out.println(passedSlotSeconds2());
+                    elapsedTime2 = 0;
                 } else {
                     lastColor = WHITE;
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
                     timerTimeline1.stop();
                     START_TIME2 = System.currentTimeMillis();
                     timerTimeline2.play(); // start the timer for player 2
+                    System.out.println(passedSlotSeconds1());
+                    elapsedTime1 = 0;
                 }
                 break;
             }
