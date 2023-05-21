@@ -11,8 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 
@@ -49,30 +47,6 @@ public class inputMaskController {
         stage.setMinWidth(600);
         stage.setMinHeight(650);
 
-        // Set up keyboard event handling
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case UP:
-                        boardMask.moveUp();
-                        break;
-                    case DOWN:
-                        boardMask.moveDown();
-                        break;
-                    case LEFT:
-                        boardMask.moveLeft();
-                        break;
-                    case RIGHT:
-                        boardMask.moveRight();
-                        break;
-                    case ENTER:
-                        boardMask.placeStone(boardMask.getCurrentX(), boardMask.getCurrentY());
-                        break;
-                }
-            }
-        });
-
         //for larger boards, the window needs to be bigger
         if(getBoardSize() == 19) {
             stage.setMinHeight(800);
@@ -80,7 +54,6 @@ public class inputMaskController {
 
         stage.show();
     }
-
 
     public int getBoardSize() {
         if (size9.isSelected()) {

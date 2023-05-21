@@ -129,9 +129,6 @@ public class boardMaskController {
     protected int BYOYOMINUMBER = 0;
     protected int BYOYOMITIME = 0;
 
-    private int currentX = 0;
-    private int currentY = 0;
-
     /*
       ----------------------------------------------------------------------------------------------------------------
                                         global variables
@@ -816,38 +813,6 @@ public class boardMaskController {
                 terminalInfo("Stone deleted: " + (p.row() + 1) + ALPHABET[p.col()]);
             }
         }
-    }
-
-    public void moveUp() {
-        if (currentY > 0) currentY--;
-        // Update the UI to reflect the change in position.
-    }
-
-    public void moveDown() {
-        if (currentY < BOARD_SIZE - 1) currentY++;
-        // Update the UI to reflect the change in position.
-    }
-
-    public void moveLeft() {
-        if (currentX > 0) currentX--;
-        // Update the UI to reflect the change in position.
-    }
-
-    public void moveRight() {
-        if (currentX < BOARD_SIZE - 1) currentX++;
-        // Update the UI to reflect the change in position.
-    }
-
-    public void placeStone(int x, int y) {
-        // Code to place a stone at the provided coordinates.
-    }
-
-    public int getCurrentX() {
-        return currentX;
-    }
-
-    public int getCurrentY() {
-        return currentY;
     }
 
     /*
