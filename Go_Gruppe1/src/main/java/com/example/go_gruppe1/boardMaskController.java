@@ -25,6 +25,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -123,7 +124,6 @@ public class boardMaskController {
     private long START_TIME2;
     private long elapsedTime1 = 0;
     private long elapsedTime2 = 0;
-
     protected int BYOYOMI_NUMBER = 0;
     private int blackByoyomi = 0, whiteByoyomi = 0;
     protected int BYOYOMI_TIME = 0;
@@ -137,6 +137,8 @@ public class boardMaskController {
     private Color lastColor = BLACK;
     private int blackTrappedStones = 0;
     private int whiteTrappedStones = 0;
+    private final List<Circle[][]> changeLog = new ArrayList<>();
+    private int changeLogCounter = 0;
 
 
 
@@ -231,8 +233,36 @@ public class boardMaskController {
         leftArrow.setVisible(true);
         rightArrow.setVisible(true);
         //TODO logic for arrow clicks
-        /*rightArrow.setOnMouseClicked();
-          leftArrow.setOnMouseClicked();*/
+        rightArrow.setOnMouseClicked(e -> {
+            System.out.println("something at last");
+        });
+        leftArrow.setOnMouseClicked(e -> {
+            int index = changeLogCounter - 1;
+            if(!changeLog.isEmpty() && !(index < 0)) {
+                Circle[][] boardToBe = changeLog.get(index);
+                /*for(int i = 0; i < circlesOfBoard.length; i++)
+                    for(int j = 0; j < circlesOfBoard[i].length; j++)
+                        circlesOfBoard[i][j].setFill(boardToBe[i][j].getFill());*/
+
+
+                for(int k = 0; k < boardToBe.length; k++)
+                    for(int j = 0; j < boardToBe[k].length; j++)
+                        if(boardToBe[k][j] != null) {
+                            if(circlesOfBoard[k][j] != null){
+                                circlesOfBoard[k][j].setFill(TRANSPARENT);
+                            }
+                            circlesOfBoard[k][j].setFill(boardToBe[k][j].getFill());
+                            System.out.println("1Colored circle " + boardToBe[k][j].getFill() + " at row " + k + ", col " + j);
+                        }else if(circlesOfBoard[k][j] != null) {
+                            circlesOfBoard[k][j].setFill(TRANSPARENT);
+                            circlesOfBoard = null;
+                            System.out.println("2Colored circle " + boardToBe[k][j].getFill() + " at row " + k + ", col " + j);
+                        }
+                changeLogCounter--;
+            }
+            System.out.println("empty?" + changeLog.isEmpty() + "\n index < 0? " + index);
+            System.out.println("well something is not working!");
+        });
 
         passButton.setVisible(false);
         resignButton.setVisible(false);
@@ -809,6 +839,8 @@ public class boardMaskController {
                 c.setFill(lastColor);
                 boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
 
+                changeLog.add(circlesOfBoard.clone());
+                changeLogCounter++;
                 if (lastColor == WHITE) {
                     lastColor = BLACK;
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
@@ -853,6 +885,8 @@ public class boardMaskController {
                 terminalInfo("Stone deleted: " + (p.row() + 1) + ALPHABET[p.col()]);
             }
         }
+        changeLog.add(circlesOfBoard.clone());
+        changeLogCounter++;
     }
 
     public static int calculateScore(char playerColor, char[][] board) {
