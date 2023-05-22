@@ -73,33 +73,14 @@ public class FileControl {
         updateMovesLog(row, col);
     }
 
-    protected void updateMovesLog(int row, char col){/*
-        try {
-            JSONParser parser1 = new JSONParser();
-            JSONObject jsonObject;
-            try (FileReader fileReader = new FileReader(outputFile.getAbsolutePath())) {
-                jsonObject = (JSONObject) parser1.parse(fileReader);
-            }
-            jsonObject.put("moves", movesLog);
-            try (FileWriter fileWriter = new FileWriter(outputFile.getAbsolutePath())) {
-                fileWriter.write(jsonObject.toJSONString());
-                fileWriter.flush();
-                System.out.println("JSON data has been updated and written to the file successfully.");
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }*/
+    protected void updateMovesLog(int row, char col){
         try {
             // Parse the JSON file
             //JSONParser parser = new JSONParser();
             JSONObject jsonObject;
-/*
-            try (FileReader fileReader = new FileReader(outputFile.getAbsolutePath())) {
-                String fileContents = new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())));
-                jsonObject = (JSONObject) parser.parse(fileContents);
-            }*/
             String fileContents = new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())));
             jsonObject = (JSONObject) parser.parse(fileContents);
+
             // Retrieve the existing "moves" array
             JSONArray movesArray = (JSONArray) jsonObject.get("moves");
 
