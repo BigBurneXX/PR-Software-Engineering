@@ -67,7 +67,7 @@ public class BoardLogicControl {
                 stoneList.add(toAdd);
 
         //prints all position per stone group and their free field position
-        /*for(StoneGroup s: stoneList){
+        for(StoneGroup s: stoneList){
             System.out.println(s.getColour() + ", " +  s.getFreeFields().size());
             for(Position p: s.getPosition())
                 System.out.print(" " + (p.row()+1) + alphabet[p.col()]);
@@ -75,7 +75,7 @@ public class BoardLogicControl {
             for(Position p: s.getFreeFields())
                 System.out.print(" " + (p.row()+1) + alphabet[p.col()]);
             System.out.println();
-        }*/
+        }
     }
 
     private StoneGroup searchForStone(int row, int col){

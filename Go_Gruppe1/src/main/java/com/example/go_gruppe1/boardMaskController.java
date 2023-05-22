@@ -191,11 +191,12 @@ public class boardMaskController {
         for(Move m: moves){
             int col = new String(ALPHABET).indexOf(m.col());
             fileControl.writeMoves((m.row() - 1), ALPHABET[col]);
-            terminalInfo("Stone (" + lastColor + ") placed at: " + m.row() + ALPHABET[col]);
-            circlesOfBoard[m.row()+2][col].setFill(currentColor);
+            terminalInfo("Stone (" + currentColor + ") placed at: " + m.row() + ALPHABET[col]);
+            circlesOfBoard[col+1][m.row()].setFill(currentColor);
+            boardLogicControl.setStoneToList(currentColor, col, m.row()-1);
             currentColor = (currentColor == BLACK ? WHITE : BLACK);
-            boardLogicControl.setStoneToList(lastColor, m.row()+1, col-1);
         }
+        lastColor = currentColor;
     }
 
     public void onExitGameClick() {
