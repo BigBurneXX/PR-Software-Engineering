@@ -848,6 +848,34 @@ public class boardMaskController {
         }
     }
 
+    public static int calculateScore(char playerColor, char[][] board) {
+        int score = 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == playerColor) {
+                    score++;
+                }
+            }
+        }
+        return score;
+    }
+
+    public static void endGame(char[][] board) {
+        int blackScore = calculateScore('B', board);
+        int whiteScore = calculateScore('W', board);
+
+        System.out.println("Black score: " + blackScore);
+        System.out.println("White score: " + whiteScore);
+
+        if (blackScore > whiteScore) {
+            System.out.println("Black won the game!");
+        } else if (blackScore < whiteScore) {
+            System.out.println("White won the game!");
+        } else {
+            System.out.println("The game is a draw!");
+        }
+    }
+
     /*
       ================================================================================================================
 
