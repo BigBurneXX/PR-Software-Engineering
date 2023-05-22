@@ -141,7 +141,7 @@ public class FileControl {
                     counter.getAndIncrement();
                 });
             controller.switchToNewGame((String) jsonObject.get("player1Name"), (String) jsonObject.get("player2Name"), jsonObject.get("komi").toString(),
-                    jsonObject.get("handicaps").toString(), ((Long) jsonObject.get("boardSize")).intValue());
+                    jsonObject.get("handicaps").toString(), ((Long) jsonObject.get("boardSize")).intValue(), movesLoaded);
         } catch (ParseException | IOException e) {
             System.out.println("an IO Exception was thrown when trying to load file " + newFile.getName());
         }

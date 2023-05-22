@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -26,8 +25,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static javafx.scene.paint.Color.*;
@@ -126,9 +124,9 @@ public class boardMaskController {
     private long elapsedTime1 = 0;
     private long elapsedTime2 = 0;
 
-    protected int BYOYOMINUMBER = 0;
+    protected int BYOYOMI_NUMBER = 0;
     private int blackByoyomi = 0, whiteByoyomi = 0;
-    protected int BYOYOMITIME = 0;
+    protected int BYOYOMI_TIME = 0;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -186,9 +184,18 @@ public class boardMaskController {
             fileControl.loadFile(selectedFile);
         }
     }
-    protected void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize) throws IOException{
+    protected void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize, List<Move> moves) throws IOException{
         System.out.println(player1Name + player2Name + komi + handicaps + boardSize);
         initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize);
+        Color currentColor = BLACK;
+        for(Move m: moves){
+            int col = new String(ALPHABET).indexOf(m.col());
+            fileControl.writeMoves((m.row() - 1), ALPHABET[col]);
+            terminalInfo("Stone (" + lastColor + ") placed at: " + m.row() + ALPHABET[col]);
+            circlesOfBoard[m.row()+2][col].setFill(currentColor);
+            currentColor = (currentColor == BLACK ? WHITE : BLACK);
+            boardLogicControl.setStoneToList(lastColor, m.row()+1, col-1);
+        }
     }
 
     public void onExitGameClick() {
@@ -356,30 +363,30 @@ public class boardMaskController {
 
     protected void initiateTimeRules(String byoyomiNumber, String byoyomiTime) {
         try {
-            BYOYOMINUMBER = Integer.parseInt(byoyomiNumber);
-            BYOYOMITIME = Integer.parseInt(byoyomiTime);
-            if(BYOYOMINUMBER <= 0 || BYOYOMITIME < 30) {
-                BYOYOMINUMBER = 0;
-                BYOYOMITIME = 0;
+            BYOYOMI_NUMBER = Integer.parseInt(byoyomiNumber);
+            BYOYOMI_TIME = Integer.parseInt(byoyomiTime);
+            if(BYOYOMI_NUMBER <= 0 || BYOYOMI_TIME < 30) {
+                BYOYOMI_NUMBER = 0;
+                BYOYOMI_TIME = 0;
                 blackTimeLabel.setText("NO BYOYOMI");
-                infoPane.setValignment(blackTimeLabel, VPos.CENTER);
+                GridPane.setValignment(blackTimeLabel, VPos.CENTER);
                 timerBlack.setVisible(false);
                 whiteTimeLabel.setVisible(false);
                 timerWhite.setVisible(false);
                 terminalInfo("Invalid input of Byoyomi");
             } else {
-                blackByoyomi = BYOYOMINUMBER;
-                whiteByoyomi = BYOYOMINUMBER;
-                blackTimeLabel.setText(BYOYOMINUMBER + " time period(s) à " + BYOYOMITIME + " s");
-                whiteTimeLabel.setText(BYOYOMINUMBER + " time period(s) à " + BYOYOMITIME + " s");
-                terminalInfo("Number of Byoyomi time periods set to " + BYOYOMINUMBER);
-                terminalInfo("Time period duration: " + BYOYOMITIME);
+                blackByoyomi = BYOYOMI_NUMBER;
+                whiteByoyomi = BYOYOMI_NUMBER;
+                blackTimeLabel.setText(BYOYOMI_NUMBER + " time period(s) à " + BYOYOMI_TIME + " s");
+                whiteTimeLabel.setText(BYOYOMI_NUMBER + " time period(s) à " + BYOYOMI_TIME + " s");
+                terminalInfo("Number of Byoyomi time periods set to " + BYOYOMI_NUMBER);
+                terminalInfo("Time period duration: " + BYOYOMI_TIME);
             }
         } catch (NumberFormatException nfe) {
-            BYOYOMINUMBER = 0;
-            BYOYOMITIME = 0;
+            BYOYOMI_NUMBER = 0;
+            BYOYOMI_TIME = 0;
             blackTimeLabel.setText("NO BYOYOMI");
-            infoPane.setValignment(blackTimeLabel, VPos.CENTER);
+            GridPane.setValignment(blackTimeLabel, VPos.CENTER);
             timerBlack.setVisible(false);
             whiteTimeLabel.setVisible(false);
             timerWhite.setVisible(false);
@@ -417,6 +424,7 @@ public class boardMaskController {
         rightRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
 
         //create grid
+        board.getChildren().clear();
         board.getColumnConstraints().clear();
         board.getRowConstraints().clear();
         for (int i = 0; i <= BOARD_SIZE; i++) {
@@ -740,40 +748,38 @@ public class boardMaskController {
     private int passedSlotSeconds1() {
         long elapsedTimeForTurn = System.currentTimeMillis() - START_TIME1;
 
-        int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime1);
-        return seconds;
+        return (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime1);
     }
 
     private int passedSlotSeconds2() {
         long elapsedTimeForTurn = System.currentTimeMillis() - START_TIME2;
 
-        int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime2);
-        return seconds;
+        return (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime2);
     }
     private void initiateByoyomiRules(int playerNumber) {
-        if(BYOYOMINUMBER != 0) {
+        if(BYOYOMI_NUMBER != 0) {
             if(playerNumber == 1) {
-                if(passedSlotSeconds1() > BYOYOMITIME) {
-                    int slots = passedSlotSeconds1() / BYOYOMITIME;
+                if(passedSlotSeconds1() > BYOYOMI_TIME) {
+                    int slots = passedSlotSeconds1() / BYOYOMI_TIME;
                     blackByoyomi -= slots;
                     if(blackByoyomi < 0) {
                         //TODO declare player 2 (WHITE) as winner!
                         modeAndMoveDisplay.setText(pl1.getText() + " used all time slots. " + pl2.getText() + " won!");
                         blackTimeLabel.setText("No time left");
                     } else {
-                        blackTimeLabel.setText(blackByoyomi + " time period(s) à " + BYOYOMITIME + " s");
+                        blackTimeLabel.setText(blackByoyomi + " time period(s) à " + BYOYOMI_TIME + " s");
                     }
                 }
             } else if(playerNumber == 2){
-                if(passedSlotSeconds2() > BYOYOMITIME) {
-                    int slots = passedSlotSeconds2() / BYOYOMITIME;
+                if(passedSlotSeconds2() > BYOYOMI_TIME) {
+                    int slots = passedSlotSeconds2() / BYOYOMI_TIME;
                     whiteByoyomi -= slots;
                     if(whiteByoyomi < 0) {
                         //TODO declare player 1 (BLACK) as winner!
                         modeAndMoveDisplay.setText(pl2.getText() + " used all time slots. " + pl1.getText() + " won!");
                         whiteTimeLabel.setText("No time left");
                     } else {
-                        whiteTimeLabel.setText(whiteByoyomi + " time period(s) à " + BYOYOMITIME + " s");
+                        whiteTimeLabel.setText(whiteByoyomi + " time period(s) à " + BYOYOMI_TIME + " s");
                     }
                 }
             }
@@ -797,7 +803,7 @@ public class boardMaskController {
                 row = GridPane.getRowIndex(n);
                 col = GridPane.getColumnIndex(n);
                 fileControl.writeMoves((row - 1), ALPHABET[col-1]);
-                terminalInfo("Stone placed at: " + row + ALPHABET[col-1]);
+                terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col-1]);
                 circlesOfBoard[row][col] = c;
                 c.setFill(lastColor);
                 boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
@@ -850,13 +856,10 @@ public class boardMaskController {
 
     public static int calculateScore(char playerColor, char[][] board) {
         int score = 0;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == playerColor) {
+        for (char[] chars : board)
+            for (char aChar : chars)
+                if (aChar == playerColor)
                     score++;
-                }
-            }
-        }
         return score;
     }
 
