@@ -19,7 +19,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="boardPane" prefHeight="580.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.boardMaskController">
+<BorderPane fx:id="boardPane" prefHeight="580.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.boardMaskController">
    <center>
       <StackPane fx:id="circlePane" BorderPane.alignment="CENTER">
          <GridPane fx:id="board">
@@ -38,19 +38,19 @@
    <top>
       <BorderPane fx:id="topRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
-            <GridPane fx:id="infoPane" prefHeight="129.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" BorderPane.alignment="CENTER">
+            <GridPane fx:id="infoPane" prefHeight="129.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" BorderPane.alignment="CENTER">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                </columnConstraints>
                <rowConstraints>
-                  <RowConstraints maxHeight="109.60001220703126" minHeight="0.0" prefHeight="55.8" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="186.20000228881835" minHeight="0.0" prefHeight="31.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="292.8000213623047" minHeight="10.0" prefHeight="19.999993896484384" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="109.60001220703126" minHeight="0.0" prefHeight="52.19999694824219" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="186.20000228881835" minHeight="0.0" prefHeight="49.80000305175781" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="292.8000213623047" minHeight="10.0" prefHeight="37.400024414062486" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="292.8000213623047" minHeight="5.999981689453136" prefHeight="23.20000610351562" vgrow="SOMETIMES" />
                </rowConstraints>
-               <Label fx:id="whiteTrapped" minHeight="-Infinity" minWidth="-Infinity" text="Trapped" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+               <Label fx:id="whiteTrapped" minHeight="-Infinity" minWidth="-Infinity" text="Trapped" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                   <font>
                      <Font name="Baskerville Old Face" size="14.0" />
                   </font>
@@ -58,7 +58,7 @@
                      <Insets right="20.0" />
                   </GridPane.margin>
                </Label>
-               <Label fx:id="blackTrapped" minHeight="-Infinity" minWidth="-Infinity" text="Trapped" GridPane.rowIndex="3">
+               <Label fx:id="blackTrapped" minHeight="-Infinity" minWidth="-Infinity" text="Trapped" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                   <font>
                      <Font name="Baskerville Old Face" size="14.0" />
                   </font>
@@ -71,7 +71,7 @@
                      <Font name="Baskerville Old Face" size="54.0" />
                   </font>
                </Label>
-               <Label fx:id="handicapsBoard" minHeight="-Infinity" minWidth="-Infinity" text="Handicaps" GridPane.rowIndex="2">
+               <Label fx:id="handicapsBoard" minHeight="-Infinity" minWidth="-Infinity" text="Handicaps" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                   <font>
                      <Font name="Baskerville Old Face" size="14.0" />
                   </font>
@@ -79,7 +79,7 @@
                      <Insets left="20.0" />
                   </GridPane.margin>
                </Label>
-               <Label fx:id="pl1" minHeight="-Infinity" minWidth="-Infinity" text="Player 1 (Black)" textAlignment="RIGHT" GridPane.rowIndex="1">
+               <Label fx:id="pl1" minHeight="-Infinity" minWidth="-Infinity" text="Player 1 (Black)" textAlignment="RIGHT">
                   <font>
                      <Font name="Baskerville Old Face" size="20.0" />
                   </font>
@@ -87,7 +87,7 @@
                      <Insets left="20.0" />
                   </GridPane.margin>
                </Label>
-               <Label fx:id="komiBoard" minHeight="-Infinity" minWidth="-Infinity" text="Komi" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+               <Label fx:id="komiBoard" minHeight="-Infinity" minWidth="-Infinity" text="Komi" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                   <font>
                      <Font name="Baskerville Old Face" size="14.0" />
                   </font>
@@ -95,7 +95,7 @@
                      <Insets right="20.0" />
                   </GridPane.margin>
                </Label>
-               <Label fx:id="pl2" minHeight="-Infinity" minWidth="-Infinity" style="-fx-font-weight: bold;" text="Player 2 (White)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+               <Label fx:id="pl2" minHeight="-Infinity" minWidth="-Infinity" style="-fx-font-weight: bold;" text="Player 2 (White)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
                   <font>
                      <Font name="Baskerville Old Face" size="20.0" />
                   </font>
@@ -116,23 +116,35 @@
                   <font>
                      <Font name="Baskerville Old Face" size="13.0" />
                   </font></Button>
-               <Label fx:id="timerWhite" alignment="CENTER" style="-fx-font-weight: bold;" text="00:00" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                  <font>
-                     <Font name="Baskerville Old Face" size="15.0" />
-                  </font></Label>
-               <Label fx:id="timerBlack" text="00:00" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                  <font>
-                     <Font name="Baskerville Old Face" size="15.0" />
-                  </font></Label>
-               <Label fx:id="blackTimeLabel" text="Time Periods" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+               <Label fx:id="timerWhite" alignment="CENTER" style="-fx-font-weight: bold;" text="00:00" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                   <font>
                      <Font name="Baskerville Old Face" size="15.0" />
                   </font>
+                  <GridPane.margin>
+                     <Insets right="20.0" />
+                  </GridPane.margin></Label>
+               <Label fx:id="timerBlack" text="00:00" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                  <font>
+                     <Font name="Baskerville Old Face" size="15.0" />
+                  </font>
+                  <GridPane.margin>
+                     <Insets left="20.0" />
+                  </GridPane.margin></Label>
+               <Label fx:id="blackTimeLabel" text="Time Periods" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                  <font>
+                     <Font name="Baskerville Old Face" size="15.0" />
+                  </font>
+                  <GridPane.margin>
+                     <Insets left="20.0" top="15.0" />
+                  </GridPane.margin>
                </Label>
-               <Label fx:id="whiteTimeLabel" layoutX="82.0" layoutY="60.0" text="Time Periods" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+               <Label fx:id="whiteTimeLabel" layoutX="82.0" layoutY="60.0" text="Time Periods" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                   <font>
                      <Font name="Baskerville Old Face" size="15.0" />
                   </font>
+                  <GridPane.margin>
+                     <Insets right="20.0" top="15.0" />
+                  </GridPane.margin>
                </Label>
             </GridPane>
          </center>
@@ -158,8 +170,8 @@
    </top>
    <bottom>
       <VBox fx:id="bottomRegion" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-         <Label fx:id="modeAndMoveDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" textAlignment="CENTER" />
-         <Label fx:id="sampleSolutionDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: #F2F3F5;" />
+         <Label fx:id="modeAndMoveDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" textAlignment="CENTER" />
+         <Label fx:id="sampleSolutionDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" />
       </VBox>
    </bottom>
    <left>

@@ -132,7 +132,7 @@
           <Insets right="20.0" />
         </GridPane.margin>
     </TextField>
-    <Text layoutX="50.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Enter Byōyomi:" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+    <Text layoutX="50.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Enter Byoyomi:" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
         <font>
           <Font name="Baskerville Old Face" size="24.0" />
         </font>
@@ -142,17 +142,12 @@
     </Text>
     <ButtonBar buttonMinWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="BASELINE">
       <buttons>
-          <Button alignment="CENTER" contentDisplay="CENTER" minWidth="-Infinity" mnemonicParsing="false" prefHeight="38.0" prefWidth="152.0" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Location ..." textAlignment="CENTER">
-              <font>
-                  <Font name="Baskerville Old Face" size="20.0" />
-              </font>
-          </Button>
           <Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#switchToBoardMask" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start Game" textAlignment="CENTER">
               <font>
                   <Font name="Baskerville Old Face" size="20.0" />
               </font>
           </Button>
-          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Load Game" textAlignment="CENTER">
+          <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onLoadGameClick" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Load Game" textAlignment="CENTER">
               <font>
                   <Font name="Baskerville Old Face" size="20.0" />
               </font>
@@ -192,14 +187,6 @@
       </font>
       <GridPane.margin>
          <Insets right="40.0" />
-      </GridPane.margin>
-   </Text>
-   <Text layoutX="30.0" layoutY="410.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Optional" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
-      <font>
-         <Font name="Baskerville Old Face" size="15.0" />
-      </font>
-      <GridPane.margin>
-         <Insets left="20.0" />
       </GridPane.margin>
    </Text>
 </GridPane>

@@ -138,6 +138,8 @@ public class boardMaskController {
     private int blackTrappedStones = 0;
     private int whiteTrappedStones = 0;
 
+    private long blackTotal = 0, whiteTotal = 0;
+
 
 
 
@@ -368,7 +370,7 @@ public class boardMaskController {
             if(BYOYOMI_NUMBER <= 0 || BYOYOMI_TIME < 30) {
                 BYOYOMI_NUMBER = 0;
                 BYOYOMI_TIME = 0;
-                blackTimeLabel.setText("NO BYOYOMI");
+                blackTimeLabel.setVisible(false);
                 GridPane.setValignment(blackTimeLabel, VPos.CENTER);
                 timerBlack.setVisible(false);
                 whiteTimeLabel.setVisible(false);
@@ -385,7 +387,7 @@ public class boardMaskController {
         } catch (NumberFormatException nfe) {
             BYOYOMI_NUMBER = 0;
             BYOYOMI_TIME = 0;
-            blackTimeLabel.setText("NO BYOYOMI");
+            blackTimeLabel.setVisible(false);
             GridPane.setValignment(blackTimeLabel, VPos.CENTER);
             timerBlack.setVisible(false);
             whiteTimeLabel.setVisible(false);
@@ -701,10 +703,18 @@ public class boardMaskController {
         //resign logic
         resignButton.setOnMouseClicked(e -> {
             if (lastColor == BLACK) {
-                //TODO declare player 2 (WHITE) as winner!
+                try {
+                    switchToWinnerMask(2, 2);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 modeAndMoveDisplay.setText(pl1.getText() + " resigned! - " + pl2.getText() + " won!");
             } else {
-                //TODO declare player 1 (BLACK) as winner!
+                try {
+                    switchToWinnerMask(1, 2);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
             }
             //file functionality is disabled for now
@@ -763,7 +773,11 @@ public class boardMaskController {
                     int slots = passedSlotSeconds1() / BYOYOMI_TIME;
                     blackByoyomi -= slots;
                     if(blackByoyomi < 0) {
-                        //TODO declare player 2 (WHITE) as winner!
+                        try {
+                            switchToWinnerMask(2, 3);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         modeAndMoveDisplay.setText(pl1.getText() + " used all time slots. " + pl2.getText() + " won!");
                         blackTimeLabel.setText("No time left");
                     } else {
@@ -775,7 +789,11 @@ public class boardMaskController {
                     int slots = passedSlotSeconds2() / BYOYOMI_TIME;
                     whiteByoyomi -= slots;
                     if(whiteByoyomi < 0) {
-                        //TODO declare player 1 (BLACK) as winner!
+                        try {
+                            switchToWinnerMask(1, 3);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         modeAndMoveDisplay.setText(pl2.getText() + " used all time slots. " + pl1.getText() + " won!");
                         whiteTimeLabel.setText("No time left");
                     } else {
@@ -876,6 +894,46 @@ public class boardMaskController {
             System.out.println("White won the game!");
         } else {
             System.out.println("The game is a draw!");
+        }
+    }
+
+    private void switchToWinnerMask(int player, int reasonForWinning) throws IOException {
+        //reason for winning 1 - points, 2 - resigned, 3 - byoyomi
+        if((player == 1 || player == 2) && (reasonForWinning >= 1 && reasonForWinning <= 3)) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
+            Parent root = loader.load();
+
+            winnerMaskController winnerMask = loader.getController();
+            winnerMask.setSize(getWidth(), getHeight());
+            winnerMask.setReasonForWinning(reasonForWinning);
+
+            if(player == 1) {
+                winnerMask.setName(pl1.getText(), pl2.getText());
+                winnerMask.setTotalPoints(blackTotal);
+                winnerMask.setTrapped(blackTrappedStones);
+                winnerMask.setExtraPoints("Handicaps:");
+                winnerMask.setExtraPointsValue(HANDICAPS);
+                winnerMask.setByoyomi(BYOYOMI_NUMBER, blackByoyomi, BYOYOMI_TIME);
+                terminalInfo("Black won... \n[log end]");
+            } else {
+                winnerMask.setName(pl2.getText(), pl1.getText());
+                winnerMask.setTotalPoints(whiteTotal);
+                winnerMask.setTrapped(whiteTrappedStones);
+                winnerMask.setExtraPoints("Komi:");
+                winnerMask.setExtraPointsValue(KOMI);
+                winnerMask.setByoyomi(BYOYOMI_NUMBER, whiteByoyomi, BYOYOMI_TIME);
+                terminalInfo("White won... \n[log end]");
+            }
+
+            Node source = topRegion.getTop();
+            Stage stage = (Stage) source.getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setMinWidth(600);
+            stage.setMinHeight(500);
+            stage.show();
+
+
         }
     }
 
