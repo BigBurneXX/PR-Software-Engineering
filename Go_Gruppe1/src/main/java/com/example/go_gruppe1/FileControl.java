@@ -3,13 +3,16 @@ package com.example.go_gruppe1;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.simple.JSONArray;
@@ -26,8 +29,8 @@ public class FileControl {
     private int moveCounter = 0;
     private int fileNameCounter = 0;
 
-    public FileControl(){}
-    protected void createFile(boardMaskController controller, String oldFileName, String player1Name, String player2Name, int boardSize, double komi, int handicaps){
+    protected void createFile(boardMaskController controller, String oldFileName, String player1Name, String player2Name,
+                              int boardSize, double komi, int handicaps, int byoyomiNumberOfTimes, int byoyomiTimeLimit){
         this.controller = controller;
         try{
             String newFileName = oldFileName.endsWith(".json") ?
@@ -37,32 +40,37 @@ public class FileControl {
                     player1Name + "_" + player2Name + ".json";
             outputFile = new File(newFileName);
             if (outputFile.createNewFile()) {
-                writeStartInfo(player1Name,player2Name,boardSize,komi, handicaps);
-                System.out.println("File " + outputFile.getName() + " created.");
+                writeStartInfo(player1Name,player2Name,boardSize,komi, handicaps, byoyomiNumberOfTimes, byoyomiTimeLimit);
+                terminalInfo("File " + outputFile.getName() + " created.");
             }else {
-                System.out.println("File " + outputFile.getName() + " already exists!");
+                terminalInfo("File " + outputFile.getName() + " already exists!");
                 fileNameCounter++;
-                createFile(controller, outputFile.getName(), player1Name, player2Name, boardSize, komi, handicaps);
+                createFile(controller, outputFile.getName(), player1Name, player2Name, boardSize, komi, handicaps, byoyomiNumberOfTimes, byoyomiTimeLimit);
             }
         } catch (IOException e ){
-            System.out.println("File " + outputFile.getName() + " creation failed!");
+            terminalInfo("File " + outputFile.getName() + " creation failed!");
             e.printStackTrace();
         }
     }
 
-    private void writeStartInfo(String player1Name, String player2Name, int boardSize, double komi, int handicaps){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("player1Name", player1Name);
-        jsonObject.put("player2Name", player2Name);
-        jsonObject.put("boardSize", boardSize);
-        jsonObject.put("komi", komi);
-        jsonObject.put("handicaps", handicaps);
-        jsonObject.put("moves", movesLog);
-        jsonObject.put("boardChanges", boardLog);
+    private void writeStartInfo(String player1Name, String player2Name, int boardSize, double komi, int handicaps,
+                                int byoyomiNumberOfTimes, int byoyomiTimeLimit){
+        Map<String, Object> fileMap = new HashMap<>();
+        fileMap.put("player1Name", player1Name);
+        fileMap.put("player2Name", player2Name);
+        fileMap.put("boardSize", boardSize);
+        fileMap.put("komi", komi);
+        fileMap.put("handicaps", handicaps);
+        fileMap.put("byoyomiNumber", byoyomiNumberOfTimes);
+        fileMap.put("byoyomiLimit", byoyomiTimeLimit);
+        fileMap.put("moves", movesLog);
+        fileMap.put("boardChanges", boardLog);
+
         try (FileWriter fileWriter = new FileWriter(outputFile.getAbsolutePath())) {
-            fileWriter.write(jsonObject.toJSONString());
+            fileWriter.write(new JSONObject(fileMap).toJSONString());
             fileWriter.flush();
-            System.out.println("JSON data has been written to the file successfully.");
+
+            terminalInfo("JSON data has been written to the file successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,22 +82,22 @@ public class FileControl {
     }
 
     protected void updateMovesLog(int row, char col, String text){
-        try {
-            // Parse the JSON file
-            //JSONParser parser = new JSONParser();
-            JSONObject jsonObject;
-            String fileContents = new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())));
-            jsonObject = (JSONObject) parser.parse(fileContents);
+        // Read the existing JSON file
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(outputFile.getAbsolutePath()))) {
+            // Parse the JSON file incrementally
+            JSONParser parser = new JSONParser();
+            Object fileContents = parser.parse(reader);
 
             // Retrieve the existing "moves" array
+            JSONObject jsonObject = (JSONObject) fileContents;
             JSONArray movesArray = (JSONArray) jsonObject.get("moves");
 
             // Create a new move record and add it to the "moves" array
-            JSONObject newMove = new JSONObject();
-            newMove.put(moveCounter + "row", row);
-            newMove.put(moveCounter + "col", String.valueOf(col));
-            newMove.put(moveCounter + "text", text);
-            movesArray.add(newMove);
+            Map<String, Object> newMoveMap = new HashMap<>();
+            newMoveMap.put(moveCounter + "row", row);
+            newMoveMap.put(moveCounter + "col", String.valueOf(col));
+            newMoveMap.put(moveCounter + "text", text);
+            movesArray.add(new JSONObject(newMoveMap));
             moveCounter++;
 
             // Write the updated JSON object back to the file
@@ -97,7 +105,7 @@ public class FileControl {
                 fileWriter.write(jsonObject.toJSONString());
                 fileWriter.flush();
 
-                System.out.println("JSON data has been updated and written to the file successfully.");
+                terminalInfo("JSON data has been updated and written to the file successfully.");
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
@@ -110,9 +118,8 @@ public class FileControl {
     }
 
     protected void loadFile(File newFile){
-        try {
-            String fileContents = new String(Files.readAllBytes(Paths.get(newFile.getAbsolutePath())));
-            JSONObject jsonObject = (JSONObject) parser.parse(fileContents);
+        try(BufferedReader reader = Files.newBufferedReader(Paths.get(newFile.getAbsolutePath()))) {
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
             JSONArray jsonArray = (JSONArray) jsonObject.get("moves");
             List<Move> movesLoaded = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger();
@@ -126,7 +133,7 @@ public class FileControl {
             controller.switchToNewGame((String) jsonObject.get("player1Name"), (String) jsonObject.get("player2Name"), jsonObject.get("komi").toString(),
                     jsonObject.get("handicaps").toString(), ((Long) jsonObject.get("boardSize")).intValue(), movesLoaded);
         } catch (ParseException | IOException e) {
-            System.out.println("an IO Exception was thrown when trying to load file " + newFile.getName());
+            terminalInfo("an IO Exception was thrown when trying to load file " + newFile.getName());
         }
     }
 
@@ -136,16 +143,20 @@ public class FileControl {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
         File selectedDirectory = fileChooser.showSaveDialog(null);
         if (selectedDirectory != null) {
-            System.out.println("Selected directory: " + selectedDirectory.getAbsolutePath());
+            terminalInfo("Selected directory: " + selectedDirectory.getAbsolutePath());
             try {
-                Files.move(Paths.get(outputFile.getAbsolutePath()), Paths.get(selectedDirectory.getAbsolutePath()));
-                System.out.println("File moved successfully from " + outputFile.getAbsolutePath() + " to " + selectedDirectory.getAbsolutePath());
+                Files.move(outputFile.toPath(),selectedDirectory.toPath());
+                terminalInfo("File moved successfully from " + outputFile.getAbsolutePath() + " to " + selectedDirectory.getAbsolutePath());
                 outputFile = selectedDirectory;
             } catch (IOException e) {
-                System.out.println("an IO Exception was thrown when trying to save file to " + outputFile.getName());
+                terminalInfo("an IO Exception was thrown when trying to save file to " + selectedDirectory.getName());
             }
         } else {
-            System.out.println("No directory selected");
+            terminalInfo("No directory selected");
         }
+    }
+
+    private void terminalInfo(String data){
+        System.out.println(data);
     }
 }

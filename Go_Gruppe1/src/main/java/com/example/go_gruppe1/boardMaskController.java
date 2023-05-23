@@ -523,7 +523,7 @@ public class boardMaskController {
 
         //creating output file
         //For now creating a file is deactivated, otherwise there would be too much files created while coding
-        fileControl.createFile(this, "", PLAYER1NAME, PLAYER2NAME, BOARD_SIZE, KOMI, HANDICAPS);
+        fileControl.createFile(this, "", PLAYER1NAME, PLAYER2NAME, BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
     }
 
     /*
