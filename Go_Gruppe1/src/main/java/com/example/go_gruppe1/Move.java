@@ -1,4 +1,4 @@
 package com.example.go_gruppe1;
 
-public record Move(int row, char col) {
+public record Move(int row, char col, String text) {
 }

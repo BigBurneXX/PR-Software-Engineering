@@ -68,12 +68,12 @@ public class FileControl {
         }
     }
 
-    protected void writeMoves(int row, char col){
-        movesLog.add(new Move(row, col));
-        updateMovesLog(row, col);
+    protected void writeMoves(int row, char col, String text){
+        movesLog.add(new Move(row, col, text));
+        updateMovesLog(row, col, text);
     }
 
-    protected void updateMovesLog(int row, char col){
+    protected void updateMovesLog(int row, char col, String text){
         try {
             // Parse the JSON file
             //JSONParser parser = new JSONParser();
@@ -88,6 +88,7 @@ public class FileControl {
             JSONObject newMove = new JSONObject();
             newMove.put(moveCounter + "row", row);
             newMove.put(moveCounter + "col", String.valueOf(col));
+            newMove.put(moveCounter + "text", text);
             movesArray.add(newMove);
             moveCounter++;
 
@@ -118,7 +119,8 @@ public class FileControl {
             if(jsonArray != null)
                 jsonArray.iterator().forEachRemaining(element -> {
                     JSONObject toAdd = (JSONObject) element;
-                    movesLoaded.add(new Move(((Long) toAdd.get(counter + "row")).intValue(), toAdd.get(counter + "col").toString().charAt(0)));
+                    movesLoaded.add(new Move(((Long) toAdd.get(counter + "row")).intValue(), toAdd.get(counter + "col").toString().charAt(0),
+                            (String) toAdd.get(counter + "text")));
                     counter.getAndIncrement();
                 });
             controller.switchToNewGame((String) jsonObject.get("player1Name"), (String) jsonObject.get("player2Name"), jsonObject.get("komi").toString(),

@@ -138,7 +138,7 @@ public class boardMaskController {
     private Color lastColor = BLACK;
     private int blackTrappedStones = 0;
     private int whiteTrappedStones = 0;
-    private List<Circle[][]> changeLog = new ArrayList<>();
+    private final List<Circle[][]> changeLog = new ArrayList<>();
     private int changeLogCounter = -1;
     private long blackTotal = 0, whiteTotal = 0;
 
@@ -194,10 +194,11 @@ public class boardMaskController {
         Color currentColor = BLACK;
         for(Move m: moves){
             int col = new String(ALPHABET).indexOf(m.col());
-            fileControl.writeMoves((m.row() - 1), ALPHABET[col]);
+            fileControl.writeMoves((m.row() - 1), ALPHABET[col], m.text());
+            setSampleSolutionDisplay(m.text());
             terminalInfo("Stone (" + currentColor + ") placed at: " + m.row() + ALPHABET[col]);
-            circlesOfBoard[col+1][m.row()].setFill(currentColor);
-            boardLogicControl.setStoneToList(currentColor, col, m.row()-1);
+            circlesOfBoard[col+1][m.row()+1].setFill(currentColor);
+            boardLogicControl.setStoneToList(currentColor, m.row(), col);
             currentColor = (currentColor == BLACK ? WHITE : BLACK);
         }
         lastColor = currentColor;
@@ -239,6 +240,7 @@ public class boardMaskController {
         rightArrow.setOnMouseClicked(e -> System.out.println("something at last"));
         leftArrow.setOnMouseClicked(e -> {
             printSomething();
+            //copying somehow doesn't work yet
             /*
             int index = changeLogCounter - 1;
             if(!changeLog.isEmpty() && !(index < 0)) {
@@ -873,7 +875,7 @@ public class boardMaskController {
             if (n instanceof Circle && n.equals(c)) {
                 row = GridPane.getRowIndex(n);
                 col = GridPane.getColumnIndex(n);
-                fileControl.writeMoves((row - 1), ALPHABET[col-1]);
+                fileControl.writeMoves((row - 1), ALPHABET[col-1], "");
                 terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col-1]);
                 System.out.println("attaching stone to row " + row + ", col " + col);
                 c.setFill(lastColor);
