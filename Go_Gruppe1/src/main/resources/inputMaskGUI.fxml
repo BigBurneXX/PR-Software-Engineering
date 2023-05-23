@@ -49,7 +49,7 @@
           <Insets left="20.0" />
         </GridPane.margin>
     </Text>
-    <RadioButton fx:id="size9" mnemonicParsing="false" onAction="#size9Clicked" selected="true" text="9x9" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+    <RadioButton fx:id="size9" mnemonicParsing="false" selected="true" text="9x9" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
         <font>
           <Font name="Baskerville Old Face" size="15.0" />
         </font>
@@ -60,7 +60,7 @@
           <ToggleGroup fx:id="boardSize" />
         </toggleGroup>
     </RadioButton>
-    <RadioButton fx:id="size13" layoutX="352.0" layoutY="126.0" mnemonicParsing="false" onAction="#size13Clicked" text="13x13" toggleGroup="$boardSize" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+    <RadioButton fx:id="size13" layoutX="352.0" layoutY="126.0" mnemonicParsing="false" text="13x13" toggleGroup="$boardSize" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
         <font>
           <Font name="Baskerville Old Face" size="15.0" />
         </font>
@@ -68,7 +68,7 @@
           <Insets right="20.0" />
         </GridPane.margin>
     </RadioButton>
-    <RadioButton fx:id="size19" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" onAction="#size19Clicked" text="19x19" toggleGroup="$boardSize" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+    <RadioButton fx:id="size19" layoutX="438.0" layoutY="126.0" mnemonicParsing="false" text="19x19" toggleGroup="$boardSize" GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
         <font>
           <Font name="Baskerville Old Face" size="15.0" />
         </font>
@@ -142,7 +142,7 @@
     </Text>
     <ButtonBar buttonMinWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="BASELINE">
       <buttons>
-          <Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#switchToBoardMask" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start Game" textAlignment="CENTER">
+          <Button alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#onStartGameClick" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start Game" textAlignment="CENTER">
               <font>
                   <Font name="Baskerville Old Face" size="20.0" />
               </font>

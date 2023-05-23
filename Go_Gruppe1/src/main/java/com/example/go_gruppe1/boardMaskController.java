@@ -921,7 +921,7 @@ public class boardMaskController {
 
         //finds the circle for every position of stoneGroup toDelete and sets the visibility to TRANSPARENT
         for (Position p : toDelete.getPosition()) {
-            Circle c = circlesOfBoard[p.row()+1][p.col()+1];
+            Circle c = circlesOfBoard[p.col()+1][p.row()+1];
             if(c.getFill() == TRANSPARENT)
                 terminalInfo("Error: no stone found at " + (p.row()+1) + ALPHABET[p.col()]);
             else {
