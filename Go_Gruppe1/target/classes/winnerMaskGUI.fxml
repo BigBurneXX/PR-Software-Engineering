@@ -15,7 +15,7 @@
    <top>
       <Label fx:id="name" text="Name" textFill="#703400" BorderPane.alignment="TOP_CENTER">
          <font>
-            <Font name="Baskerville Old Face" size="25.0" />
+            <Font name="System" size="25.0" />
          </font>
          <BorderPane.margin>
             <Insets top="130.0" />
@@ -37,42 +37,42 @@
          <children>
             <Label text="Total Points:" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
             <Label layoutX="10.0" layoutY="29.0" text="Trapped:" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
             <Label fx:id="extraPoints" layoutX="10.0" layoutY="91.0" text="Komi/Handicaps:" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
             <Label fx:id="byoyomiLabel" layoutX="10.0" layoutY="115.0" text="Byoyomi:" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
             <Label fx:id="totalPoints" layoutX="10.0" layoutY="24.0" prefHeight="22.0" prefWidth="110.0" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
             <Label fx:id="trapped" layoutX="156.0" layoutY="24.0" prefHeight="22.0" prefWidth="106.0" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
             <Label fx:id="extraPointsValue" layoutX="110.0" layoutY="76.0" prefHeight="22.0" prefWidth="100.0" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
             <Label fx:id="byoyomi" layoutX="110.0" layoutY="128.0" prefHeight="22.0" prefWidth="100.0" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <font>
-                  <Font name="Baskerville Old Face" size="17.0" />
+                  <Font name="System" size="17.0" />
                </font>
             </Label>
          </children>
