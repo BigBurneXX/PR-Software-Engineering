@@ -20,8 +20,9 @@ public class Main extends Application {
         //stage.getIcons().add(icon);
         stage.setScene(inputMask);
         //stage.sizeToScene();
-        stage.setMinWidth(600);
+        stage.setMinWidth(630);
         stage.setMinHeight(500);
+        stage.centerOnScreen();
         stage.show();
     }
 

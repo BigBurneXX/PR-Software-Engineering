@@ -47,7 +47,7 @@ public class inputMaskController {
         Scene scene = new Scene(root);
 
         stage.setScene(scene);
-        stage.setMinWidth(600);
+        stage.setMinWidth(630);
         stage.setMinHeight((getBoardSize() == 19 ? 800: 650));
         stage.show();
     }
