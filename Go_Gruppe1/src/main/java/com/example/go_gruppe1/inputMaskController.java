@@ -23,12 +23,22 @@ public class inputMaskController {
     @FXML
     private TextField player1, player2, komi, handicaps, byoyomiNumber, byoyomiTime;
 
+    @FXML
+    private Spinner<Double> komiSpinner;
+
     public void onStartGameClick(ActionEvent event) throws IOException {
         switchToBoardMask(event, false);
     }
 
     public void onLoadGameClick(ActionEvent event) throws IOException {
         switchToBoardMask(event, true);
+    }
+
+    protected void initiateSpinner() {
+        komiSpinner = new Spinner<>();
+
+        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 7.5, 0.5);
+        komiSpinner.setValueFactory(valueFactory);
     }
 
     private void switchToBoardMask(ActionEvent event, boolean wantToLoad) throws IOException{

@@ -4,6 +4,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -555,13 +556,24 @@ public class boardMaskController {
             bottomLetterCell.setStyle("-fx-background-color:  #C4A484");
             board.add(bottomLetterCell, i, BOARD_SIZE);
 
+            double sizeBinding = 0.035;
+            int padding = 5;
+            if(BOARD_SIZE == 19) {
+                sizeBinding = 0.02;
+                padding = 4;
+            }
+
             //right labelling
             if (i != 0) {
                 Label rightNumberCell = new Label();
                 rightNumberCell.setText(String.valueOf(BOARD_SIZE - i + 1));
                 rightNumberCell.setCenterShape(true);
-                rightNumberCell.setStyle("-fx-text-fill: #483C32; -fx-font-size: 15; -fx-font-weight: bold");
-                rightNumberCell.setPadding(new Insets(0, 10, 0, 0));
+                rightNumberCell.styleProperty().bind(Bindings.concat(
+                        "-fx-text-fill: #483C32; ",
+                        "-fx-font-weight: bold; ",
+                        "-fx-font-size: ", board.heightProperty().multiply(sizeBinding).asString()
+                ));
+                rightNumberCell.setPadding(new Insets(0, padding, 0, 0));
                 GridPane.setHalignment(rightNumberCell, HPos.RIGHT);
                 GridPane.setValignment(rightNumberCell, VPos.TOP);
                 rightNumberCell.translateYProperty().bind(rightNumberCell.heightProperty().divide(2).multiply(-1));
@@ -569,6 +581,8 @@ public class boardMaskController {
                 bottomLetterCell.toBack();
                 board.add(rightNumberCell, BOARD_SIZE, i);
             }
+
+
 
             //left color
             if (i != 0 && i != BOARD_SIZE) {
@@ -582,8 +596,12 @@ public class boardMaskController {
                 Label letter = new Label();
                 letter.setText(String.valueOf(ALPHABET[i]));
                 letter.setCenterShape(true);
-                letter.setStyle("-fx-text-fill: #483C32; -fx-font-size: 15; -fx-font-weight: bold");
-                letter.setPadding(new Insets(0, 0, 1, 0));
+                letter.styleProperty().bind(Bindings.concat(
+                        "-fx-text-fill: #483C32; ",
+                        "-fx-font-weight: bold; ",
+                        "-fx-font-size: ", board.heightProperty().multiply(sizeBinding).asString()
+                ));
+                letter.setPadding(new Insets(0, 0, padding - 3, 0));
                 GridPane.setHalignment(letter, HPos.RIGHT);
                 GridPane.setValignment(letter, VPos.BOTTOM);
                 letter.translateXProperty().bind(bottomLetterCell.widthProperty().multiply(-0.8));
@@ -720,10 +738,13 @@ public class boardMaskController {
     }
 
     private void drawPassButton() {
-        passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
-
-        passButton.setOnMouseEntered(e -> passButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
-        passButton.setOnMouseExited(e -> passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
+        passButton.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", board.heightProperty().multiply(0.03).asString()
+        ));
+        passButton.setFocusTraversable(false);
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
@@ -752,9 +773,13 @@ public class boardMaskController {
     }
 
     private void drawResignButton() {
-        resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
-        resignButton.setOnMouseEntered(e -> resignButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
-        resignButton.setOnMouseExited(e -> resignButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
+        resignButton.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", board.heightProperty().multiply(0.03).asString()
+        ));
+        resignButton.setFocusTraversable(false);
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
@@ -994,8 +1019,8 @@ public class boardMaskController {
             Stage stage = (Stage) source.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setMinWidth(630);
-            stage.setMinHeight(500);
+            stage.setMinHeight(300);
+            stage.setMinWidth(550);
             stage.centerOnScreen();
             stage.show();
         }
