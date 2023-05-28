@@ -31,7 +31,7 @@ public class Main extends Application {
         Parent root = loader.load();
 
         inputMaskController inputMask = loader.getController();
-        inputMask.initiateSpinner();
+        inputMask.initiateDisplay();
 
         Scene scene = new Scene(root);
 

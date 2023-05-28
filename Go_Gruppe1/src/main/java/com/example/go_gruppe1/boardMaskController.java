@@ -161,6 +161,7 @@ public class boardMaskController {
 
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
+        inputMask.initiateDisplay();
 
         Node source = topRegion.getTop();
         Stage stage = (Stage) source.getScene().getWindow();
@@ -360,25 +361,8 @@ public class boardMaskController {
     }
 
     private void displayKomi(String komiAdvantage) {
-        //only numeric values can be entered
-        try {
-            double d = Double.parseDouble(komiAdvantage);
-            //only values greater than 0 are valid
-            KOMI = d < 0 || d > 9.5 ? 0 : d;
-            if(KOMI == 0) {
-                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> Komi set to 0");
-            }
-            komiBoard.setText("Komi: " + KOMI);
-            terminalInfo("komi: " + KOMI);
-        } catch (NumberFormatException nfe) {
-            KOMI = 0;
-            komiBoard.setText("Komi: " + KOMI);
-            if (!komiAdvantage.isEmpty()) {
-                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> Komi set to 0");
-                terminalInfo("invalid Komi input");
-            }
-            terminalInfo("Komi set to: " + KOMI);
-        }
+        KOMI = Double.parseDouble(komiAdvantage);
+        komiBoard.setText("Komi: "+ KOMI);
     }
 
     private void displayHandicaps(String handicaps) {

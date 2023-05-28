@@ -95,11 +95,11 @@
                      <Insets right="20.0" />
                   </GridPane.margin>
                </Label>
-               <Button fx:id="passButton" minWidth="70.0" mnemonicParsing="false" prefWidth="70.0" style="-fx-border-color: #483C32; -fx-background-color: transparent; -fx-text-fill: #483C32;" text="PASS" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+               <Button fx:id="passButton" minWidth="90.0" mnemonicParsing="false" text="PASS" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                   <font>
                      <Font name="System" size="13.0" />
                   </font></Button>
-               <Button fx:id="resignButton" minWidth="70.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-border-color: #483C32; -fx-text-fill: #483C32;" text="RESIGN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+               <Button fx:id="resignButton" minWidth="90.0" mnemonicParsing="false" text="RESIGN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                   <font>
                      <Font name="System" size="13.0" />
                   </font></Button>

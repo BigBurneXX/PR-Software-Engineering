@@ -74,6 +74,7 @@ public class winnerMaskController {
 
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
+        inputMask.initiateDisplay();
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
