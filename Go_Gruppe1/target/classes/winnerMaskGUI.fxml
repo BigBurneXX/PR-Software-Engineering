@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="pane" prefHeight="580.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.winnerMaskController">
+<BorderPane fx:id="pane" prefHeight="580.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.winnerMaskController">
    <top>
-      <Label fx:id="name" text="Name" textFill="#703400" BorderPane.alignment="TOP_CENTER">
+      <Label fx:id="name" text="Name" BorderPane.alignment="TOP_CENTER">
          <font>
             <Font name="System" size="25.0" />
          </font>
@@ -83,17 +83,17 @@
          <children>
             <ButtonBar layoutX="99.0" layoutY="70.0" prefHeight="70.0" prefWidth="413.0">
               <buttons>
-                  <Button fx:id="newGame" layoutX="264.0" layoutY="24.0" mnemonicParsing="false" onAction="#onNewGameClick" prefHeight="41.0" prefWidth="137.0" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Start New Game">
+                  <Button fx:id="newGame" layoutX="264.0" layoutY="24.0" mnemonicParsing="false" onAction="#onNewGameClick" prefHeight="41.0" prefWidth="137.0" text="Start New Game">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="saveAs" layoutX="264.0" layoutY="24.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="137.0" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Save as...">
+                  <Button fx:id="saveAs" layoutX="264.0" layoutY="24.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="137.0" text="Save as...">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="exit" layoutX="224.0" layoutY="16.0" mnemonicParsing="false" onAction="#onExitGameClick" prefHeight="41.0" prefWidth="137.0" style="-fx-border-color: #483C32; -fx-background-color: #C4A484;" text="Exit">
+                  <Button fx:id="exit" layoutX="224.0" layoutY="16.0" mnemonicParsing="false" onAction="#onExitGameClick" prefHeight="41.0" prefWidth="137.0" text="Exit">
                      <font>
                         <Font size="14.0" />
                      </font>
