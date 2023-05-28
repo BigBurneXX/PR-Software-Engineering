@@ -1,5 +1,6 @@
 package com.example.go_gruppe1;
 
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -18,13 +20,28 @@ public class inputMaskController {
     private GridPane inputPane;
 
     @FXML
-    private RadioButton size9, size13, size19;
+    private RadioButton size9, size13;
 
     @FXML
-    private TextField player1, player2, komi, handicaps, byoyomiNumber, byoyomiTime;
+    private TextField player1, player2, handicaps, byoyomiNumber, byoyomiTime;
 
     @FXML
     private Spinner<Double> komiSpinner;
+
+    @FXML
+    private Label title;
+
+    @FXML
+    private Text sizeText, namesText, komiText, handicapText,byoyomiText;
+
+    @FXML
+    private Button start, load;
+
+    protected void initiateDisplay() {
+        initiateSpinner();
+        initiateLabels();
+        initiateButtons();
+    }
 
     public void onStartGameClick(ActionEvent event) throws IOException {
         switchToBoardMask(event, false);
@@ -35,11 +52,61 @@ public class inputMaskController {
     }
 
     protected void initiateSpinner() {
-        komiSpinner = new Spinner<>();
+        komiSpinner.setEditable(false);
 
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 7.5, 0.5);
+        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 9.5, 0, 0.5);
         komiSpinner.setValueFactory(valueFactory);
+        komiSpinner.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
+        ));
     }
+
+    protected void initiateLabels() {
+        double binding = 0.04;
+        title.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(0.1).asString()
+        ));
+
+        sizeText.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
+        ));
+
+        namesText.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
+        ));
+
+        komiText.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
+        ));
+
+        handicapText.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
+        ));
+
+        byoyomiText.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
+        ));
+    }
+
+    private void initiateButtons() {
+        start.prefWidthProperty().bind(inputPane.heightProperty().multiply(15));
+        start.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", inputPane.heightProperty().multiply(0.035).asString()
+        ));
+        start.toFront();
+
+        load.prefWidthProperty().bind(inputPane.heightProperty().multiply(15));
+        load.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", inputPane.heightProperty().multiply(0.035).asString()
+        ));
+        load.toFront();
+    }
+
+
 
     private void switchToBoardMask(ActionEvent event, boolean wantToLoad) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/boardMaskGUI.fxml"));
@@ -48,7 +115,7 @@ public class inputMaskController {
         boardMaskController boardMask = loader.getController();
         boardMask.setSize(inputPane.getWidth(), inputPane.getHeight());
 
-        boardMask.initiateDisplay(player1.getText(), player2.getText(), komi.getText(), handicaps.getText(), getBoardSize());
+        boardMask.initiateDisplay(player1.getText(), player2.getText(), komiSpinner.getValue().toString(), handicaps.getText(), getBoardSize());
         boardMask.initiateTimeRules(byoyomiNumber.getText(), byoyomiTime.getText());
         if(wantToLoad)
             boardMask.onOpenFileClick();
