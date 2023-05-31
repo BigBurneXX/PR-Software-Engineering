@@ -58,9 +58,10 @@ public class BoardLogicControl {
         toDelete.clear();
 
         if(searchForStone(row, col) == null)
-            if(toAdd.getFreeFields().isEmpty())
+            if(toAdd.getFreeFields().isEmpty()) {
+                System.out.println("THIS IS SUICIDE");
                 deleteStone(toAdd);
-            else if(!isSuicide)
+            }else if(!isSuicide)
                 stoneList.add(toAdd);
         //prints all position per stone group and their free field position
         for(StoneGroup s: stoneList){
