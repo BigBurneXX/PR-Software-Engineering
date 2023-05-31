@@ -4,6 +4,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -160,13 +161,15 @@ public class boardMaskController {
 
         inputMaskController inputMask = loader.getController();
         inputMask.setSize(getWidth(), getHeight());
+        inputMask.initiateDisplay();
 
         Node source = topRegion.getTop();
         Stage stage = (Stage) source.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.setMinWidth(600);
+        stage.setMinWidth(630);
         stage.setMinHeight(500);
+        stage.centerOnScreen();
         stage.show();
     }
 
@@ -224,7 +227,7 @@ public class boardMaskController {
         rightArrow.setVisible(false);
         passButton.setVisible(true);
         resignButton.setVisible(true);
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+        modeAndMoveDisplay.setFont(Font.font("System", FontWeight.BOLD, 15));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
 
         modeAndMoveDisplay.setText((lastColor == BLACK ? pl1.getText() : pl2.getText()) + "'s turn!");
@@ -281,7 +284,7 @@ public class boardMaskController {
         passButton.setVisible(false);
         resignButton.setVisible(false);
         modeAndMoveDisplay.setText("Navigation mode activated");
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, board.getHeight() * 0.10));
+        modeAndMoveDisplay.setFont(Font.font("System", FontWeight.BOLD, board.getHeight() * 0.10));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
     }
     private void printSomething(){
@@ -358,25 +361,8 @@ public class boardMaskController {
     }
 
     private void displayKomi(String komiAdvantage) {
-        //only numeric values can be entered
-        try {
-            double d = Double.parseDouble(komiAdvantage);
-            //only values greater than 0 are valid
-            KOMI = d < 0 || d > 9.5 ? 0 : d;
-            if(KOMI == 0) {
-                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> Komi set to 0");
-            }
-            komiBoard.setText("Komi: " + KOMI);
-            terminalInfo("komi: " + KOMI);
-        } catch (NumberFormatException nfe) {
-            KOMI = 0;
-            komiBoard.setText("Komi: " + KOMI);
-            if (!komiAdvantage.isEmpty()) {
-                sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid komi input -> Komi set to 0");
-                terminalInfo("invalid Komi input");
-            }
-            terminalInfo("Komi set to: " + KOMI);
-        }
+        KOMI = Double.parseDouble(komiAdvantage);
+        komiBoard.setText("Komi: "+ KOMI);
     }
 
     private void displayHandicaps(String handicaps) {
@@ -464,19 +450,19 @@ public class boardMaskController {
         //set padding, so stones are not covered by top region
         board.setPadding(new Insets(20, 0, 0, 0));
 
-        //bind bottom and upper region to 25% of window width
-        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
+        //bind bottom and upper region to 20% of window height
+        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.1));
         topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
 
-        //set left, right and center (board) region to 50% of window width
-        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.6));
-        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.6));
-        board.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.6));
+        //set left, right and center (board) region to 60% of window height
+        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.7));
+        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.7));
+        board.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.7));
 
-        //bind center width to 50% of window width, so it's a square
-        board.prefWidthProperty().bind(boardPane.heightProperty().multiply(0.6));
+        //bind center width to 60% of window height, so it's a square
+        board.prefWidthProperty().bind(boardPane.heightProperty().multiply(0.7));
 
-        //bind left and right width to remaining width of the window of what's left from taking 50% of the height
+        //bind left and right width to remaining width of the window of what's left from taking 60% of the height
         leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
         rightRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
 
@@ -554,13 +540,24 @@ public class boardMaskController {
             bottomLetterCell.setStyle("-fx-background-color:  #C4A484");
             board.add(bottomLetterCell, i, BOARD_SIZE);
 
+            double sizeBinding = 0.035;
+            int padding = 5;
+            if(BOARD_SIZE == 19) {
+                sizeBinding = 0.02;
+                padding = 4;
+            }
+
             //right labelling
             if (i != 0) {
                 Label rightNumberCell = new Label();
-                rightNumberCell.setText(String.valueOf(i));
+                rightNumberCell.setText(String.valueOf(BOARD_SIZE - i + 1));
                 rightNumberCell.setCenterShape(true);
-                rightNumberCell.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-                rightNumberCell.setStyle("-fx-text-fill: #483C32; -fx-font-size: 15");
+                rightNumberCell.styleProperty().bind(Bindings.concat(
+                        "-fx-text-fill: #483C32; ",
+                        "-fx-font-weight: bold; ",
+                        "-fx-font-size: ", board.heightProperty().multiply(sizeBinding).asString()
+                ));
+                rightNumberCell.setPadding(new Insets(0, padding, 0, 0));
                 GridPane.setHalignment(rightNumberCell, HPos.RIGHT);
                 GridPane.setValignment(rightNumberCell, VPos.TOP);
                 rightNumberCell.translateYProperty().bind(rightNumberCell.heightProperty().divide(2).multiply(-1));
@@ -569,6 +566,8 @@ public class boardMaskController {
                 board.add(rightNumberCell, BOARD_SIZE, i);
             }
 
+
+
             //left color
             if (i != 0 && i != BOARD_SIZE) {
                 Pane leftNumberCell = new Pane();
@@ -576,15 +575,19 @@ public class boardMaskController {
                 board.add(leftNumberCell, 0, i);
             }
 
+            //bottom labelling
             if (i < BOARD_SIZE) {
                 Label letter = new Label();
                 letter.setText(String.valueOf(ALPHABET[i]));
                 letter.setCenterShape(true);
-                letter.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 13));
-                letter.setStyle("-fx-text-fill: #C4A484");
+                letter.styleProperty().bind(Bindings.concat(
+                        "-fx-text-fill: #483C32; ",
+                        "-fx-font-weight: bold; ",
+                        "-fx-font-size: ", board.heightProperty().multiply(sizeBinding).asString()
+                ));
+                letter.setPadding(new Insets(0, 0, padding - 3, 0));
                 GridPane.setHalignment(letter, HPos.RIGHT);
                 GridPane.setValignment(letter, VPos.BOTTOM);
-                letter.setStyle("-fx-font-size: 15");
                 letter.translateXProperty().bind(bottomLetterCell.widthProperty().multiply(-0.8));
                 board.add(letter, i + 1, BOARD_SIZE);
             }
@@ -605,7 +608,7 @@ public class boardMaskController {
 
                 //make stones resizable and adjust X and Y properties
                 circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE).divide(4));
-                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.6).divide(BOARD_SIZE * 2.4).multiply(-1));
+                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(BOARD_SIZE * 2.4).multiply(-1));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE * 3.9).multiply(-1));
 
                 //initial start
@@ -615,7 +618,7 @@ public class boardMaskController {
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
                     lastColor = WHITE;
                 }
-                modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+                modeAndMoveDisplay.setFont(Font.font("System", FontWeight.BOLD, 15));
 
                 //color for hovering
                 final Color HOVER_BLACK = Color.valueOf("#00000070");
@@ -707,7 +710,7 @@ public class boardMaskController {
             circlesOfBoard[higherValue][midValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, higherValue - 1, midValue - 1);
         }
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+        modeAndMoveDisplay.setFont(Font.font("System", FontWeight.BOLD, 15));
     }
 
     private void drawNavigationArrows() {
@@ -719,10 +722,13 @@ public class boardMaskController {
     }
 
     private void drawPassButton() {
-        passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
-
-        passButton.setOnMouseEntered(e -> passButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
-        passButton.setOnMouseExited(e -> passButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
+        passButton.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", board.heightProperty().multiply(0.03).asString()
+        ));
+        passButton.setFocusTraversable(false);
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
@@ -751,9 +757,13 @@ public class boardMaskController {
     }
 
     private void drawResignButton() {
-        resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.08));
-        resignButton.setOnMouseEntered(e -> resignButton.setStyle("-fx-background-color: #C4A484; -fx-border-color: #483C32"));
-        resignButton.setOnMouseExited(e -> resignButton.setStyle("-fx-background-color: transparent; -fx-border-color: #483C32"));
+        resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
+        resignButton.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", board.heightProperty().multiply(0.03).asString()
+        ));
+        resignButton.setFocusTraversable(false);
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
@@ -796,6 +806,7 @@ public class boardMaskController {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime1) - TimeUnit.MINUTES.toSeconds(minutes);
 
         timerBlack.setText(String.format("%02d:%02d", minutes, seconds));
+        timerBlack.setPadding(new Insets(0, 0, 4, 0));
     }
 
     private void updateTimer2() {
@@ -808,6 +819,7 @@ public class boardMaskController {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime2) - TimeUnit.MINUTES.toSeconds(minutes);
 
         timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
+        timerWhite.setPadding(new Insets(0, 0, 4, 0));
     }
 
     private int passedSlotSeconds1() {
@@ -868,7 +880,7 @@ public class boardMaskController {
      */
 
     public void setStone(Circle c) {
-        modeAndMoveDisplay.setFont(Font.font("Baskerville Old Face", FontWeight.BOLD, 15));
+        modeAndMoveDisplay.setFont(Font.font("System", FontWeight.BOLD, 15));
         int row;
         int col;
         for (Node n : board.getChildren()) {
@@ -991,11 +1003,10 @@ public class boardMaskController {
             Stage stage = (Stage) source.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setMinWidth(600);
-            stage.setMinHeight(500);
+            stage.setMinHeight(300);
+            stage.setMinWidth(550);
+            stage.centerOnScreen();
             stage.show();
-
-
         }
     }
 
