@@ -205,7 +205,7 @@ public class boardMaskController {
             setSampleSolutionDisplay(m.text());
             terminalInfo("Stone (" + currentColor + ") placed at: " + m.row() + ALPHABET[col]);
             circlesOfBoard[col+1][m.row()+1].setFill(currentColor);
-            boardLogicControl.setStoneToList(currentColor, m.row(), col);
+            //boardLogicControl.setStoneToList(currentColor, m.row(), col);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), m.row(), col, currentColor));
             currentColor = (currentColor == BLACK ? WHITE : BLACK);
         }
@@ -906,7 +906,7 @@ public class boardMaskController {
                 terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col-1]);
                 System.out.println("attaching stone to row " + row + ", col " + col);
                 c.setFill(lastColor);
-                boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
+                //boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
                 game.executeCommand(new PlaceStoneCommand(game.getBoard(), row - 1, col - 1, lastColor));
 
                 /*Circle[][] logEntry = copyMatrix(circlesOfBoard);

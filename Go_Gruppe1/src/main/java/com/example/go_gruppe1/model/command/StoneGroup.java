@@ -42,7 +42,7 @@ public class StoneGroup {
     protected void removeFreeField(Position pos){
         freeFields.remove(pos);
         if(freeFields.isEmpty()) {
-            boardLogicControl.addToDelete(this);
+            //boardLogicControl.addToDelete(this);
             board.addToDelete(this);
         }
     }

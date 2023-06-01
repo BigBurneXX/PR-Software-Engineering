@@ -89,8 +89,9 @@ public class Board {
             }
         //prints the logic representation of the board
         for(int i = 0; i < size; i++) {
+            System.out.print(indexToNum(i+1) + "\t");
             for (int j = 0; j < size; j++)
-                System.out.print(stoneMapping[i][j] == null ? "null" : stoneMapping[i][j].getColour());
+                System.out.print(stoneMapping[i][j] == null ? "empty\t" : (stoneMapping[i][j].getColour() == Color.BLACK ? "BLACK\t" : "WHITE\t"));
             System.out.println();
         }
 
@@ -99,10 +100,10 @@ public class Board {
         for(StoneGroup s: stoneList){
             System.out.println(s.getColour() + ", " +  s.getFreeFields().size());
             for(Position p: s.getPosition())
-                System.out.print(" " + (p.row()+1) + ALPHABET[p.col()]);
+                System.out.print(" " + (indexToNum(p.row()+1)) + ALPHABET[p.col()]);
             System.out.println();
             for(Position p: s.getFreeFields())
-                System.out.print(" " + (p.row()+1) + ALPHABET[p.col()]);
+                System.out.print(" " + (indexToNum(p.row()+1)) + ALPHABET[p.col()]);
             System.out.println();
         }
     }
@@ -174,28 +175,34 @@ public class Board {
             int row = p.row();
             int col = p.col();
             StoneGroup neighbour;
+            Position nowFree = new Position(row, col);
 
             // Upper neighbour
             neighbour = searchForStone(row - 1, col);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(nowFree);
 
             // Right neighbour
             neighbour = searchForStone(row, col + 1);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(nowFree);
 
             // Lower neighbour
             neighbour = searchForStone(row + 1, col);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(nowFree);
 
             // Left neighbour
             neighbour = searchForStone(row, col - 1);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(nowFree);
+            stoneMapping[row][col] = null;
         }
         stoneList.remove(toDelete);
         controller.deleteStoneGroup(toDelete);
+    }
+
+    private int indexToNum(int row){
+        return (size+1) - row;
     }
 }
