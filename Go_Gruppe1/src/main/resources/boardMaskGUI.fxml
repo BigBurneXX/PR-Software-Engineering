@@ -18,7 +18,7 @@
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="boardPane" prefHeight="600.0" prefWidth="630.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.boardMaskController">
+<BorderPane fx:id="boardPane" prefHeight="600.0" prefWidth="630.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.controller.boardMaskController">
    <center>
       <StackPane fx:id="circlePane" BorderPane.alignment="CENTER">
          <GridPane fx:id="board">
@@ -166,8 +166,8 @@
    </top>
    <bottom>
       <VBox fx:id="bottomRegion" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-         <Label fx:id="modeAndMoveDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" textAlignment="CENTER" />
-         <Label fx:id="sampleSolutionDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: #F5F5DC;" />
+         <Label fx:id="modeAndMoveDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" textAlignment="CENTER" />
+         <Label fx:id="sampleSolutionDisplay" alignment="CENTER" contentDisplay="CENTER" prefHeight="100.0" prefWidth="600.0" />
       </VBox>
    </bottom>
    <left>

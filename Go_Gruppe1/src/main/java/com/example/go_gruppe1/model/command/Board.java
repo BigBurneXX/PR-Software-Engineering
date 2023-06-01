@@ -1,26 +1,48 @@
-package com.example.go_gruppe1;
+package com.example.go_gruppe1.model.command;
 
+import com.example.go_gruppe1.controller.boardMaskController;
 import javafx.scene.paint.Color;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public class BoardLogicControl {
+public class Board {
+    //private Color[][] stones;
+    private final int size;
     private final char[] ALPHABET = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
     private final List<StoneGroup> stoneList = new ArrayList<>();
-    private final int size;
-    private final boardMaskController controller;
-
     private boolean isSuicide = false;
-
     private final Set<StoneGroup> toDelete = new HashSet<>();
     private boolean isPartOfGroup;
+    private final StoneGroup[][] stoneMapping;
+    private final boardMaskController controller;
 
-    protected BoardLogicControl(boardMaskController controller, int boardSize) {
+    public Board(boardMaskController controller, int boardSize) {
         this.controller = controller;
         size = boardSize;
+        //this.stones = new Color[size][size];
+        stoneMapping = new StoneGroup[size][size];
+        // Initialize the board with empty stones
+        //for (int i = 0; i < size; i++)
+        //    for (int j = 0; j < size; j++)
+        //        stones[i][j] = Color.TRANSPARENT;
     }
 
-    protected void setStoneToList(Color colour, int row, int col){
+    /*
+    public Board(boardMaskController controller, int boardSize, StoneGroup[][] stoneMapping){
+        this.controller = controller;
+        size = boardSize;
+        this.stoneMapping = stoneMapping;
+    }*/
+
+    public void placeStone(int row, int col, Color colour) {
+        //stones[row][col] = colour;
+        //add to stoneMapping
+        //check liberties
+        //send feedback
+        // Additional game logic for capturing opponent stones, etc.
         StoneGroup toAdd = new StoneGroup(this, colour, row, col);
         Position toAddPosition = new Position(row, col);
         StoneGroup neighbour;
@@ -61,9 +83,19 @@ public class BoardLogicControl {
             if(toAdd.getFreeFields().isEmpty()) {
                 System.out.println("THIS IS SUICIDE");
                 deleteStone(toAdd);
-            }else if(!isSuicide)
+            }else if(!isSuicide) {
                 stoneList.add(toAdd);
+                stoneMapping[row][col] = toAdd;
+            }
+        //prints the logic representation of the board
+        for(int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++)
+                System.out.print(stoneMapping[i][j] == null ? "null" : stoneMapping[i][j].getColour());
+            System.out.println();
+        }
+
         //prints all position per stone group and their free field position
+        System.out.println("all stone groups");
         for(StoneGroup s: stoneList){
             System.out.println(s.getColour() + ", " +  s.getFreeFields().size());
             for(Position p: s.getPosition())
@@ -75,36 +107,33 @@ public class BoardLogicControl {
         }
     }
 
+    public void removeStone(int x, int y) {
+        //stones[x][y] = Color.TRANSPARENT;
+        // Additional game logic for restoring captured stones, etc.
+    }
+
     private StoneGroup searchForStone(int row, int col){
-        for (StoneGroup s: stoneList) {
+        return stoneMapping[row][col];
+        /*for (StoneGroup s: stoneList) {
             for (Position p: s.getPosition())
                 if (p.row() == row && p.col() == col)
                     return s;
         }
-        return null;
-    }
-
-    private StoneGroup searchForStone(Position toFind){
-        for (StoneGroup s: stoneList) {
-            for (Position p: s.getPosition())
-                if (p.equals(toFind))
-                    return s;
-        }
-        return null;
+        return null;*/
     }
 
     private void checkNeighbour(StoneGroup toAdd, Position toAddPosition, StoneGroup neighbour, Position neighbourPosition){
         if(neighbour == null){
             if(isPartOfGroup){
-                StoneGroup libertyToAdd = searchForStone(toAddPosition);
+                StoneGroup libertyToAdd = searchForStone(toAddPosition.row(), toAddPosition.col());
                 libertyToAdd.addFreeField(neighbourPosition);
             } else {
                 toAdd.addFreeField(neighbourPosition);
             }
-        //if neighbour has the same colour the current stone should be added to the neighbours group
+            //if neighbour has the same colour the current stone should be added to the neighbours group
         }else if(neighbour.getColour() == toAdd.getColour()) {
             if(isPartOfGroup) {
-                StoneGroup listToCombine = searchForStone(toAddPosition);
+                StoneGroup listToCombine = stoneMapping[toAddPosition.row()][toAddPosition.col()];
                 neighbour.addPositions(listToCombine.getPosition());
                 neighbour.addFreeFields(listToCombine.getFreeFields());
                 stoneList.remove(listToCombine);
@@ -113,12 +142,13 @@ public class BoardLogicControl {
                 neighbour.addFreeFields(toAdd.getFreeFields());
                 isPartOfGroup = true;
             }
+            stoneMapping[toAddPosition.row()][toAddPosition.col()] = neighbour;
             neighbour.removeFreeField(toAddPosition);
-            if(searchForStone(toAddPosition) == null) {
+            if(searchForStone(toAddPosition.row(), toAddPosition.col()) == null) {
                 isSuicide = true;
                 System.out.println("This is suicide!!");
             }
-        //if neighbour has the opposite colour to the current stone a liberty should be taken
+            //if neighbour has the opposite colour to the current stone a liberty should be taken
         } else {
             neighbour.removeFreeField(toAddPosition);
         }

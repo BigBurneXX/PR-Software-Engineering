@@ -1,5 +1,8 @@
-package com.example.go_gruppe1;
+package com.example.go_gruppe1.controller;
 
+import com.example.go_gruppe1.model.FileControl;
+import com.example.go_gruppe1.model.Move;
+import com.example.go_gruppe1.model.command.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -13,7 +16,10 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -107,6 +113,7 @@ public class boardMaskController {
       ----------------------------------------------------------------------------------------------------------------
      */
     private BoardLogicControl boardLogicControl;
+    private Game game;
     private final FileControl fileControl = new FileControl();
 
     /*
@@ -142,9 +149,6 @@ public class boardMaskController {
     private final List<Circle[][]> changeLog = new ArrayList<>();
     private int changeLogCounter = -1;
     private long blackTotal = 0, whiteTotal = 0;
-
-
-
 
     /*
       ================================================================================================================
@@ -191,7 +195,7 @@ public class boardMaskController {
             fileControl.loadFile(selectedFile);
         }
     }
-    protected void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize, List<Move> moves) throws IOException{
+    public void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize, List<Move> moves) throws IOException{
         System.out.println(player1Name + player2Name + komi + handicaps + boardSize);
         initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize);
         Color currentColor = BLACK;
@@ -202,6 +206,7 @@ public class boardMaskController {
             terminalInfo("Stone (" + currentColor + ") placed at: " + m.row() + ALPHABET[col]);
             circlesOfBoard[col+1][m.row()+1].setFill(currentColor);
             boardLogicControl.setStoneToList(currentColor, m.row(), col);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), m.row(), col, currentColor));
             currentColor = (currentColor == BLACK ? WHITE : BLACK);
         }
         lastColor = currentColor;
@@ -340,6 +345,7 @@ public class boardMaskController {
         BOARD_SIZE = boardSize;
         terminalInfo("starting a new game\nboard size set to: " + boardSize);
         boardLogicControl = new BoardLogicControl(this, boardSize);
+        game = new Game(this, boardSize);
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
@@ -670,45 +676,54 @@ public class boardMaskController {
         if (HANDICAPS >= 1) {
             circlesOfBoard[lowerValue][higherValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, lowerValue - 1, higherValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, higherValue - 1, BLACK));
         }
         if (HANDICAPS >= 2) {
             circlesOfBoard[higherValue][lowerValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, higherValue - 1, lowerValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, lowerValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 3) {
             circlesOfBoard[higherValue][higherValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, higherValue - 1, higherValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, higherValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 4) {
             circlesOfBoard[lowerValue][lowerValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, lowerValue - 1, lowerValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, lowerValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 5) {
             circlesOfBoard[midValue][midValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, midValue - 1, midValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, midValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 6) {
             circlesOfBoard[midValue][lowerValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, midValue - 1, lowerValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, lowerValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 7) {
             circlesOfBoard[midValue][higherValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, midValue - 1, higherValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, higherValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 8) {
             circlesOfBoard[lowerValue][midValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, lowerValue - 1, midValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, midValue - 1, BLACK));
         }
 
         if (HANDICAPS == 9) {
             circlesOfBoard[higherValue][midValue].setFill(BLACK);
             boardLogicControl.setStoneToList(BLACK, higherValue - 1, midValue - 1);
+            game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, midValue - 1, BLACK));
         }
         modeAndMoveDisplay.setFont(Font.font("System", FontWeight.BOLD, 15));
     }
@@ -892,6 +907,7 @@ public class boardMaskController {
                 System.out.println("attaching stone to row " + row + ", col " + col);
                 c.setFill(lastColor);
                 boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
+                game.executeCommand(new PlaceStoneCommand(game.getBoard(), row - 1, col - 1, lastColor));
 
                 /*Circle[][] logEntry = copyMatrix(circlesOfBoard);
                 changeLog.add(logEntry);
@@ -922,7 +938,7 @@ public class boardMaskController {
         }
     }
 
-    protected void deleteStoneGroup(StoneGroup toDelete) {
+    public void deleteStoneGroup(StoneGroup toDelete) {
         if (toDelete.getColour() == WHITE) {
             blackTrappedStones += toDelete.getPosition().size();
             displayTrappedStone(blackTrappedStones, blackTrapped);

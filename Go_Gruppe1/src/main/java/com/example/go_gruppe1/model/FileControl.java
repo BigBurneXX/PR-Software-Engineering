@@ -1,5 +1,6 @@
-package com.example.go_gruppe1;
+package com.example.go_gruppe1.model;
 
+import com.example.go_gruppe1.controller.boardMaskController;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
@@ -29,8 +30,8 @@ public class FileControl {
     private int moveCounter = 0;
     private int fileNameCounter = 0;
 
-    protected void createFile(boardMaskController controller, String oldFileName, String player1Name, String player2Name,
-                              int boardSize, double komi, int handicaps, int byoyomiNumberOfTimes, int byoyomiTimeLimit){
+    public void createFile(boardMaskController controller, String oldFileName, String player1Name, String player2Name,
+                           int boardSize, double komi, int handicaps, int byoyomiNumberOfTimes, int byoyomiTimeLimit){
         this.controller = controller;
         try{
             String newFileName = oldFileName.endsWith(".json") ?
@@ -76,7 +77,7 @@ public class FileControl {
         }
     }
 
-    protected void writeMoves(int row, char col, String text){
+    public void writeMoves(int row, char col, String text){
         movesLog.add(new Move(row, col, text));
         updateMovesLog(row, col, text);
     }
@@ -112,12 +113,12 @@ public class FileControl {
         }
     }
 
-    protected void writeAction(String data){
+    public void writeAction(String data){
         /* implementation of pass and resign? */
         /* resign maybe with boolean value? */
     }
 
-    protected void loadFile(File newFile){
+    public void loadFile(File newFile){
         try(BufferedReader reader = Files.newBufferedReader(Paths.get(newFile.getAbsolutePath()))) {
             JSONObject jsonObject = (JSONObject) parser.parse(reader);
             JSONArray jsonArray = (JSONArray) jsonObject.get("moves");
@@ -137,7 +138,7 @@ public class FileControl {
         }
     }
 
-    protected void saveFile(){
+    public void saveFile(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save to location");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));

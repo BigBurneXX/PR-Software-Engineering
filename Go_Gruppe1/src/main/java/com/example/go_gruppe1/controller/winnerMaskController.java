@@ -1,4 +1,4 @@
-package com.example.go_gruppe1;
+package com.example.go_gruppe1.controller;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

@@ -1,8 +1,8 @@
 package com.example.go_gruppe1;
 
+import com.example.go_gruppe1.controller.inputMaskController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

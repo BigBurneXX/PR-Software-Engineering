@@ -1,4 +1,4 @@
-package com.example.go_gruppe1;
+package com.example.go_gruppe1.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -37,7 +37,7 @@ public class inputMaskController {
     @FXML
     private Button start, load;
 
-    protected void initiateDisplay() {
+    public void initiateDisplay() {
         initiateSpinner();
         initiateLabels();
         initiateButtons();

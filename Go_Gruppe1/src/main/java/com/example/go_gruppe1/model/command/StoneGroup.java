@@ -1,4 +1,4 @@
-package com.example.go_gruppe1;
+package com.example.go_gruppe1.model.command;
 
 import javafx.scene.paint.Color;
 
@@ -9,10 +9,17 @@ public class StoneGroup {
     private final Color colour;
     private final Set<Position> positions = new HashSet<>();
     private final Set<Position> freeFields = new HashSet<>();
-    private final BoardLogicControl boardLogicControl;
+    private BoardLogicControl boardLogicControl;
+    private Board board;
 
     protected StoneGroup(BoardLogicControl boardLogicControl, Color colour, int row, int col){
         this.boardLogicControl = boardLogicControl;
+        this.colour = colour;
+        positions.add(new Position(row, col));
+    }
+
+    protected StoneGroup(Board board, Color colour, int row, int col){
+        this.board = board;
         this.colour = colour;
         positions.add(new Position(row, col));
     }
@@ -34,18 +41,21 @@ public class StoneGroup {
 
     protected void removeFreeField(Position pos){
         freeFields.remove(pos);
-        if(freeFields.isEmpty())
+        if(freeFields.isEmpty()) {
             boardLogicControl.addToDelete(this);
+            board.addToDelete(this);
+        }
     }
+
     protected void addFreeFields(Set<Position> toAdd){
         freeFields.addAll(toAdd);
     }
 
-    protected Color getColour() {
+    public Color getColour() {
         return colour;
     }
 
-    protected Set<Position> getPosition() {
+    public Set<Position> getPosition() {
         return positions;
     }
 
