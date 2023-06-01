@@ -31,10 +31,6 @@ public class StoneGroup {
         positions.add(p);
     }
 
-    protected void addFreeField(int row, int col){
-        freeFields.add(new Position(row, col));
-    }
-
     protected void addFreeField(Position pos){
         freeFields.add(pos);
     }

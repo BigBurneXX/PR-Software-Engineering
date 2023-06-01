@@ -146,26 +146,27 @@ public class BoardLogicControl {
             int row = p.row();
             int col = p.col();
             StoneGroup neighbour;
+            Position newLiberty = new Position(row, col);
 
             // Upper neighbour
             neighbour = searchForStone(row - 1, col);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(newLiberty);
 
             // Right neighbour
             neighbour = searchForStone(row, col + 1);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(newLiberty);
 
             // Lower neighbour
             neighbour = searchForStone(row + 1, col);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(newLiberty);
 
             // Left neighbour
             neighbour = searchForStone(row, col - 1);
             if (neighbour != null && neighbour.getColour() != toDelete.getColour())
-                neighbour.addFreeField(row, col);
+                neighbour.addFreeField(newLiberty);
         }
         stoneList.remove(toDelete);
         controller.deleteStoneGroup(toDelete);

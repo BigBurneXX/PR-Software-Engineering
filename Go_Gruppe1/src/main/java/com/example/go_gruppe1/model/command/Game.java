@@ -5,9 +5,9 @@ import com.example.go_gruppe1.controller.boardMaskController;
 import java.util.Stack;
 
 public class Game {
-    private Board board;
-    private Stack<Command> undoStack;
-    private Stack<Command> redoStack;
+    private final Board board;
+    private final Stack<Command> undoStack;
+    private final Stack<Command> redoStack;
 
     public Game(boardMaskController controller, int boardSize) {
         this.board = new Board(controller, boardSize);

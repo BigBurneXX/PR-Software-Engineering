@@ -4,21 +4,22 @@ import javafx.scene.paint.Color;
 
 public class RemoveStoneCommand implements Command {
     private final Board board;
-    private final int x;
-    private int y;
+    private final int row;
+    private final int col;
 
-    public RemoveStoneCommand(Board board, int x, int y) {
+    public RemoveStoneCommand(Board board, int row, int col) {
         this.board = board;
-        this.x = x;
-        this.y = y;
+        this.row = row;
+        this.col = col;
     }
 
     public void execute() {
-        board.removeStone(x, y);
+        board.removeStone(row, col);
     }
 
+    //should definitely be the color of the stone to be placed
     public void undo() {
-        board.placeStone(x, y, Color.TRANSPARENT);
+        board.placeStone(row, col, Color.TRANSPARENT);
     }
 }
 

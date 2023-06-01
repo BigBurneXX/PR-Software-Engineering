@@ -32,8 +32,6 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -146,8 +144,6 @@ public class boardMaskController {
     private Color lastColor = BLACK;
     private int blackTrappedStones = 0;
     private int whiteTrappedStones = 0;
-    private final List<Circle[][]> changeLog = new ArrayList<>();
-    private int changeLogCounter = -1;
     private long blackTotal = 0, whiteTotal = 0;
 
     /*
@@ -246,45 +242,7 @@ public class boardMaskController {
         rightArrow.setVisible(true);
         //TODO logic for arrow clicks
         rightArrow.setOnMouseClicked(e -> System.out.println("something at last"));
-        leftArrow.setOnMouseClicked(e -> {
-            printSomething();
-            //copying somehow doesn't work yet
-            /*
-            int index = changeLogCounter - 1;
-            if(!changeLog.isEmpty() && !(index < 0)) {
-                Circle[][] boardToBe = changeLog.get(index);
-                System.out.println("white: " + WHITE + "\nblack: " + BLACK);
-                for(int i = 1; i < boardToBe.length; i++){
-                    System.out.print("i(" + i + ")");
-                    for(int j = 1; j < boardToBe[i].length; j++){
-                        circlesOfBoard[i][j].setFill(TRANSPARENT);
-                        System.out.print(", j(" + j + ")" + circlesOfBoard[i][j].getFill() + "\t");
-                    }
-                    System.out.println();
-                }
-                System.out.println("\nshould be:\n");
-                printSomething();
-
-                        /*
-                        if(boardToBe[k][j] != null) {
-                            /*if(circlesOfBoard[k][j] != null){
-                                circlesOfBoard[k][j].setFill(TRANSPARENT);
-                                System.out.println("GOT YOU");
-                            }
-                            circlesOfBoard[k][j].setFill(boardToBe[k][j].getFill());
-                            System.out.println("1Colored circle " + boardToBe[k][j].getFill() + " at row " + k + ", col " + j);
-                            System.out.println("should be colored: " + k + ", " + j + " with color " + circlesOfBoard[k][j].getFill());
-                        }else if(circlesOfBoard[k][j] != null) {
-                            circlesOfBoard[k][j].setFill(TRANSPARENT);
-                            circlesOfBoard = null;
-                            System.out.println("2Colored circle " + boardToBe[k][j].getFill() + " at row " + k + ", col " + j);
-                        }
-            */
-                changeLogCounter--;
-            //}
-            //System.out.println("empty?" + changeLog.isEmpty() + "\n index < 0? " + index);
-            System.out.println("well something is not working!");
-        });
+        leftArrow.setOnMouseClicked(e -> System.out.println("well something is not working!"));
 
         passButton.setVisible(false);
         resignButton.setVisible(false);
@@ -292,19 +250,7 @@ public class boardMaskController {
         modeAndMoveDisplay.setFont(Font.font("System", FontWeight.BOLD, board.getHeight() * 0.10));
         modeAndMoveDisplay.prefHeightProperty().bind(bottomRegion.heightProperty().multiply(0.25));
     }
-    private void printSomething(){
-        System.out.println("full test");
-        for(int i = changeLogCounter; i >= 0; i--) {
-            Circle[][] test3 = changeLog.get(changeLogCounter);
-            System.out.println("test" + i + "\nwhite: " + WHITE + "\nblack: " + BLACK);
-            for (int k = 1; k < test3.length; k++) {
-                System.out.print("k: " + k);
-                for (int j = 1; j < test3[k].length; j++)
-                    System.out.print(", j: " + j + "(" + (test3[k][j] != null ? test3[k][j].getFill() : TRANSPARENT + "Transparent") + ")");
-                System.out.println();
-            }
-        }
-    }
+
     /*
       ================================================================================================================
 
@@ -909,10 +855,6 @@ public class boardMaskController {
                 //boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
                 game.executeCommand(new PlaceStoneCommand(game.getBoard(), row - 1, col - 1, lastColor));
 
-                /*Circle[][] logEntry = copyMatrix(circlesOfBoard);
-                changeLog.add(logEntry);
-                changeLogCounter++;*/
-                printSomething();
                 if (lastColor == WHITE) {
                     lastColor = BLACK;
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
@@ -951,15 +893,12 @@ public class boardMaskController {
         for (Position p : toDelete.getPosition()) {
             Circle c = circlesOfBoard[p.col()+1][p.row()+1];
             if(c.getFill() == TRANSPARENT)
-                terminalInfo("Error: no stone found at " + (p.row()+1) + ALPHABET[p.col()]);
+                terminalInfo("Error: no stone found at " + (indexToNum(p.row()+1)) + ALPHABET[p.col()]);
             else {
                 c.setFill(TRANSPARENT);
-                terminalInfo("Stone deleted: " + (p.row() + 1) + ALPHABET[p.col()]);
+                terminalInfo("Stone deleted: " + (indexToNum(p.row()+1)) + ALPHABET[p.col()]);
             }
         }
-        /*Circle[][] logEntry = copyMatrix(circlesOfBoard);
-        changeLog.add(logEntry);
-        changeLogCounter++;*/
     }
 
     public static int calculateScore(char playerColor, char[][] board) {
@@ -969,22 +908,6 @@ public class boardMaskController {
                 if (aChar == playerColor)
                     score++;
         return score;
-    }
-
-    public static void endGame(char[][] board) {
-        int blackScore = calculateScore('B', board);
-        int whiteScore = calculateScore('W', board);
-
-        System.out.println("Black score: " + blackScore);
-        System.out.println("White score: " + whiteScore);
-
-        if (blackScore > whiteScore) {
-            System.out.println("Black won the game!");
-        } else if (blackScore < whiteScore) {
-            System.out.println("White won the game!");
-        } else {
-            System.out.println("The game is a draw!");
-        }
     }
 
     private void switchToWinnerMask(int player, int reasonForWinning) throws IOException {
@@ -1038,19 +961,7 @@ public class boardMaskController {
         System.out.println(data);
     }
 
-    private Circle[][] copyMatrix(Circle[][] array) {
-        return Arrays.stream(array)
-                .map(this::copyArray)
-                .toArray(Circle[][]::new);
-    }
-
-    private Circle[] copyArray(Circle[] array){
-        return Arrays.stream(array)
-                .map(this::copyCircle)
-                .toArray(Circle[]::new);
-    }
-
-    private Circle copyCircle(Circle circle) {
-        return (circle == null ? null : new Circle(circle.getCenterX(), circle.getCenterY(), circle.getRadius()));
+    private int indexToNum(int row){
+        return (BOARD_SIZE+1) - row;
     }
 }
