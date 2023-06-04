@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
 public class winnerMaskController {
 
     @FXML
-    private BorderPane pane;
+    private GridPane pane;
 
     @FXML
     private Label name, totalPoints, trapped, extraPoints, extraPointsValue, byoyomi, byoyomiLabel;
@@ -92,7 +93,7 @@ public class winnerMaskController {
     protected void setSize(double width, double height) {
         pane.setPrefHeight(height);
         pane.setPrefWidth(width);
-        pane.setMinSize(600, 580);
+        pane.setMinSize(400, 300);
     }
 
     protected double getWidth() {

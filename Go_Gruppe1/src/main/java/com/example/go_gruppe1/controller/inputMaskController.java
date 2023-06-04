@@ -20,13 +20,16 @@ public class inputMaskController {
     private GridPane inputPane;
 
     @FXML
-    private RadioButton size9, size13;
+    private RadioButton size9, size13, size19;
 
     @FXML
-    private TextField player1, player2, handicaps, byoyomiNumber, byoyomiTime;
+    private TextField player1, player2;
 
     @FXML
     private Spinner<Double> komiSpinner;
+
+    @FXML
+    private Spinner<Integer> handicapSpinner, timePeriodSpinner, durationSpinner;
 
     @FXML
     private Label title;
@@ -52,13 +55,60 @@ public class inputMaskController {
     }
 
     protected void initiateSpinner() {
+        //komi
         komiSpinner.setEditable(false);
 
-        SpinnerValueFactory<Double> valueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 9.5, 0, 0.5);
-        komiSpinner.setValueFactory(valueFactory);
+        SpinnerValueFactory<Double> komiValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 9.5, 0, 0.5);
+        komiSpinner.setValueFactory(komiValueFactory);
         komiSpinner.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
         ));
+
+        //handicaps
+        handicapSpinner.setEditable(false);
+
+        SpinnerValueFactory<Integer> handicapValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5, 0, 1);
+        handicapSpinner.setValueFactory(handicapValueFactory);
+        handicapSpinner.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
+        ));
+
+        //more handicaps are allowed for 19x19
+        size19.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                ((SpinnerValueFactory.IntegerSpinnerValueFactory) handicapValueFactory).setMax(9);
+            } else {
+                ((SpinnerValueFactory.IntegerSpinnerValueFactory) handicapValueFactory).setMax(5);
+            }
+        });
+
+        //byoyomi
+        timePeriodSpinner.setEditable(true);
+
+        SpinnerValueFactory<Integer> timePeriodValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1);
+        timePeriodSpinner.setValueFactory(timePeriodValueFactory);
+        timePeriodSpinner.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
+        ));
+
+        durationSpinner.setEditable(true);
+
+        SpinnerValueFactory<Integer> durationValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1);
+        durationSpinner.setValueFactory(durationValueFactory);
+        durationSpinner.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
+        ));
+
+        timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue > 0) {
+                ((SpinnerValueFactory.IntegerSpinnerValueFactory) durationValueFactory).setMin(30);
+                durationValueFactory.setValue(30);
+            } else {
+                ((SpinnerValueFactory.IntegerSpinnerValueFactory) durationValueFactory).setMin(0);
+                durationValueFactory.setValue(0);
+            }
+        });
+
     }
 
     protected void initiateLabels() {
@@ -115,8 +165,8 @@ public class inputMaskController {
         boardMaskController boardMask = loader.getController();
         boardMask.setSize(inputPane.getWidth(), inputPane.getHeight());
 
-        boardMask.initiateDisplay(player1.getText(), player2.getText(), komiSpinner.getValue().toString(), handicaps.getText(), getBoardSize());
-        boardMask.initiateTimeRules(byoyomiNumber.getText(), byoyomiTime.getText());
+        boardMask.initiateDisplay(player1.getText(), player2.getText(), komiSpinner.getValue().toString(), handicapSpinner.getValue().toString(), getBoardSize());
+        boardMask.initiateTimeRules(timePeriodSpinner.getValue().toString(), durationSpinner.getValue().toString());
         if(wantToLoad)
             boardMask.onOpenFileClick();
 
@@ -131,13 +181,10 @@ public class inputMaskController {
 
     public int getBoardSize() {
         if (size9.isSelected()) {
-            handicaps.setPromptText("0 - 5");
             return 9;
         } else if (size13.isSelected()) {
-            handicaps.setPromptText("0 - 5");
             return 13;
         } else {
-            handicaps.setPromptText("0 - 9");
             return 19;
         }
     }
