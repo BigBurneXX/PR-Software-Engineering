@@ -132,7 +132,7 @@
          <Insets right="40.0" />
       </GridPane.margin>
    </Text>
-   <Text fx:id="durationText" layoutX="227.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Duration:" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+   <Text fx:id="durationText" layoutX="227.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seconds:" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
       <font>
          <Font name="System" size="15.0" />
       </font>
