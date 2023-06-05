@@ -946,13 +946,65 @@ public class boardMaskController {
         }
     }
 
-    public static int calculateScore(char playerColor, char[][] board) {
+    private int calculateScore(char playerColor, char enemyColor, char[][] board) {
         int score = 0;
-        for (char[] chars : board)
-            for (char aChar : chars)
-                if (aChar == playerColor)
+        int territory = 0;
+        int captured = 0;
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                // Check if the point is a player's stone
+                if (board[i][j] == playerColor) {
                     score++;
-        return score;
+                }
+                // Check if the point is part of player's territory
+                else if (board[i][j] == ' ' && isTerritory(i, j, playerColor, board)) {
+                    territory++;
+                }
+                // Check if the point is a captured enemy's stone
+                else if (board[i][j] == enemyColor && isCaptured(i, j, board)) {
+                    captured++;
+                }
+            }
+        }
+
+        return score + territory + captured;
+    }
+
+    private boolean isTerritory(int i, int j, char playerColor, char[][] board) {
+        return checkSurrounding(i, j, playerColor, board, new boolean[board.length][board[0].length]);
+    }
+
+    private boolean isCaptured(int i, int j, char[][] board) {
+        return checkSurrounding(i, j, board[i][j], board, new boolean[board.length][board[0].length]);
+    }
+
+    private boolean checkSurrounding(int i, int j, char color, char[][] board, boolean[][] visited) {
+        if (i < 0 || j < 0 || i >= board.length || j >= board[0].length) {
+            return false;
+        }
+
+        if (visited[i][j]) {
+            return true;
+        }
+
+        visited[i][j] = true;
+
+        if (board[i][j] == ' ') {
+            return true;
+        }
+
+        if (board[i][j] != color) {
+            return false;
+        }
+
+        boolean result = true;
+        result &= checkSurrounding(i - 1, j, color, board, visited);
+        result &= checkSurrounding(i + 1, j, color, board, visited);
+        result &= checkSurrounding(i, j - 1, color, board, visited);
+        result &= checkSurrounding(i, j + 1, color, board, visited);
+
+        return result;
     }
 
     private void switchToWinnerMask(int player, int reasonForWinning) throws IOException {
