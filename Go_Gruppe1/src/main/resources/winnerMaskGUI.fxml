@@ -9,90 +9,70 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<GridPane fx:id="pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.controller.winnerMaskController">
+<GridPane fx:id="pane" alignment="CENTER" maxHeight="250.0" maxWidth="400.0" minHeight="250.0" minWidth="400.0" prefHeight="250.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.controller.winnerMaskController">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     </columnConstraints>
     <rowConstraints>
       <RowConstraints maxHeight="42.4" minHeight="10.0" prefHeight="39.19998779296875" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="42.4" minHeight="10.0" prefHeight="39.19998779296875" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="60.4" minHeight="10.0" prefHeight="57.59998779296875" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="117.99997558593748" minHeight="10.0" prefHeight="56.800012207031244" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="47.99998779296875" minHeight="10.0" prefHeight="47.99998779296875" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="60.4" minHeight="10.0" prefHeight="54.39998779296876" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="117.99997558593748" minHeight="10.0" prefHeight="52.800012207031244" vgrow="SOMETIMES" />
         <RowConstraints maxHeight="87.79998779296875" minHeight="10.0" prefHeight="46.400006103515636" vgrow="SOMETIMES" />
       <RowConstraints maxHeight="87.79998779296875" minHeight="10.0" prefHeight="46.400006103515636" vgrow="SOMETIMES" />
     </rowConstraints>
    <children>
-      <Label text="Total Points:" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Label fx:id="totalPoints" text="Total Points: 0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <font>
             <Font size="17.0" />
          </font>
          <GridPane.margin>
-            <Insets left="50.0" />
+            <Insets />
          </GridPane.margin>
       </Label>
-      <Label text="Trapped:" GridPane.rowIndex="2">
+      <Label fx:id="trapped" text="Trapped: 0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
          <font>
             <Font size="14.0" />
          </font>
          <GridPane.margin>
-            <Insets left="50.0" />
+            <Insets />
          </GridPane.margin>
       </Label>
-      <Label fx:id="extraPoints" text="Komi/Handicap:" GridPane.rowIndex="3">
+      <Label fx:id="extraPointsValue" text="Komi/Handicaps:" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
          <font>
             <Font size="14.0" />
          </font>
          <GridPane.margin>
-            <Insets left="50.0" />
+            <Insets />
          </GridPane.margin>
       </Label>
-      <Label fx:id="byoyomiLabel" text="Byoyomi:" GridPane.rowIndex="4">
+      <Label fx:id="byoyomi" text="Byoyomi:" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
          <font>
             <Font size="14.0" />
          </font>
          <GridPane.margin>
-            <Insets left="50.0" />
+            <Insets />
          </GridPane.margin>
       </Label>
-      <Label fx:id="totalPoints" text="0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <font>
-            <Font size="17.0" />
-         </font>
-      </Label>
-      <Label fx:id="trapped" text="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-      <Label fx:id="extraPointsValue" text="0" GridPane.columnIndex="2" GridPane.rowIndex="3">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-      <Label fx:id="byoyomi" text="0" GridPane.columnIndex="2" GridPane.rowIndex="4">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-      <Label fx:id="name" text="Name" GridPane.columnIndex="1">
+      <Label fx:id="name" text="Name" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
          <font>
             <Font size="25.0" />
          </font>
          <padding>
             <Insets top="20.0" />
          </padding>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
       </Label>
-      <ButtonBar prefHeight="70.0" prefWidth="413.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+      <ButtonBar fx:id="buttonBar" buttonMinWidth="110.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
       <buttons>
           <Button fx:id="newGame" mnemonicParsing="false" onAction="#onNewGameClick" prefHeight="41.0" prefWidth="137.0" text="Start New Game" />
-            <Button fx:id="saveAs" mnemonicParsing="false" prefHeight="41.0" prefWidth="137.0" text="Save as..." />
+            <Button fx:id="saveAs" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="41.0" prefWidth="137.0" text="Save as..." />
             <Button fx:id="exit" minWidth="70.0" mnemonicParsing="false" onAction="#onExitGameClick" prefHeight="41.0" prefWidth="137.0" text="Exit" />
         </buttons>
          <GridPane.margin>
-            <Insets bottom="20.0" />
+            <Insets />
          </GridPane.margin>
       </ButtonBar>
    </children>
