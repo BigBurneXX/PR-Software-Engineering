@@ -1,10 +1,12 @@
 package com.example.go_gruppe1.controller;
 
+import com.example.go_gruppe1.model.FileControl;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -25,14 +27,18 @@ public class winnerMaskController {
 
     @FXML
     private Label name, totalPoints, trapped, extraPointsValue, byoyomi;
-
     @FXML
-    private ButtonBar buttonBar;
-
     private Button saveAs, newGame, exit;
 
     private int reasonForWinning = 0;
 
+    private final FileControl fileControl = new FileControl();
+
+    @FXML
+    public void onSaveFileAsClick() {
+        System.out.println("Saving file...");
+        fileControl.saveFile();
+    }
     protected void setReasonForWinning(int reason) {
         if (reason > 0 && reason <= 3) {
             reasonForWinning = reason;
@@ -47,10 +53,33 @@ public class winnerMaskController {
         setExtraPoints(komiOrHandicaps);
         setExtraPointsValue(komiOrHandicap);
         setByoyomi(byoyomi, boyoyomiNumber, time);
+        initiateButtons();
     }
 
-    private void initateButtons() {
+    private void initiateButtons() {
+        newGame.prefWidthProperty().bind(pane.heightProperty().multiply(0.2));
+        newGame.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", pane.heightProperty().multiply(0.02).asString()
+        ));
+        newGame.toFront();
 
+        saveAs.prefWidthProperty().bind(pane.heightProperty().multiply(0.2));
+        saveAs.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", pane.heightProperty().multiply(0.02).asString()
+        ));
+        saveAs.toFront();
+
+        exit.prefWidthProperty().bind(pane.heightProperty().multiply(0.2));
+        exit.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", pane.heightProperty().multiply(0.02).asString()
+        ));
+        exit.toFront();
     }
 
     private void setName(String winner, String other) {
@@ -74,14 +103,14 @@ public class winnerMaskController {
     private void setTotalPoints(long total) {
         totalPoints.setText("Total Points: " + total);
         totalPoints.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", pane.heightProperty().multiply(0.03).asString()
+                "-fx-font-size: ", pane.heightProperty().multiply(0.042).asString()
         ));
     }
 
     private void setTrapped(int trapped) {
         this.trapped.setText("Trapped: " + trapped);
         this.trapped.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", pane.heightProperty().multiply(0.025).asString()
+                "-fx-font-size: ", pane.heightProperty().multiply(0.035).asString()
         ));
     }
 
@@ -93,7 +122,7 @@ public class winnerMaskController {
         String komiOrHandicap = extraPointsValue.getText();
         extraPointsValue.setText(komiOrHandicap + komiOrHandicaps);
         extraPointsValue.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", pane.heightProperty().multiply(0.025).asString()
+                "-fx-font-size: ", pane.heightProperty().multiply(0.035).asString()
         ));
     }
 
@@ -106,7 +135,7 @@ public class winnerMaskController {
         }
 
         byoyomi.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", pane.heightProperty().multiply(0.025).asString()
+                "-fx-font-size: ", pane.heightProperty().multiply(0.035).asString()
         ));
     }
 
@@ -134,7 +163,7 @@ public class winnerMaskController {
     protected void setSize(double width, double height) {
         pane.setPrefHeight(height);
         pane.setPrefWidth(width);
-        pane.setMinSize(300, 300);
+        pane.setMinSize(600, 580);
     }
 
     protected double getWidth() {

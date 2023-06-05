@@ -71,28 +71,12 @@
                      <Font name="System" size="54.0" />
                   </font>
                </Label>
-               <Label fx:id="handicapsBoard" minHeight="-Infinity" minWidth="-Infinity" text="Handicaps" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                  <font>
-                     <Font name="System" size="14.0" />
-                  </font>
-                  <GridPane.margin>
-                     <Insets left="20.0" />
-                  </GridPane.margin>
-               </Label>
                <Label fx:id="pl1" minHeight="-Infinity" minWidth="-Infinity" text="Player 1 (Black)" textAlignment="RIGHT">
                   <font>
                      <Font name="System" size="20.0" />
                   </font>
                   <GridPane.margin>
                      <Insets left="20.0" />
-                  </GridPane.margin>
-               </Label>
-               <Label fx:id="komiBoard" minHeight="-Infinity" minWidth="-Infinity" text="Komi" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                  <font>
-                     <Font name="System" size="14.0" />
-                  </font>
-                  <GridPane.margin>
-                     <Insets right="20.0" />
                   </GridPane.margin>
                </Label>
                <Button fx:id="passButton" minWidth="90.0" mnemonicParsing="false" text="PASS" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
@@ -103,22 +87,28 @@
                   <font>
                      <Font name="System" size="13.0" />
                   </font></Button>
-               <Label fx:id="timerBlack" text="00:00" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+               <Label fx:id="timerBlack" text="00:00" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                   <font>
                      <Font name="System" size="15.0" />
                   </font>
                   <GridPane.margin>
                      <Insets left="20.0" />
                   </GridPane.margin></Label>
-               <Label fx:id="blackTimeLabel" text="Time Periods" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <Label fx:id="blackTimeLabel" text="Time Periods" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
                   <GridPane.margin>
                      <Insets left="20.0" />
                   </GridPane.margin>
+                  <font>
+                     <Font size="15.0" />
+                  </font>
                </Label>
-               <Label fx:id="whiteTimeLabel" layoutX="82.0" layoutY="60.0" text="Time Periods" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <Label fx:id="whiteTimeLabel" layoutX="82.0" layoutY="60.0" text="Time Periods" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
                   <GridPane.margin>
                      <Insets right="20.0" />
                   </GridPane.margin>
+                  <font>
+                     <Font size="15.0" />
+                  </font>
                </Label>
                <Label fx:id="pl2" minHeight="-Infinity" minWidth="-Infinity" text="Player 2 (White)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                   <font>
@@ -128,7 +118,7 @@
                      <Insets right="20.0" />
                   </GridPane.margin>
                </Label>
-               <Label fx:id="timerWhite" text="00:00" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+               <Label fx:id="timerWhite" text="00:00" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="TOP">
                   <font>
                      <Font name="System" size="15.0" />
                   </font>

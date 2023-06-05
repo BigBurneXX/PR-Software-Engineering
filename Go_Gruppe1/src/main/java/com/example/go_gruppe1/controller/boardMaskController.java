@@ -60,7 +60,7 @@ public class boardMaskController {
     @FXML
     public ToggleGroup mode;
     @FXML
-    private Label pl1, pl2, komiBoard, handicapsBoard, blackTrapped, whiteTrapped, timerBlack, timerWhite, blackTimeLabel, whiteTimeLabel, title;
+    private Label pl1, pl2, blackTrapped, whiteTrapped, timerBlack, timerWhite, blackTimeLabel, whiteTimeLabel, title;
     @FXML
     private Button passButton, resignButton;
     @FXML
@@ -330,11 +330,6 @@ public class boardMaskController {
 
     private void displayKomi(String komiAdvantage) {
         KOMI = Double.parseDouble(komiAdvantage);
-        komiBoard.setText("Komi: " + KOMI);
-
-        komiBoard.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.026).asString()
-        ));
     }
 
     private void displayHandicaps(String handicaps) {
@@ -344,35 +339,24 @@ public class boardMaskController {
             //only values greater than 0 are valid
             if (BOARD_SIZE == 9 || BOARD_SIZE == 13) {
                 if (HANDICAPS < 0 || HANDICAPS > 5) {
-                    handicapsBoard.setText("Handicaps: " + "0");
                     HANDICAPS = 0;
                     sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> Handicaps set to 0");
-                } else {
-                    handicapsBoard.setText("Handicaps: " + HANDICAPS);
                 }
             } else if (BOARD_SIZE == 19) {
                 if (HANDICAPS < 0 || HANDICAPS > 9) {
-                    handicapsBoard.setText("Handicaps: " + "0");
                     HANDICAPS = 0;
                     sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> Handicaps set to 0");
-                } else {
-                    handicapsBoard.setText("Handicaps: " + HANDICAPS);
                 }
             }
             terminalInfo("handicaps: " + HANDICAPS);
         } catch (NumberFormatException nfe) {
             HANDICAPS = 0;
-            handicapsBoard.setText("Handicaps: " + HANDICAPS);
             if (!handicaps.isEmpty()) {
                 sampleSolutionDisplay.setText(sampleSolutionDisplay.getText() + "\nInvalid handicap input -> Handicaps set to 0");
                 terminalInfo("invalid handicap input");
             }
             terminalInfo("handicaps set to: " + HANDICAPS);
         }
-
-        handicapsBoard.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.026).asString()
-        ));
     }
 
     private void displayTrappedStone(int numberTrapped, Label trappedLabel) {
@@ -422,11 +406,11 @@ public class boardMaskController {
         }
 
         blackTimeLabel.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.018).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(0.023).asString()
         ));
 
         whiteTimeLabel.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.018).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(0.023).asString()
         ));
 
         timerBlack.styleProperty().bind(Bindings.concat(
@@ -1014,7 +998,7 @@ public class boardMaskController {
             Parent root = loader.load();
 
             winnerMaskController winnerMask = loader.getController();
-            winnerMask.setSize(getWidth(), getHeight());
+            winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
             winnerMask.setReasonForWinning(reasonForWinning);
 
             if (player == 1) {
@@ -1031,8 +1015,8 @@ public class boardMaskController {
             Stage stage = (Stage) source.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setMinHeight(300);
-            stage.setMinWidth(550);
+            stage.setMinWidth(600);
+            stage.setMinHeight(580);
             stage.centerOnScreen();
             stage.show();
         }
