@@ -243,15 +243,17 @@ public class boardMaskController {
         terminalInfo("navigation mode activated!");
         leftArrow.setVisible(true);
         rightArrow.setVisible(true);
-        //TODO logic for arrow clicks
 
         rightArrow.setOnMouseClicked(e -> {
-            System.out.println(game.getUndoStack().size() + " <-- undo\n" + game.getRedoStack().size() + " <-- redo");
             game.redoLastMove();
+            simpleBoard = game.getBoard();
+            drawStones();
         });
+
         leftArrow.setOnMouseClicked(e -> {
-            System.out.println(game.getUndoStack().size() + " <-- undo\n" + game.getRedoStack().size() + " <-- redo");
             game.undoLastMove();
+            simpleBoard = game.getBoard();
+            drawStones();
         });
 
         passButton.setVisible(false);
@@ -302,8 +304,8 @@ public class boardMaskController {
         BOARD_SIZE = boardSize;
         terminalInfo("starting a new game\nboard size set to: " + BOARD_SIZE);
         boardLogicControl = new BoardLogicControl(this, BOARD_SIZE);
-        game = new Game(this, BOARD_SIZE);
-        simpleBoard = new SimpleBoard(this, BOARD_SIZE);
+        game = new Game(BOARD_SIZE);
+        simpleBoard = new SimpleBoard(BOARD_SIZE);
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
@@ -889,9 +891,7 @@ public class boardMaskController {
                 terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col - 1]);
                 System.out.println("attaching stone to row " + row + ", col " + col);
                 c.setFill(lastColor);
-                //boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
-                //game.executeCommand(new PlaceStoneCommand(game.getBoard(), row - 1, col - 1, lastColor));
-                if(simpleBoard.setStone(row-1, col-1, lastColor)){
+                if(game.executeCommand(new PlaceStoneCommand(simpleBoard,row-1, col-1, lastColor))){
                     drawStones();
                     modeAndMoveDisplay.setText("This is suicide. Please select another position");
                     return;
