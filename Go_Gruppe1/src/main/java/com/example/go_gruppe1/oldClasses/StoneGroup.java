@@ -1,5 +1,6 @@
-package com.example.go_gruppe1.model.command;
+package com.example.go_gruppe1.oldClasses;
 
+import com.example.go_gruppe1.model.command.Position;
 import javafx.scene.paint.Color;
 
 import java.util.HashSet;

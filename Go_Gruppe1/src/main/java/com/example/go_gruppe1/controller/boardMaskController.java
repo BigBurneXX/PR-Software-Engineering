@@ -3,6 +3,8 @@ package com.example.go_gruppe1.controller;
 import com.example.go_gruppe1.model.FileControl;
 import com.example.go_gruppe1.model.Move;
 import com.example.go_gruppe1.model.command.*;
+import com.example.go_gruppe1.oldClasses.BoardLogicControl;
+import com.example.go_gruppe1.oldClasses.StoneGroup;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,8 +26,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -112,6 +112,7 @@ public class boardMaskController {
      */
     private BoardLogicControl boardLogicControl;
     private Game game;
+    private SimpleBoard simpleBoard;
     private final FileControl fileControl = new FileControl();
 
     /*
@@ -232,7 +233,7 @@ public class boardMaskController {
 
         modeAndMoveDisplay.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", boardPane.heightProperty().multiply(0.025).asString()
-        ));;
+        ));
 
         modeAndMoveDisplay.setText((lastColor == BLACK ? pl1.getText() : pl2.getText()) + "'s turn!");
     }
@@ -240,12 +241,18 @@ public class boardMaskController {
     @FXML
     public void onModeNavigateClick() {
         terminalInfo("navigation mode activated!");
-        //printSomething();
         leftArrow.setVisible(true);
         rightArrow.setVisible(true);
         //TODO logic for arrow clicks
-        rightArrow.setOnMouseClicked(e -> System.out.println("something at last"));
-        leftArrow.setOnMouseClicked(e -> System.out.println("well something is not working!"));
+
+        rightArrow.setOnMouseClicked(e -> {
+            System.out.println(game.getUndoStack().size() + " <-- undo\n" + game.getRedoStack().size() + " <-- redo");
+            game.redoLastMove();
+        });
+        leftArrow.setOnMouseClicked(e -> {
+            System.out.println(game.getUndoStack().size() + " <-- undo\n" + game.getRedoStack().size() + " <-- redo");
+            game.undoLastMove();
+        });
 
         passButton.setVisible(false);
         resignButton.setVisible(false);
@@ -293,9 +300,10 @@ public class boardMaskController {
      */
     protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize) {
         BOARD_SIZE = boardSize;
-        terminalInfo("starting a new game\nboard size set to: " + boardSize);
-        boardLogicControl = new BoardLogicControl(this, boardSize);
-        game = new Game(this, boardSize);
+        terminalInfo("starting a new game\nboard size set to: " + BOARD_SIZE);
+        boardLogicControl = new BoardLogicControl(this, BOARD_SIZE);
+        game = new Game(this, BOARD_SIZE);
+        simpleBoard = new SimpleBoard(this, BOARD_SIZE);
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
@@ -586,7 +594,7 @@ public class boardMaskController {
         for (int row = 1; row <= BOARD_SIZE; row++) {
             for (int col = 1; col <= BOARD_SIZE; col++) {
                 Circle circle = new Circle(10, TRANSPARENT);
-                board.add(circle, row, col);
+                board.add(circle, col, row);
                 circlesOfBoard[row][col] = circle;
 
                 //make stones resizable and adjust X and Y properties
@@ -619,7 +627,7 @@ public class boardMaskController {
                 //           when clicked so that .equals will return false
                 circle.setOnMouseEntered(e -> {
                     if (modePlay.isSelected()) {
-                        if (circle.getFill() == TRANSPARENT) {
+                        if (circle.getFill() == TRANSPARENT || circle.getFill() == null) {
                             if (lastColor == BLACK)
                                 circle.setFill(HOVER_BLACK);
                             else
@@ -882,7 +890,12 @@ public class boardMaskController {
                 System.out.println("attaching stone to row " + row + ", col " + col);
                 c.setFill(lastColor);
                 //boardLogicControl.setStoneToList(lastColor, row - 1, col - 1);
-                game.executeCommand(new PlaceStoneCommand(game.getBoard(), row - 1, col - 1, lastColor));
+                //game.executeCommand(new PlaceStoneCommand(game.getBoard(), row - 1, col - 1, lastColor));
+                if(simpleBoard.setStone(row-1, col-1, lastColor)){
+                    drawStones();
+                    modeAndMoveDisplay.setText("This is suicide. Please select another position");
+                    return;
+                }
 
                 if (lastColor == WHITE) {
                     lastColor = BLACK;
@@ -906,6 +919,22 @@ public class boardMaskController {
                 break;
             }
             //   terminalInfo("Error: System was unable to located circle!");
+        }
+        drawStones();
+    }
+
+    private void drawStones() {
+        Color[][] boardToDraw = simpleBoard.getBoard();
+        for(int r = 0; r < BOARD_SIZE; r++) {
+            for (int c = 0; c < BOARD_SIZE; c++) {
+                circlesOfBoard[r + 1][c + 1].setFill(boardToDraw[r][c] == null ? TRANSPARENT : boardToDraw[r][c] == BLACK ? BLACK : WHITE);
+                Color toCompare = (Color) circlesOfBoard[r + 1][c + 1].getFill();
+                System.out.print(TRANSPARENT == toCompare || null == toCompare ? "empty\t" :
+                        toCompare == BLACK ? "BLACK\t" :
+                                toCompare == WHITE ? "WHITE\t" :
+                                        toCompare + "\t");
+            }
+            System.out.println();
         }
     }
 

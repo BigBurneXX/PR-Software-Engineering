@@ -1,6 +1,7 @@
-package com.example.go_gruppe1.model.command;
+package com.example.go_gruppe1.oldClasses;
 
 import com.example.go_gruppe1.controller.boardMaskController;
+import com.example.go_gruppe1.model.command.Position;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -9,18 +10,25 @@ import java.util.List;
 import java.util.Set;
 
 public class Board {
-    private final int size;
+    private int size;
     private final char[] ALPHABET = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
     private final List<StoneGroup> stoneList = new ArrayList<>();
     private final Set<StoneGroup> toDelete = new HashSet<>();
     private boolean isPartOfGroup;
-    private final StoneGroup[][] stoneMapping;
-    private final boardMaskController controller;
+    private StoneGroup[][] stoneMapping;
+    private boardMaskController controller;
 
     public Board(boardMaskController controller, int boardSize) {
         this.controller = controller;
         size = boardSize;
         stoneMapping = new StoneGroup[size][size];
+    }
+
+    public Board(Board board){
+        this.controller = board.controller;
+        this.size = board.size;
+        this.stoneMapping = board.stoneMapping;
+        this.stoneList.addAll(board.stoneList);
     }
 
     public void placeStone(int row, int col, Color colour) {
@@ -52,10 +60,15 @@ public class Board {
             deleteStone(toAdd);
             System.out.println("THIS IS SUICIDE");
         }
-        printSomething();
+        //printSomething();
     }
 
-    public void removeStone(int x, int y) {
+    public void removeStone(Board board) {
+        this.controller = board.controller;
+        this.size = board.size;
+        this.stoneMapping = board.stoneMapping;
+        this.stoneList.clear();
+        this.stoneList.addAll(board.stoneList);
         //stones[x][y] = Color.TRANSPARENT;
         // Additional game logic for restoring captured stones, etc.
     }
@@ -92,7 +105,7 @@ public class Board {
         //System.out.println("Stone at " + (toAddPosition.row()+1) + alphabet[toAddPosition.col()] + " has " + toAdd.getFreeFields().size() + " liberties.");
     }
 
-    protected void addToDelete(StoneGroup addToDelete){
+    public void addToDelete(StoneGroup addToDelete){
         toDelete.add(addToDelete);
     }
 
