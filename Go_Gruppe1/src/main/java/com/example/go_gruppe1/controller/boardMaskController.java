@@ -34,6 +34,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import static javafx.scene.paint.Color.*;
 
@@ -135,6 +137,8 @@ public class boardMaskController {
     protected int BYOYOMI_NUMBER = 0;
     private int blackByoyomi = 0, whiteByoyomi = 0;
     protected int BYOYOMI_TIME = 0;
+    private int currentSelectionRow = 1;
+    private int currentSelectionCol = 1;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -1049,6 +1053,53 @@ public class boardMaskController {
             stage.centerOnScreen();
             stage.show();
         }
+    }
+
+    private void setupKeyboardControls() {
+        board.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            switch (event.getCode()) {
+                case W:  // move selection up
+                    moveSelection(0, -1);
+                    break;
+                case S:  // move selection down
+                    moveSelection(0, 1);
+                    break;
+                case A:  // move selection left
+                    moveSelection(-1, 0);
+                    break;
+                case D:  // move selection right
+                    moveSelection(1, 0);
+                    break;
+                case SPACE:  // place stone
+                    placeStoneAtSelection();
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+    public void moveSelection(int dx, int dy) {
+        // Update row
+        currentSelectionRow += dy;
+        if (currentSelectionRow < 1) {
+            currentSelectionRow = 1;
+        } else if (currentSelectionRow > BOARD_SIZE) {
+            currentSelectionRow = BOARD_SIZE;
+        }
+
+        // Update column
+        currentSelectionCol += dx;
+        if (currentSelectionCol < 1) {
+            currentSelectionCol = 1;
+        } else if (currentSelectionCol > BOARD_SIZE) {
+            currentSelectionCol = BOARD_SIZE;
+        }
+
+    }
+
+    public void placeStoneAtSelection() {
+        Circle selectedCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
+        setStone(selectedCircle);
     }
 
     /*
