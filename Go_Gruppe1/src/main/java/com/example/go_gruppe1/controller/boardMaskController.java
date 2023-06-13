@@ -3,6 +3,7 @@ package com.example.go_gruppe1.controller;
 import com.example.go_gruppe1.model.FileControl;
 import com.example.go_gruppe1.model.GoTimer;
 import com.example.go_gruppe1.model.Move;
+import com.example.go_gruppe1.model.Player;
 import com.example.go_gruppe1.model.command.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -104,7 +105,7 @@ public class boardMaskController {
                                         controllers
       ----------------------------------------------------------------------------------------------------------------
      */
-    //private BoardLogicControl boardLogicControl;
+
     private Game game;
     private final FileControl fileControl = new FileControl();
 
@@ -113,14 +114,15 @@ public class boardMaskController {
                                         constants
       ----------------------------------------------------------------------------------------------------------------
      */
+
     private final char[] ALPHABET = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
     private int BOARD_SIZE;
-    private String PLAYER1NAME;
-    private String PLAYER2NAME;
     private int HANDICAPS;
     private double KOMI;
     protected int BYOYOMI_NUMBER;
     protected int BYOYOMI_TIME;
+    private Player PLAYER_BLACK;
+    private Player PLAYER_WHITE;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -292,7 +294,7 @@ public class boardMaskController {
     /*
       ================================================================================================================
 
-                                            initialize methods
+                                            initialization methods
 
       ================================================================================================================
      */
@@ -301,7 +303,7 @@ public class boardMaskController {
         terminalInfo("starting a new game\nboard size set to: " + BOARD_SIZE);
         //boardLogicControl = new BoardLogicControl(this, BOARD_SIZE);
         game = new Game(BOARD_SIZE);
-        displayPlayerNames(player1Name, player2Name);
+        initiatePlayers(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
         displayTrappedStone(0, blackTrapped);
@@ -316,14 +318,20 @@ public class boardMaskController {
         ));
     }
 
-    private void displayPlayerNames(String p1, String p2) {
-        PLAYER1NAME = p1.isEmpty() ? "Player 1" : p1;
-        PLAYER2NAME = p2.isEmpty() ? "Player 2" : p2;
+    private void initiatePlayers(String p1, String p2) {
+        String playerBlack = p1.isEmpty() ? "Player 1" : p1;
+        String playerWhite = p2.isEmpty() ? "Player 2" : p2;
+        PLAYER_BLACK = new Player(playerBlack, BLACK);
+        PLAYER_WHITE = new Player(playerWhite, WHITE);
 
-        pl1.setText(PLAYER1NAME + " (Black)");
-        pl2.setText(PLAYER2NAME + " (White)");
-        terminalInfo("player1 set to: " + PLAYER1NAME);
-        terminalInfo("player2 set to: " + PLAYER2NAME);
+        displayPlayerNames();
+    }
+
+    private void displayPlayerNames(){
+        pl1.setText(PLAYER_BLACK.getName() + " (Black)");
+        pl2.setText(PLAYER_WHITE.getName() + " (White)");
+        terminalInfo("player1 set to: " + PLAYER_BLACK.getName());
+        terminalInfo("player2 set to: " + PLAYER_WHITE.getName());
 
         pl1.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", boardPane.heightProperty().multiply(PLAYER_LABEL_MULTIPLIER).asString()
@@ -490,16 +498,13 @@ public class boardMaskController {
         initTimer();
         //immediately start timer for 1st player
         if (HANDICAPS == 0) {
-            timer1.updateStartTime();
             timer1.startTimer();
         } else {
-            timer2.updateStartTime();
             timer2.startTimer();
         }
 
-
         //creating output file
-        fileControl.createFile(this, "", PLAYER1NAME, PLAYER2NAME, BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
+        fileControl.createFile(this, "", PLAYER_BLACK.getName(), PLAYER_WHITE.getName(), BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
     }
 
     /*
@@ -719,7 +724,6 @@ public class boardMaskController {
                 modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
                 lastColor = WHITE;
                 timer1.stopTimer();
-                timer2.updateStartTime();
                 timer2.startTimer();
                 terminalInfo(String.valueOf(timer1.passedSlotSeconds()));
                 initiateByoyomiRules(1);
@@ -727,7 +731,6 @@ public class boardMaskController {
                 modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
                 lastColor = BLACK;
                 timer2.stopTimer();
-                timer1.updateStartTime();
                 timer1.startTimer();
                 terminalInfo(String.valueOf(timer2.passedSlotSeconds()));
                 initiateByoyomiRules(2);
@@ -844,7 +847,6 @@ public class boardMaskController {
                     lastColor = BLACK;
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
                     timer2.stopTimer();
-                    timer1.updateStartTime();
                     timer1.startTimer();
                     terminalInfo(String.valueOf(timer2.passedSlotSeconds()));
                     initiateByoyomiRules(2);
@@ -852,7 +854,6 @@ public class boardMaskController {
                     lastColor = WHITE;
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
                     timer1.stopTimer();
-                    timer2.updateStartTime();
                     timer2.startTimer();
                     terminalInfo(String.valueOf(timer1.passedSlotSeconds()));
                     initiateByoyomiRules(1);
@@ -902,6 +903,8 @@ public class boardMaskController {
         }
     }
 */
+
+    //TODO: Implementing calculate score accurately!
     private int calculateScore(char playerColor, char enemyColor, char[][] board) {
         int score = 0;
         int territory = 0;

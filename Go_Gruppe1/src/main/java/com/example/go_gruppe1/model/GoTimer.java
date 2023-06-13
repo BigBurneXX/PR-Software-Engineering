@@ -12,8 +12,8 @@ public class GoTimer {
     private long elapsedTime;
     private long startTime;
     private final StringProperty timeProperty;
-
     private final Timeline timeline;
+
     public GoTimer(){
         elapsedTime = 0;
         startTime = 0;
@@ -24,6 +24,7 @@ public class GoTimer {
     }
 
     public void startTimer(){
+        startTime = System.currentTimeMillis();
         timeline.play();
     }
 
@@ -51,15 +52,7 @@ public class GoTimer {
         return passedSlot;
     }
 
-    public void updateStartTime(){
-        startTime = System.currentTimeMillis();
-    }
-
     public StringProperty timeProperty() {
         return timeProperty;
-    }
-
-    public String getTime() {
-        return timeProperty.get();
     }
 }
