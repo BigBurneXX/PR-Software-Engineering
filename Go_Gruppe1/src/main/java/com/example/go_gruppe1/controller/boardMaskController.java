@@ -112,7 +112,6 @@ public class boardMaskController {
      */
     private BoardLogicControl boardLogicControl;
     private Game game;
-    private SimpleBoard simpleBoard;
     private final FileControl fileControl = new FileControl();
 
     /*
@@ -194,7 +193,7 @@ public class boardMaskController {
     }
 
     public void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize, List<Move> moves) throws IOException {
-        System.out.println(player1Name + player2Name + komi + handicaps + boardSize);
+        terminalInfo(player1Name + player2Name + komi + handicaps + boardSize);
         initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize);
         Color currentColor = BLACK;
         for (Move m : moves) {
@@ -203,7 +202,6 @@ public class boardMaskController {
             setSampleSolutionDisplay(m.text());
             terminalInfo("Stone (" + currentColor + ") placed at: " + m.row() + ALPHABET[col]);
             circlesOfBoard[col + 1][m.row() + 1].setFill(currentColor);
-            //boardLogicControl.setStoneToList(currentColor, m.row(), col);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), m.row(), col, currentColor));
             currentColor = (currentColor == BLACK ? WHITE : BLACK);
         }
@@ -246,13 +244,11 @@ public class boardMaskController {
 
         rightArrow.setOnMouseClicked(e -> {
             game.redoLastMove();
-            simpleBoard = game.getBoard();
             drawStones();
         });
 
         leftArrow.setOnMouseClicked(e -> {
             game.undoLastMove();
-            simpleBoard = game.getBoard();
             drawStones();
         });
 
@@ -305,7 +301,6 @@ public class boardMaskController {
         terminalInfo("starting a new game\nboard size set to: " + BOARD_SIZE);
         boardLogicControl = new BoardLogicControl(this, BOARD_SIZE);
         game = new Game(BOARD_SIZE);
-        simpleBoard = new SimpleBoard(BOARD_SIZE);
         displayPlayerNames(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
@@ -738,7 +733,7 @@ public class boardMaskController {
                 timerTimeline1.stop();
                 START_TIME2 = System.currentTimeMillis();
                 timerTimeline2.play();
-                System.out.println(passedSlotSeconds1());
+                terminalInfo(String.valueOf(passedSlotSeconds1()));
                 initiateByoyomiRules(1);
                 elapsedTime1 = 0;
             } else {
@@ -747,7 +742,7 @@ public class boardMaskController {
                 timerTimeline2.stop();
                 START_TIME1 = System.currentTimeMillis();
                 timerTimeline1.play();
-                System.out.println(passedSlotSeconds2());
+                terminalInfo(String.valueOf(passedSlotSeconds2()));
                 initiateByoyomiRules(2);
                 elapsedTime2 = 0;
             }
@@ -889,9 +884,8 @@ public class boardMaskController {
                 col = GridPane.getColumnIndex(n);
                 fileControl.writeMoves((row - 1), ALPHABET[col - 1], "");
                 terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col - 1]);
-                System.out.println("attaching stone to row " + row + ", col " + col);
                 c.setFill(lastColor);
-                if(game.executeCommand(new PlaceStoneCommand(simpleBoard,row-1, col-1, lastColor))){
+                if(game.executeCommand(new PlaceStoneCommand(game.getBoard(),row-1, col-1, lastColor))){
                     drawStones();
                     modeAndMoveDisplay.setText("This is suicide. Please select another position");
                     return;
@@ -903,7 +897,7 @@ public class boardMaskController {
                     timerTimeline2.stop();
                     START_TIME1 = System.currentTimeMillis();
                     timerTimeline1.play(); // start the timer for player 1
-                    System.out.println(passedSlotSeconds2());
+                    terminalInfo(String.valueOf(passedSlotSeconds2()));
                     initiateByoyomiRules(2);
                     elapsedTime2 = 0;
                 } else {
@@ -912,7 +906,7 @@ public class boardMaskController {
                     timerTimeline1.stop();
                     START_TIME2 = System.currentTimeMillis();
                     timerTimeline2.play(); // start the timer for player 2
-                    System.out.println(passedSlotSeconds1());
+                    terminalInfo(String.valueOf(passedSlotSeconds1()));
                     initiateByoyomiRules(1);
                     elapsedTime1 = 0;
                 }
@@ -924,18 +918,20 @@ public class boardMaskController {
     }
 
     private void drawStones() {
-        Color[][] boardToDraw = simpleBoard.getBoard();
+        Color[][] boardToDraw = game.getBoard().getBoard();
+        String printBoard = "";
         for(int r = 0; r < BOARD_SIZE; r++) {
             for (int c = 0; c < BOARD_SIZE; c++) {
                 circlesOfBoard[r + 1][c + 1].setFill(boardToDraw[r][c] == null ? TRANSPARENT : boardToDraw[r][c] == BLACK ? BLACK : WHITE);
                 Color toCompare = (Color) circlesOfBoard[r + 1][c + 1].getFill();
-                System.out.print(TRANSPARENT == toCompare || null == toCompare ? "empty\t" :
+                printBoard += TRANSPARENT == toCompare || null == toCompare ? "empty\t" :
                         toCompare == BLACK ? "BLACK\t" :
                                 toCompare == WHITE ? "WHITE\t" :
-                                        toCompare + "\t");
+                                        toCompare + "\t";
             }
-            System.out.println();
+            printBoard += "\n";
         }
+        terminalInfo(printBoard);
     }
 
     public void deleteStoneGroup(StoneGroup toDelete) {
@@ -1060,7 +1056,9 @@ public class boardMaskController {
      */
 
     private void terminalInfo(String data) {
-        System.out.println(data);
+        boolean logging = true;
+        if(logging)
+            System.out.println(data);
     }
 
     private int indexToNum(int row) {
