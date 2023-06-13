@@ -145,7 +145,7 @@ public class Board {
             System.out.println("deleting stone at " + indexToNum(row) + ALPHABET[col]);
         }
         stoneList.remove(toDelete);
-        controller.deleteStoneGroup(toDelete);
+        //controller.deleteStoneGroup(toDelete);
     }
 
     private void checkForNewLiberty(int row, int col, Position newLiberty, Color color){

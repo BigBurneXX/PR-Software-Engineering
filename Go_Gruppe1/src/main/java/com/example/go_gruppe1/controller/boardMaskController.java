@@ -1,13 +1,10 @@
 package com.example.go_gruppe1.controller;
 
 import com.example.go_gruppe1.model.FileControl;
+import com.example.go_gruppe1.model.GoTimer;
 import com.example.go_gruppe1.model.Move;
+import com.example.go_gruppe1.model.Player;
 import com.example.go_gruppe1.model.command.*;
-import com.example.go_gruppe1.oldClasses.BoardLogicControl;
-import com.example.go_gruppe1.oldClasses.StoneGroup;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -28,14 +25,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
 import static javafx.scene.paint.Color.*;
 
@@ -112,9 +105,8 @@ public class boardMaskController {
                                         controllers
       ----------------------------------------------------------------------------------------------------------------
      */
-    private BoardLogicControl boardLogicControl;
+
     private Game game;
-    private SimpleBoard simpleBoard;
     private final FileControl fileControl = new FileControl();
 
     /*
@@ -122,23 +114,29 @@ public class boardMaskController {
                                         constants
       ----------------------------------------------------------------------------------------------------------------
      */
+
     private final char[] ALPHABET = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
     private int BOARD_SIZE;
-    private String PLAYER1NAME;
-    private String PLAYER2NAME;
     private int HANDICAPS;
     private double KOMI;
-    private Timeline timerTimeline1;
-    private Timeline timerTimeline2;
-    private long START_TIME1;
-    private long START_TIME2;
-    private long elapsedTime1 = 0;
-    private long elapsedTime2 = 0;
-    protected int BYOYOMI_NUMBER = 0;
-    private int blackByoyomi = 0, whiteByoyomi = 0;
-    protected int BYOYOMI_TIME = 0;
-    private int currentSelectionRow = 1;
-    private int currentSelectionCol = 1;
+    protected int BYOYOMI_NUMBER;
+    protected int BYOYOMI_TIME;
+    private Player PLAYER_BLACK;
+    private Player PLAYER_WHITE;
+
+    /*
+      ----------------------------------------------------------------------------------------------------------------
+                                        constants - GUI multipliers
+      ----------------------------------------------------------------------------------------------------------------
+     */
+
+    private final double PLAYER_LABEL_MULTIPLIER = 0.04;
+    private final double TRAPPED_LABEL_MULTIPLIER = 0.026;
+    private final double TIMER_LABEL_MULTIPLIER = 0.026;
+    private final double TIMELABEL_LABEL_MULTIPLIER = 0.023;
+    private final double TOP_REGION_MULTIPLIER = 0.2;
+    private final double BOTTOM_REGION_MULTIPLIER = 0.1;
+    private final double REGION_MULTIPLIER = 0.7;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -147,9 +145,10 @@ public class boardMaskController {
      */
     private Circle[][] circlesOfBoard;
     private Color lastColor = BLACK;
-    private int blackTrappedStones = 0;
-    private int whiteTrappedStones = 0;
+    private int blackTrappedStones = 0, whiteTrappedStones = 0;
     private long blackTotal = 0, whiteTotal = 0;
+    private int blackByoyomi = 0, whiteByoyomi = 0;
+    private GoTimer timer1, timer2;
 
     /*
       ================================================================================================================
@@ -192,13 +191,12 @@ public class boardMaskController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
-            //file functionality is disabled for now
             fileControl.loadFile(selectedFile);
         }
     }
 
     public void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize, List<Move> moves) throws IOException {
-        System.out.println(player1Name + player2Name + komi + handicaps + boardSize);
+        terminalInfo(player1Name + player2Name + komi + handicaps + boardSize);
         initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize);
         Color currentColor = BLACK;
         for (Move m : moves) {
@@ -207,7 +205,6 @@ public class boardMaskController {
             setSampleSolutionDisplay(m.text());
             terminalInfo("Stone (" + currentColor + ") placed at: " + m.row() + ALPHABET[col]);
             circlesOfBoard[col + 1][m.row() + 1].setFill(currentColor);
-            //boardLogicControl.setStoneToList(currentColor, m.row(), col);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), m.row(), col, currentColor));
             currentColor = (currentColor == BLACK ? WHITE : BLACK);
         }
@@ -250,13 +247,11 @@ public class boardMaskController {
 
         rightArrow.setOnMouseClicked(e -> {
             game.redoLastMove();
-            simpleBoard = game.getBoard();
             drawStones();
         });
 
         leftArrow.setOnMouseClicked(e -> {
             game.undoLastMove();
-            simpleBoard = game.getBoard();
             drawStones();
         });
 
@@ -276,7 +271,6 @@ public class boardMaskController {
       ================================================================================================================
      */
 
-    //TODO sample solution
     protected void setSampleSolutionDisplay(String text) {
         sampleSolutionDisplay.setText(text);
         terminalInfo("sample solution display set to" + text);
@@ -300,17 +294,16 @@ public class boardMaskController {
     /*
       ================================================================================================================
 
-                                            initialize methods
+                                            initialization methods
 
       ================================================================================================================
      */
     protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize) {
         BOARD_SIZE = boardSize;
         terminalInfo("starting a new game\nboard size set to: " + BOARD_SIZE);
-        boardLogicControl = new BoardLogicControl(this, BOARD_SIZE);
+        //boardLogicControl = new BoardLogicControl(this, BOARD_SIZE);
         game = new Game(BOARD_SIZE);
-        simpleBoard = new SimpleBoard(BOARD_SIZE);
-        displayPlayerNames(player1Name, player2Name);
+        initiatePlayers(player1Name, player2Name);
         displayKomi(komi);
         displayHandicaps(handicaps);
         displayTrappedStone(0, blackTrapped);
@@ -325,20 +318,26 @@ public class boardMaskController {
         ));
     }
 
-    private void displayPlayerNames(String p1, String p2) {
-        PLAYER1NAME = p1.isEmpty() ? "Player 1" : p1;
-        PLAYER2NAME = p2.isEmpty() ? "Player 2" : p2;
+    private void initiatePlayers(String p1, String p2) {
+        String playerBlack = p1.isEmpty() ? "Player 1" : p1;
+        String playerWhite = p2.isEmpty() ? "Player 2" : p2;
+        PLAYER_BLACK = new Player(playerBlack, BLACK);
+        PLAYER_WHITE = new Player(playerWhite, WHITE);
 
-        pl1.setText(PLAYER1NAME + " (Black)");
-        pl2.setText(PLAYER2NAME + " (White)");
-        terminalInfo("player1 set to: " + PLAYER1NAME + "\nplayer2 set to: " + PLAYER2NAME);
+        displayPlayerNames();
+    }
+
+    private void displayPlayerNames(){
+        pl1.setText(PLAYER_BLACK.getName() + " (Black)");
+        pl2.setText(PLAYER_WHITE.getName() + " (White)");
+        terminalInfo("player1 set to: " + PLAYER_BLACK.getName());
+        terminalInfo("player2 set to: " + PLAYER_WHITE.getName());
 
         pl1.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.04).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(PLAYER_LABEL_MULTIPLIER).asString()
         ));
-
         pl2.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.04).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(PLAYER_LABEL_MULTIPLIER).asString()
         ));
     }
 
@@ -378,11 +377,10 @@ public class boardMaskController {
         terminalInfo(trappedLabel.getId() + " set to " + numberTrapped);
 
         whiteTrapped.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.026).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(TRAPPED_LABEL_MULTIPLIER).asString()
         ));
-
         blackTrapped.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.026).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(TRAPPED_LABEL_MULTIPLIER).asString()
         ));
     }
 
@@ -420,20 +418,23 @@ public class boardMaskController {
         }
 
         blackTimeLabel.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.023).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(TIMELABEL_LABEL_MULTIPLIER).asString()
         ));
 
         whiteTimeLabel.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.023).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(TIMELABEL_LABEL_MULTIPLIER).asString()
         ));
 
         timerBlack.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.026).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(TIMER_LABEL_MULTIPLIER).asString()
         ));
 
         timerWhite.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(0.026).asString()
+                "-fx-font-size: ", boardPane.heightProperty().multiply(TIMER_LABEL_MULTIPLIER).asString()
         ));
+
+        timerBlack.textProperty().bind(timer1.timeProperty());
+        timerWhite.textProperty().bind(timer2.timeProperty());
     }
 
 
@@ -449,16 +450,16 @@ public class boardMaskController {
         board.setPadding(new Insets(20, 0, 0, 0));
 
         //bind bottom and upper region to 20% of window height
-        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.1));
-        topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
+        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(BOTTOM_REGION_MULTIPLIER));
+        topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(TOP_REGION_MULTIPLIER));
 
         //set left, right and center (board) region to 60% of window height
-        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.7));
-        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.7));
-        board.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.7));
+        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
+        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
+        board.prefHeightProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
 
         //bind center width to 60% of window height, so it's a square
-        board.prefWidthProperty().bind(boardPane.heightProperty().multiply(0.7));
+        board.prefWidthProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
 
         //bind left and right width to remaining width of the window of what's left from taking 60% of the height
         leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
@@ -497,17 +498,13 @@ public class boardMaskController {
         initTimer();
         //immediately start timer for 1st player
         if (HANDICAPS == 0) {
-            START_TIME1 = System.currentTimeMillis();
-            timerTimeline1.play();
+            timer1.startTimer();
         } else {
-            START_TIME2 = System.currentTimeMillis();
-            timerTimeline2.play();
+            timer2.startTimer();
         }
 
-
         //creating output file
-        //For now creating a file is deactivated, otherwise there would be too much files created while coding
-        fileControl.createFile(this, "", PLAYER1NAME, PLAYER2NAME, BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
+        fileControl.createFile(this, "", PLAYER_BLACK.getName(), PLAYER_WHITE.getName(), BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
     }
 
     /*
@@ -654,65 +651,52 @@ public class boardMaskController {
     }
 
     private void drawHandicaps() {
-        int dif;
-        if (BOARD_SIZE == 9)
-            dif = 2;
-        else
-            dif = 3;
+        int dif = BOARD_SIZE == 9 ? 2 : 3;
         int lowerValue = dif + 1;
         int higherValue = BOARD_SIZE - dif;
         int midValue = BOARD_SIZE / 2 + 1;
 
         if (HANDICAPS >= 1) {
             circlesOfBoard[lowerValue][higherValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, lowerValue - 1, higherValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, higherValue - 1, BLACK));
         }
         if (HANDICAPS >= 2) {
             circlesOfBoard[higherValue][lowerValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, higherValue - 1, lowerValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, lowerValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 3) {
             circlesOfBoard[higherValue][higherValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, higherValue - 1, higherValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, higherValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 4) {
             circlesOfBoard[lowerValue][lowerValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, lowerValue - 1, lowerValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, lowerValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 5) {
             circlesOfBoard[midValue][midValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, midValue - 1, midValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, midValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 6) {
             circlesOfBoard[midValue][lowerValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, midValue - 1, lowerValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, lowerValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 7) {
             circlesOfBoard[midValue][higherValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, midValue - 1, higherValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, higherValue - 1, BLACK));
         }
 
         if (HANDICAPS >= 8) {
             circlesOfBoard[lowerValue][midValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, lowerValue - 1, midValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, midValue - 1, BLACK));
         }
 
         if (HANDICAPS == 9) {
             circlesOfBoard[higherValue][midValue].setFill(BLACK);
-            boardLogicControl.setStoneToList(BLACK, higherValue - 1, midValue - 1);
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, midValue - 1, BLACK));
         }
     }
@@ -739,23 +723,18 @@ public class boardMaskController {
             if (lastColor == BLACK) {
                 modeAndMoveDisplay.setText(pl1.getText() + " passed! - " + pl2.getText() + "'s turn");
                 lastColor = WHITE;
-                timerTimeline1.stop();
-                START_TIME2 = System.currentTimeMillis();
-                timerTimeline2.play();
-                System.out.println(passedSlotSeconds1());
+                timer1.stopTimer();
+                timer2.startTimer();
+                terminalInfo(String.valueOf(timer1.passedSlotSeconds()));
                 initiateByoyomiRules(1);
-                elapsedTime1 = 0;
             } else {
                 modeAndMoveDisplay.setText(pl2.getText() + " passed! - " + pl1.getText() + "'s turn");
                 lastColor = BLACK;
-                timerTimeline2.stop();
-                START_TIME1 = System.currentTimeMillis();
-                timerTimeline1.play();
-                System.out.println(passedSlotSeconds2());
+                timer2.stopTimer();
+                timer1.startTimer();
+                terminalInfo(String.valueOf(timer2.passedSlotSeconds()));
                 initiateByoyomiRules(2);
-                elapsedTime2 = 0;
             }
-            //file functionality is disabled for now
             fileControl.writeAction("passed");
         });
     }
@@ -786,63 +765,27 @@ public class boardMaskController {
                 }
                 modeAndMoveDisplay.setText(pl2.getText() + " resigned! - " + pl1.getText() + " won!");
             }
-            //file functionality is disabled for now
             fileControl.writeAction("resigned");
         });
     }
 
     private void initTimer() {
-        timerTimeline1 = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer1()));
-        timerTimeline1.setCycleCount(Animation.INDEFINITE);
-
-        timerTimeline2 = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer2()));
-        timerTimeline2.setCycleCount(Animation.INDEFINITE);
+        timer1 = new GoTimer();
+        timer2 = new GoTimer();
     }
 
-
+/*
     private void updateTimer1() {
-        long currentTime = System.currentTimeMillis();
-        long elapsedTimeForTurn = currentTime - START_TIME1;
-        elapsedTime1 += elapsedTimeForTurn;
-        START_TIME1 = currentTime;  // update the start time
-
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime1);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime1) - TimeUnit.MINUTES.toSeconds(minutes);
-
-        timerBlack.setText(String.format("%02d:%02d", minutes, seconds));
         timerBlack.setPadding(new Insets(0, 0, 4, 0));
     }
-
-    private void updateTimer2() {
-        long currentTime = System.currentTimeMillis();
-        long elapsedTimeForTurn = currentTime - START_TIME2;
-        elapsedTime2 += elapsedTimeForTurn;
-        START_TIME2 = currentTime;  // update the start time
-
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime2);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime2) - TimeUnit.MINUTES.toSeconds(minutes);
-
-        timerWhite.setText(String.format("%02d:%02d", minutes, seconds));
-        timerWhite.setPadding(new Insets(0, 0, 4, 0));
-    }
-
-    private int passedSlotSeconds1() {
-        long elapsedTimeForTurn = System.currentTimeMillis() - START_TIME1;
-
-        return (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime1);
-    }
-
-    private int passedSlotSeconds2() {
-        long elapsedTimeForTurn = System.currentTimeMillis() - START_TIME2;
-
-        return (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTimeForTurn + elapsedTime2);
-    }
+*/
 
     private void initiateByoyomiRules(int playerNumber) {
         if (BYOYOMI_NUMBER != 0) {
             if (playerNumber == 1) {
-                if (passedSlotSeconds1() > BYOYOMI_TIME) {
-                    int slots = passedSlotSeconds1() / BYOYOMI_TIME;
+                System.out.println("timer1: " + timer1.passedSlotSeconds() + "\nByoyomiTime: " + BYOYOMI_TIME);
+                if (timer1.passedSlotSeconds() > BYOYOMI_TIME) {
+                    int slots = timer1.passedSlotSeconds() / BYOYOMI_TIME;
                     blackByoyomi -= slots;
                     if (blackByoyomi < 0) {
                         try {
@@ -857,8 +800,8 @@ public class boardMaskController {
                     }
                 }
             } else if (playerNumber == 2) {
-                if (passedSlotSeconds2() > BYOYOMI_TIME) {
-                    int slots = passedSlotSeconds2() / BYOYOMI_TIME;
+                if (timer2.passedSlotSeconds() > BYOYOMI_TIME) {
+                    int slots = timer2.passedSlotSeconds() / BYOYOMI_TIME;
                     whiteByoyomi -= slots;
                     if (whiteByoyomi < 0) {
                         try {
@@ -893,9 +836,8 @@ public class boardMaskController {
                 col = GridPane.getColumnIndex(n);
                 fileControl.writeMoves((row - 1), ALPHABET[col - 1], "");
                 terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col - 1]);
-                System.out.println("attaching stone to row " + row + ", col " + col);
                 c.setFill(lastColor);
-                if(game.executeCommand(new PlaceStoneCommand(simpleBoard,row-1, col-1, lastColor))){
+                if(game.executeCommand(new PlaceStoneCommand(game.getBoard(),row-1, col-1, lastColor))){
                     drawStones();
                     modeAndMoveDisplay.setText("This is suicide. Please select another position");
                     return;
@@ -904,21 +846,17 @@ public class boardMaskController {
                 if (lastColor == WHITE) {
                     lastColor = BLACK;
                     modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
-                    timerTimeline2.stop();
-                    START_TIME1 = System.currentTimeMillis();
-                    timerTimeline1.play(); // start the timer for player 1
-                    System.out.println(passedSlotSeconds2());
+                    timer2.stopTimer();
+                    timer1.startTimer();
+                    terminalInfo(String.valueOf(timer2.passedSlotSeconds()));
                     initiateByoyomiRules(2);
-                    elapsedTime2 = 0;
                 } else {
                     lastColor = WHITE;
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
-                    timerTimeline1.stop();
-                    START_TIME2 = System.currentTimeMillis();
-                    timerTimeline2.play(); // start the timer for player 2
-                    System.out.println(passedSlotSeconds1());
+                    timer1.stopTimer();
+                    timer2.startTimer();
+                    terminalInfo(String.valueOf(timer1.passedSlotSeconds()));
                     initiateByoyomiRules(1);
-                    elapsedTime1 = 0;
                 }
                 break;
             }
@@ -928,20 +866,22 @@ public class boardMaskController {
     }
 
     private void drawStones() {
-        Color[][] boardToDraw = simpleBoard.getBoard();
+        Color[][] boardToDraw = game.getBoard().getBoard();
+        StringBuilder printBoard = new StringBuilder();
         for(int r = 0; r < BOARD_SIZE; r++) {
             for (int c = 0; c < BOARD_SIZE; c++) {
                 circlesOfBoard[r + 1][c + 1].setFill(boardToDraw[r][c] == null ? TRANSPARENT : boardToDraw[r][c] == BLACK ? BLACK : WHITE);
                 Color toCompare = (Color) circlesOfBoard[r + 1][c + 1].getFill();
-                System.out.print(TRANSPARENT == toCompare || null == toCompare ? "empty\t" :
+                printBoard.append(TRANSPARENT == toCompare || null == toCompare ? "empty\t" :
                         toCompare == BLACK ? "BLACK\t" :
                                 toCompare == WHITE ? "WHITE\t" :
                                         toCompare + "\t");
             }
-            System.out.println();
+            printBoard.append("\n");
         }
+        terminalInfo(printBoard.toString());
     }
-
+/*
     public void deleteStoneGroup(StoneGroup toDelete) {
         if (toDelete.getColour() == WHITE) {
             blackTrappedStones += toDelete.getPosition().size();
@@ -962,7 +902,9 @@ public class boardMaskController {
             }
         }
     }
+*/
 
+    //TODO: Implementing calculate score accurately!
     private int calculateScore(char playerColor, char enemyColor, char[][] board) {
         int score = 0;
         int territory = 0;
@@ -1055,53 +997,6 @@ public class boardMaskController {
         }
     }
 
-    private void setupKeyboardControls() {
-        board.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case W:  // move selection up
-                    moveSelection(0, -1);
-                    break;
-                case S:  // move selection down
-                    moveSelection(0, 1);
-                    break;
-                case A:  // move selection left
-                    moveSelection(-1, 0);
-                    break;
-                case D:  // move selection right
-                    moveSelection(1, 0);
-                    break;
-                case SPACE:  // place stone
-                    placeStoneAtSelection();
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
-    public void moveSelection(int dx, int dy) {
-        // Update row
-        currentSelectionRow += dy;
-        if (currentSelectionRow < 1) {
-            currentSelectionRow = 1;
-        } else if (currentSelectionRow > BOARD_SIZE) {
-            currentSelectionRow = BOARD_SIZE;
-        }
-
-        // Update column
-        currentSelectionCol += dx;
-        if (currentSelectionCol < 1) {
-            currentSelectionCol = 1;
-        } else if (currentSelectionCol > BOARD_SIZE) {
-            currentSelectionCol = BOARD_SIZE;
-        }
-
-    }
-
-    public void placeStoneAtSelection() {
-        Circle selectedCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
-        setStone(selectedCircle);
-    }
-
     /*
       ================================================================================================================
 
@@ -1111,7 +1006,9 @@ public class boardMaskController {
      */
 
     private void terminalInfo(String data) {
-        System.out.println(data);
+        boolean logging = true;
+        if(logging)
+            System.out.println(data);
     }
 
     private int indexToNum(int row) {
