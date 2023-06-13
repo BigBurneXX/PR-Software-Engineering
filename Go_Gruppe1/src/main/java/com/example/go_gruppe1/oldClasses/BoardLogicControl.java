@@ -170,6 +170,6 @@ public class BoardLogicControl {
                 neighbour.addFreeField(newLiberty);
         }
         stoneList.remove(toDelete);
-        controller.deleteStoneGroup(toDelete);
+        //controller.deleteStoneGroup(toDelete);
     }
 }

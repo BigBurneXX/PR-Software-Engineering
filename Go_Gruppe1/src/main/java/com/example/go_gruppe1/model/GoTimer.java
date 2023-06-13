@@ -1,17 +1,37 @@
 package com.example.go_gruppe1.model;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.util.Duration;
+
 import java.util.concurrent.TimeUnit;
 
 public class GoTimer {
     private long elapsedTime;
     private long startTime;
+    private final StringProperty timeProperty;
 
+    private final Timeline timeline;
     public GoTimer(){
         elapsedTime = 0;
         startTime = 0;
+        timeProperty = new SimpleStringProperty("00:00");
+
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimer()));
+        timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
-    public String update(){
+    public void startTimer(){
+        timeline.play();
+    }
+
+    public void stopTimer(){
+        timeline.stop();
+    }
+
+    public void updateTimer(){
         long currentTime = System.currentTimeMillis();
         long elapsedTimeForTurn = currentTime - startTime;
         elapsedTime += elapsedTimeForTurn;
@@ -20,6 +40,26 @@ public class GoTimer {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(minutes);
 
-        return String.format("%02d:%02d", minutes, seconds);
+        timeProperty.set(String.format("%02d:%02d", minutes, seconds));
+    }
+
+    public int passedSlotSeconds() {
+        long currentTime = System.currentTimeMillis();
+        long elapsedTimeForTurn = currentTime - startTime;
+        int passedSlot = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTime + elapsedTimeForTurn);
+        elapsedTime = 0;
+        return passedSlot;
+    }
+
+    public void updateStartTime(){
+        startTime = System.currentTimeMillis();
+    }
+
+    public StringProperty timeProperty() {
+        return timeProperty;
+    }
+
+    public String getTime() {
+        return timeProperty.get();
     }
 }
