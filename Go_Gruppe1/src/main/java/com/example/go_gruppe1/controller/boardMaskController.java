@@ -236,6 +236,7 @@ public class boardMaskController {
                 "-fx-font-size: ", boardPane.heightProperty().multiply(0.025).asString()
         ));
 
+        //modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
         modeAndMoveDisplay.setText((lastColor == BLACK ? pl1.getText() : pl2.getText()) + "'s turn!");
     }
 
@@ -271,7 +272,7 @@ public class boardMaskController {
       ================================================================================================================
      */
 
-    protected void setSampleSolutionDisplay(String text) {
+    private void setSampleSolutionDisplay(String text) {
         sampleSolutionDisplay.setText(text);
         terminalInfo("sample solution display set to" + text);
     }
@@ -502,6 +503,7 @@ public class boardMaskController {
         } else {
             timer2.startTimer();
         }
+        //gameHandler.startTimer();
 
         //creating output file
         fileControl.createFile(this, "", PLAYER_BLACK.getName(), PLAYER_WHITE.getName(), BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
@@ -585,10 +587,7 @@ public class boardMaskController {
                 letter.translateXProperty().bind(bottomLetterCell.widthProperty().multiply(-0.8));
                 board.add(letter, i + 1, BOARD_SIZE);
             }
-
-
         }
-
     }
 
 
@@ -612,6 +611,7 @@ public class boardMaskController {
                     modeAndMoveDisplay.setText(pl2.getText() + "'s turn!");
                     lastColor = WHITE;
                 }
+                //modeAndMoveDisplay.setText(gameHandler.getCurrentPlayer().getName() + "'s turn!");
 
                 //color for hovering
                 final Color HOVER_BLACK = Color.valueOf("#00000070");
@@ -656,49 +656,33 @@ public class boardMaskController {
         int higherValue = BOARD_SIZE - dif;
         int midValue = BOARD_SIZE / 2 + 1;
 
-        if (HANDICAPS >= 1) {
-            circlesOfBoard[lowerValue][higherValue].setFill(BLACK);
+        if (HANDICAPS >= 1)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, higherValue - 1, BLACK));
-        }
-        if (HANDICAPS >= 2) {
-            circlesOfBoard[higherValue][lowerValue].setFill(BLACK);
+
+        if (HANDICAPS >= 2)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, lowerValue - 1, BLACK));
-        }
 
-        if (HANDICAPS >= 3) {
-            circlesOfBoard[higherValue][higherValue].setFill(BLACK);
+        if (HANDICAPS >= 3)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, higherValue - 1, BLACK));
-        }
 
-        if (HANDICAPS >= 4) {
-            circlesOfBoard[lowerValue][lowerValue].setFill(BLACK);
+        if (HANDICAPS >= 4)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, lowerValue - 1, BLACK));
-        }
 
-        if (HANDICAPS >= 5) {
-            circlesOfBoard[midValue][midValue].setFill(BLACK);
+        if (HANDICAPS >= 5)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, midValue - 1, BLACK));
-        }
 
-        if (HANDICAPS >= 6) {
-            circlesOfBoard[midValue][lowerValue].setFill(BLACK);
+        if (HANDICAPS >= 6)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, lowerValue - 1, BLACK));
-        }
 
-        if (HANDICAPS >= 7) {
-            circlesOfBoard[midValue][higherValue].setFill(BLACK);
+        if (HANDICAPS >= 7)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), midValue - 1, higherValue - 1, BLACK));
-        }
 
-        if (HANDICAPS >= 8) {
-            circlesOfBoard[lowerValue][midValue].setFill(BLACK);
+        if (HANDICAPS >= 8)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), lowerValue - 1, midValue - 1, BLACK));
-        }
 
-        if (HANDICAPS == 9) {
-            circlesOfBoard[higherValue][midValue].setFill(BLACK);
+        if (HANDICAPS == 9)
             game.executeCommand(new PlaceStoneCommand(game.getBoard(), higherValue - 1, midValue - 1, BLACK));
-        }
+        drawStones();
     }
 
     private void drawNavigationArrows() {
