@@ -327,7 +327,7 @@ public class boardMaskController {
         displayPlayerNames();
     }
 
-    private void displayPlayerNames(){
+    private void displayPlayerNames() {
         pl1.setText(PLAYER_BLACK.getName() + " (Black)");
         pl2.setText(PLAYER_WHITE.getName() + " (White)");
         terminalInfo("player1 set to: " + PLAYER_BLACK.getName());
@@ -837,7 +837,7 @@ public class boardMaskController {
                 fileControl.writeMoves((row - 1), ALPHABET[col - 1], "");
                 terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col - 1]);
                 c.setFill(lastColor);
-                if(game.executeCommand(new PlaceStoneCommand(game.getBoard(),row-1, col-1, lastColor))){
+                if (game.executeCommand(new PlaceStoneCommand(game.getBoard(), row - 1, col - 1, lastColor))) {
                     drawStones();
                     modeAndMoveDisplay.setText("This is suicide. Please select another position");
                     return;
@@ -868,7 +868,7 @@ public class boardMaskController {
     private void drawStones() {
         Color[][] boardToDraw = game.getBoard().getBoard();
         StringBuilder printBoard = new StringBuilder();
-        for(int r = 0; r < BOARD_SIZE; r++) {
+        for (int r = 0; r < BOARD_SIZE; r++) {
             for (int c = 0; c < BOARD_SIZE; c++) {
                 circlesOfBoard[r + 1][c + 1].setFill(boardToDraw[r][c] == null ? TRANSPARENT : boardToDraw[r][c] == BLACK ? BLACK : WHITE);
                 Color toCompare = (Color) circlesOfBoard[r + 1][c + 1].getFill();
@@ -994,6 +994,7 @@ public class boardMaskController {
             stage.setMinHeight(580);
             stage.centerOnScreen();
             stage.show();
+            //System.out.println("Score: " + game.cal);
         }
     }
 
@@ -1007,7 +1008,7 @@ public class boardMaskController {
 
     private void terminalInfo(String data) {
         boolean logging = true;
-        if(logging)
+        if (logging)
             System.out.println(data);
     }
 

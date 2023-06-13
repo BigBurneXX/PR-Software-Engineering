@@ -78,4 +78,8 @@ public class SimpleBoard {
     public Color[][] getBoard(){
         return board;
     }
+
+    public int getSize() {
+        return size;
+    }
 }
