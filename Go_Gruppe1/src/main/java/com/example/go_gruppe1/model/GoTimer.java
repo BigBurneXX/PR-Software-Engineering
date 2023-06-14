@@ -13,6 +13,7 @@ public class GoTimer {
     private long startTime;
     private final StringProperty timeProperty;
     private final Timeline timeline;
+    private int passedSeconds;
 
     public GoTimer(){
         elapsedTime = 0;
@@ -44,12 +45,16 @@ public class GoTimer {
         timeProperty.set(String.format("%02d:%02d", minutes, seconds));
     }
 
-    public int passedSlotSeconds() {
+    public void passedSlotSeconds() {
         long currentTime = System.currentTimeMillis();
         long elapsedTimeForTurn = currentTime - startTime;
-        int passedSlot = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTime + elapsedTimeForTurn);
+        passedSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTime + elapsedTimeForTurn);
         elapsedTime = 0;
-        return passedSlot;
+        System.out.println("passed: " + passedSeconds);
+    }
+
+    public int getPassedSeconds(){
+        return passedSeconds;
     }
 
     public StringProperty timeProperty() {

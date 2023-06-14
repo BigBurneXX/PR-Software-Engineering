@@ -682,8 +682,7 @@ public class boardMaskController {
             modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " passed! - "
                                 + playerHandler.getNextPlayer().getName() + "'s turn");
 
-            int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 1 : 2;
-            initiateByoyomiRules(num);
+            initiateByoyomiRules();
 
             playerHandler.moveMade();
             //fileHandler for passing (addMove with -1, -1)
@@ -723,7 +722,7 @@ public class boardMaskController {
     }
 */
 
-    private void initiateByoyomiRules(int playerNumber) {
+    private void initiateByoyomiRules() {
         if (BYOYOMI_NUMBER != 0) {
             /*
             if (playerNumber == 1) {
@@ -761,8 +760,11 @@ public class boardMaskController {
                 }
             }
         }*/
-            if(playerHandler.getCurrentPlayer().getTimer().passedSlotSeconds() > BYOYOMI_TIME) {
-                int slots = playerHandler.getCurrentPlayer().getTimer().passedSlotSeconds() / BYOYOMI_TIME;
+            playerHandler.getCurrentPlayer().getTimer().passedSlotSeconds();
+            System.out.println(playerHandler.getCurrentPlayer().getTimer().getPassedSeconds());
+            if(playerHandler.getCurrentPlayer().getTimer().getPassedSeconds() > BYOYOMI_TIME) {
+                int slots = playerHandler.getCurrentPlayer().getTimer().getPassedSeconds() / BYOYOMI_TIME;
+                System.out.println("slots: " + slots);
                 int currentByoyomi;
                 if (playerHandler.getCurrentPlayer().getColor().equals(BLACK)) {
                     blackByoyomi -= slots;
@@ -809,14 +811,6 @@ public class boardMaskController {
                 row = GridPane.getRowIndex(n);
                 col = GridPane.getColumnIndex(n);
                 fileHandler.write((row-1), ALPHABET[col-1], "");
-                /*
-                terminalInfo("Stone (" + lastColor + ") placed at: " + row + ALPHABET[col - 1]);
-                c.setFill(lastColor);
-                if(game.executeCommand(new PlaceStoneCommand(game.getBoard(),row-1, col-1, lastColor))){
-                    drawStones();
-                    modeAndMoveDisplay.setText("This is suicide. Please select another position");
-                    return;
-                }*/
 
                 Color current = playerHandler.getCurrentPlayer().getColor();
                 terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1]);
@@ -829,8 +823,7 @@ public class boardMaskController {
 
                 modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
                 playerHandler.moveMade();
-                int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 1 : 2;
-                initiateByoyomiRules(num);
+                initiateByoyomiRules();
                 break;
             }
             //   terminalInfo("Error: System was unable to located circle!");

@@ -22,7 +22,7 @@ public class PlayerHandler {
     public void moveMade(){
         currentPlayer.getTimer().stopTimer();
         nextPlayer.getTimer().startTimer();
-        terminalInfo(String.valueOf(currentPlayer.getTimer().passedSlotSeconds()));
+        terminalInfo("passed seconds: " + currentPlayer.getTimer().getPassedSeconds());
         changePlayer();
     }
 
