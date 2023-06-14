@@ -9,28 +9,55 @@ public class GameHandler {
     private Player nextPlayer;
     private boolean logging;
 
-    GameHandler(String playerBlackName, String playerWhiteName, Color lastColor){
-        playerBlack = new Player(playerBlackName, Color.BLACK);
-        playerWhite = new Player(playerWhiteName, Color.WHITE);
+    public GameHandler(String playerBlackName, String playerWhiteName){
+        //final Color HOVER_BLACK = Color.valueOf("#00000070");
+        //final Color HOVER_WHITE = Color.valueOf("#FFFFFF70");
+
+
+        playerBlack = new Player(playerBlackName, Color.BLACK, getHoverColorBlack());
+        playerWhite = new Player(playerWhiteName, Color.WHITE, getHoverColorWhite());
+        currentPlayer = playerBlack;
+        nextPlayer = playerWhite;
     }
 
     public void moveMade(){
-        //modeAndMoveDisplay.setText(pl1.getText() + "'s turn!");
         currentPlayer.getTimer().stopTimer();
         nextPlayer.getTimer().startTimer();
         terminalInfo(String.valueOf(currentPlayer.getTimer().passedSlotSeconds()));
         changePlayer();
-        //initiateByoyomiRules(2);
     }
 
     public void startTimer(){
         currentPlayer.getTimer().startTimer();
     }
 
+    public Color getHoverColorBlack(){
+        return Color.valueOf("#00000070");
+    }
+
+    public Color getHoverColorWhite(){
+        return Color.valueOf("#FFFFFF70");
+    }
     private void changePlayer(){
         Player change = currentPlayer;
         currentPlayer = nextPlayer;
         nextPlayer = change;
+    }
+
+    public Player getCurrentPlayer(){
+        return currentPlayer;
+    }
+
+    public Player getNextPlayer(){
+        return nextPlayer;
+    }
+
+    public Player getPlayerBlack(){
+        return playerBlack;
+    }
+
+    public Player getPlayerWhite(){
+        return playerWhite;
     }
 
     private void enableLogging(){
