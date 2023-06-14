@@ -1,6 +1,7 @@
 package com.example.go_gruppe1.controller;
 
 import com.example.go_gruppe1.model.*;
+import com.example.go_gruppe1.model.command.Position;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javafx.scene.paint.Color.*;
@@ -967,6 +969,10 @@ public class boardMaskController {
             stage.setMinHeight(580);
             stage.centerOnScreen();
             stage.show();
+
+            //only for testing score counting
+            ArrayList<ArrayList<Position>> libertyIslands = gameHandler.getLibertyIslands();
+            libertyIslands.stream().forEach(e -> System.out.println(gameHandler.isTerritory(e)));
         }
     }
 
