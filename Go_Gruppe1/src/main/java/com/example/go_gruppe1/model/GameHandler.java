@@ -1,74 +1,30 @@
 package com.example.go_gruppe1.model;
 
+import com.example.go_gruppe1.model.command.Game;
+import com.example.go_gruppe1.model.command.PlaceStoneCommand;
+import com.example.go_gruppe1.model.command.SimpleBoard;
 import javafx.scene.paint.Color;
 
 public class GameHandler {
-    private final Player playerBlack;
-    private final Player playerWhite;
-    private Player currentPlayer;
-    private Player nextPlayer;
-    private boolean logging;
+    private final Game game;
 
-    public GameHandler(String playerBlackName, String playerWhiteName){
-        //final Color HOVER_BLACK = Color.valueOf("#00000070");
-        //final Color HOVER_WHITE = Color.valueOf("#FFFFFF70");
-
-
-        playerBlack = new Player(playerBlackName, Color.BLACK, getHoverColorBlack());
-        playerWhite = new Player(playerWhiteName, Color.WHITE, getHoverColorWhite());
-        currentPlayer = playerBlack;
-        nextPlayer = playerWhite;
+    public GameHandler(int boardSize){
+        game = new Game(boardSize);
     }
 
-    public void moveMade(){
-        currentPlayer.getTimer().stopTimer();
-        nextPlayer.getTimer().startTimer();
-        terminalInfo(String.valueOf(currentPlayer.getTimer().passedSlotSeconds()));
-        changePlayer();
+    public boolean addMove(int row, int col, Color color){
+        return game.executeCommand(new PlaceStoneCommand(game.getBoard(), row, col, color));
     }
 
-    public void startTimer(){
-        currentPlayer.getTimer().startTimer();
+    public void redo(){
+        game.redoLastMove();
     }
 
-    public Color getHoverColorBlack(){
-        return Color.valueOf("#00000070");
+    public void undo(){
+        game.undoLastMove();
     }
 
-    public Color getHoverColorWhite(){
-        return Color.valueOf("#FFFFFF70");
-    }
-    private void changePlayer(){
-        Player change = currentPlayer;
-        currentPlayer = nextPlayer;
-        nextPlayer = change;
-    }
-
-    public Player getCurrentPlayer(){
-        return currentPlayer;
-    }
-
-    public Player getNextPlayer(){
-        return nextPlayer;
-    }
-
-    public Player getPlayerBlack(){
-        return playerBlack;
-    }
-
-    public Player getPlayerWhite(){
-        return playerWhite;
-    }
-
-    private void enableLogging(){
-        logging = true;
-    }
-
-    private void disableLogging(){
-        logging = false;
-    }
-    private void terminalInfo(String data){
-        if(logging)
-            System.out.println(data);
+    public SimpleBoard getBoard(){
+        return game.getBoard();
     }
 }
