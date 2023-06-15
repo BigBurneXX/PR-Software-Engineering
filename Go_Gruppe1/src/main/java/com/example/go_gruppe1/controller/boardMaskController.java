@@ -590,9 +590,6 @@ public class boardMaskController {
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(BOARD_SIZE * 2.4).multiply(-1));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE * 3.9).multiply(-1));
 
-                //initial start
-                modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
-
                 //color for hovering
                 final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
                 final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
@@ -704,7 +701,7 @@ public class boardMaskController {
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
-            int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 1 : 2;
+            int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 2 : 1;
             try {
                 switchToWinnerMask(num, 2);
             } catch (IOException ex) {
@@ -821,7 +818,7 @@ public class boardMaskController {
                 }*/
 
                 Color current = playerHandler.getCurrentPlayer().getColor();
-                terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1]);
+                terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by " + playerHandler.getCurrentPlayer().getName());
                 c.setFill(current);
                 if(gameHandler.addMove(row-1, col-1, current)){
                     drawStones();
@@ -829,7 +826,8 @@ public class boardMaskController {
                     return;
                 }
 
-                modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
+                modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
+
                 playerHandler.moveMade();
                 int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 1 : 2;
                 initiateByoyomiRules(num);
@@ -942,7 +940,7 @@ public class boardMaskController {
     }
 
     private void switchToWinnerMask(int player, int reasonForWinning) throws IOException {
-        //reason for winning 1 - points, 2 - resigned, 3 - byoyomi
+        //reason for winning 1 - points(2xconsecutive passing), 2 - resigned, 3 - byoyomi
         if ((player == 1 || player == 2) && (reasonForWinning >= 1 && reasonForWinning <= 3)) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
             Parent root = loader.load();
@@ -952,11 +950,11 @@ public class boardMaskController {
             winnerMask.setReasonForWinning(reasonForWinning);
 
             if (player == 1) {
-                winnerMask.initiateDisplay(pl1.getText(), pl2.getText(), blackTotal, blackTrappedStones, "Handicaps: ", HANDICAPS,
+                winnerMask.initiateDisplay(pl1.getText(), pl2.getText(), gameHandler.getTerritoryScore(BLACK) + blackTrappedStones, blackTrappedStones, "Handicaps: ", HANDICAPS,
                         BYOYOMI_NUMBER, blackByoyomi, BYOYOMI_TIME);
                 terminalInfo("Black won... \n[log end]");
             } else {
-                winnerMask.initiateDisplay(pl2.getText(), pl1.getText(), whiteTotal, whiteTrappedStones, "Komi: ", KOMI,
+                winnerMask.initiateDisplay(pl2.getText(), pl1.getText(), gameHandler.getTerritoryScore(WHITE) + whiteTrappedStones, whiteTrappedStones, "Komi: ", KOMI,
                         BYOYOMI_NUMBER, whiteByoyomi, BYOYOMI_TIME);
                 terminalInfo("White won... \n[log end]");
             }
@@ -969,10 +967,6 @@ public class boardMaskController {
             stage.setMinHeight(580);
             stage.centerOnScreen();
             stage.show();
-
-            //only for testing score counting
-            ArrayList<ArrayList<Position>> libertyIslands = gameHandler.getLibertyIslands();
-            libertyIslands.stream().forEach(e -> System.out.println(gameHandler.isTerritory(e)));
         }
     }
 
