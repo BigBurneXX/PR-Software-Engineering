@@ -656,6 +656,8 @@ public class boardMaskController {
 
         if (HANDICAPS == 9)
             gameHandler.addMove(higherValue, midValue, BLACK);
+        playerHandler.changePlayer();
+        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn");
         drawStones();
     }
 
