@@ -1,6 +1,7 @@
 package com.example.go_gruppe1.controller;
 
 import com.example.go_gruppe1.model.*;
+import com.example.go_gruppe1.model.command.Position;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javafx.scene.paint.Color.*;
@@ -588,9 +590,6 @@ public class boardMaskController {
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(BOARD_SIZE * 2.4).multiply(-1));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE * 3.9).multiply(-1));
 
-                //initial start
-                modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
-
                 //color for hovering
                 final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
                 final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
@@ -657,6 +656,8 @@ public class boardMaskController {
 
         if (HANDICAPS == 9)
             gameHandler.addMove(higherValue, midValue, BLACK);
+        playerHandler.changePlayer();
+        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn");
         drawStones();
     }
 
@@ -701,7 +702,7 @@ public class boardMaskController {
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
-            int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 1 : 2;
+            int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 2 : 1;
             try {
                 switchToWinnerMask(num, 2);
             } catch (IOException ex) {
@@ -813,7 +814,7 @@ public class boardMaskController {
                 fileHandler.write((row-1), ALPHABET[col-1], "");
 
                 Color current = playerHandler.getCurrentPlayer().getColor();
-                terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1]);
+                terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by " + playerHandler.getCurrentPlayer().getName());
                 c.setFill(current);
                 if(gameHandler.addMove(row-1, col-1, current)){
                     drawStones();
@@ -821,7 +822,8 @@ public class boardMaskController {
                     return;
                 }
 
-                modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
+                modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
+
                 playerHandler.moveMade();
                 initiateByoyomiRules();
                 break;
@@ -933,7 +935,7 @@ public class boardMaskController {
     }
 
     private void switchToWinnerMask(int player, int reasonForWinning) throws IOException {
-        //reason for winning 1 - points, 2 - resigned, 3 - byoyomi
+        //reason for winning 1 - points(2xconsecutive passing), 2 - resigned, 3 - byoyomi
         if ((player == 1 || player == 2) && (reasonForWinning >= 1 && reasonForWinning <= 3)) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
             Parent root = loader.load();
@@ -943,11 +945,11 @@ public class boardMaskController {
             winnerMask.setReasonForWinning(reasonForWinning);
 
             if (player == 1) {
-                winnerMask.initiateDisplay(pl1.getText(), pl2.getText(), blackTotal, blackTrappedStones, "Handicaps: ", HANDICAPS,
+                winnerMask.initiateDisplay(pl1.getText(), pl2.getText(), gameHandler.getTerritoryScore(BLACK) + blackTrappedStones, blackTrappedStones, "Handicaps: ", HANDICAPS,
                         BYOYOMI_NUMBER, blackByoyomi, BYOYOMI_TIME);
                 terminalInfo("Black won... \n[log end]");
             } else {
-                winnerMask.initiateDisplay(pl2.getText(), pl1.getText(), whiteTotal, whiteTrappedStones, "Komi: ", KOMI,
+                winnerMask.initiateDisplay(pl2.getText(), pl1.getText(), gameHandler.getTerritoryScore(WHITE) + whiteTrappedStones, whiteTrappedStones, "Komi: ", KOMI,
                         BYOYOMI_NUMBER, whiteByoyomi, BYOYOMI_TIME);
                 terminalInfo("White won... \n[log end]");
             }
