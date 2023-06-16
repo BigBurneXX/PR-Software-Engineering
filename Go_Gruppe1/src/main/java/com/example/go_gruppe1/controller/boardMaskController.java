@@ -1,7 +1,6 @@
 package com.example.go_gruppe1.controller;
 
 import com.example.go_gruppe1.model.*;
-import com.example.go_gruppe1.model.command.Position;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -23,7 +22,6 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javafx.scene.paint.Color.*;
@@ -51,7 +49,7 @@ public class boardMaskController {
     @FXML
     public ToggleGroup mode;
     @FXML
-    private Label pl1, pl2, blackTrapped, whiteTrapped, timerBlack, timerWhite, blackTimeLabel, whiteTimeLabel, title;
+    private Label plBlack, plWhite, blackTrapped, whiteTrapped, timerBlack, timerWhite, blackTimeLabel, whiteTimeLabel, title;
     @FXML
     private Button passButton, resignButton;
     @FXML
@@ -105,7 +103,6 @@ public class boardMaskController {
     private GameHandler gameHandler;
     private PlayerHandler playerHandler;
     private FileHandler fileHandler;
-    //private final FileControl fileControl = new FileControl();
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -125,10 +122,12 @@ public class boardMaskController {
 
     /*
       ----------------------------------------------------------------------------------------------------------------
-                                        constants - GUI multipliers
+                                        constants - GUI
       ----------------------------------------------------------------------------------------------------------------
      */
 
+    private final int minWidth = 600;
+    private final int minHeight = 580;
     private final double PLAYER_LABEL_MULTIPLIER = 0.04;
     private final double TRAPPED_LABEL_MULTIPLIER = 0.026;
     private final double TIMER_LABEL_MULTIPLIER = 0.026;
@@ -144,7 +143,6 @@ public class boardMaskController {
      */
     private Circle[][] circlesOfBoard;
     private int blackTrappedStones = 0, whiteTrappedStones = 0;
-    private long blackTotal = 0, whiteTotal = 0;
     private int blackByoyomi = 0, whiteByoyomi = 0;
 
     /*
@@ -186,15 +184,19 @@ public class boardMaskController {
         fileHandler.open();
     }
 
-    public void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize, List<Move> moves) throws IOException {
+    //should potentially be in FileHandler?
+    public void switchToNewGame(String player1Name, String player2Name, String komi, String handicaps, int boardSize,
+                                List<Move> moves, String byoyomiNumberOfTimes, String byoyomiTimeLimit) throws IOException {
         terminalInfo(player1Name + player2Name + komi + handicaps + boardSize);
-        initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize);
+        initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize, byoyomiNumberOfTimes, byoyomiTimeLimit);
         Color currentColor = BLACK;
         for (Move m : moves) {
+            if(m.col() == 'p')
+                passButton.getOnMouseClicked();
             int col = new String(ALPHABET).indexOf(m.col());
             fileHandler.write((m.row() - 1), ALPHABET[col], m.text());
             setSampleSolutionDisplay(m.text());
-            terminalInfo("Stone (" + currentColor + ") placed at: " + m.row() + ALPHABET[col]);
+            terminalInfo("Stone (" + (currentColor == BLACK ? "BLACK" : "WHITE") + ") placed at: " + m.row() + ALPHABET[col]);
             circlesOfBoard[col + 1][m.row() + 1].setFill(currentColor);
             gameHandler.addMove(m.row(), col, currentColor);
             currentColor = (currentColor == BLACK ? WHITE : BLACK);
@@ -271,7 +273,7 @@ public class boardMaskController {
     protected void setSize(double width, double height) {
         boardPane.setPrefHeight(height);
         boardPane.setPrefWidth(width);
-        boardPane.setMinSize(600, 580);
+        boardPane.setMinSize(minWidth, minHeight);
     }
 
     protected double getWidth() {
@@ -290,18 +292,19 @@ public class boardMaskController {
 
       ================================================================================================================
      */
-    protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize) {
+    protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize,
+                                   String byoyomiNumber, String byoyomiTime) {
         BOARD_SIZE = boardSize;
         terminalInfo("starting a new game\nboard size set to: " + BOARD_SIZE);
-        //boardLogicControl = new BoardLogicControl(this, BOARD_SIZE);
         gameHandler = new GameHandler(BOARD_SIZE);
-        initiatePlayers(player1Name, player2Name);
-        playerHandler = new PlayerHandler(PLAYER_BLACK.getName(), PLAYER_WHITE.getName());
-        playerHandler.setLogging(true);
         displayKomi(komi);
         displayHandicaps(handicaps);
         displayTrappedStone(0, blackTrapped);
         displayTrappedStone(0, whiteTrapped);
+        BYOYOMI_NUMBER = Integer.parseInt(byoyomiNumber);
+        BYOYOMI_TIME = Integer.parseInt(byoyomiTime);
+        initiatePlayers(player1Name, player2Name);
+        initiateTimeRules(byoyomiNumber, byoyomiTime);
         onModePlayClick();
         modePlay.setSelected(true);
         circlesOfBoard = new Circle[BOARD_SIZE + 1][BOARD_SIZE + 1];
@@ -315,22 +318,24 @@ public class boardMaskController {
     private void initiatePlayers(String p1, String p2) {
         String playerBlack = p1.isEmpty() ? "Player 1" : p1;
         String playerWhite = p2.isEmpty() ? "Player 2" : p2;
-        PLAYER_BLACK = new Player(playerBlack, BLACK, GOLD);
-        PLAYER_WHITE = new Player(playerWhite, WHITE, GOLD);
+        playerHandler = new PlayerHandler(playerBlack, playerWhite);
+        playerHandler.setLogging(true);
+        //creating output file
+        fileHandler = new FileHandler(this, playerBlack, playerWhite, BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
 
-        displayPlayerNames();
+        displayPlayerNames(playerBlack, playerWhite);
     }
 
-    private void displayPlayerNames(){
-        pl1.setText(PLAYER_BLACK.getName() + " (Black)");
-        pl2.setText(PLAYER_WHITE.getName() + " (White)");
-        terminalInfo("player1 set to: " + PLAYER_BLACK.getName());
-        terminalInfo("player2 set to: " + PLAYER_WHITE.getName());
+    private void displayPlayerNames(String playerBlack, String playerWhite){
+        plBlack.setText(playerBlack + " (Black)");
+        plWhite.setText(playerWhite + " (White)");
+        terminalInfo("player1 set to: " + playerBlack);
+        terminalInfo("player2 set to: " + playerWhite);
 
-        pl1.styleProperty().bind(Bindings.concat(
+        plBlack.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", boardPane.heightProperty().multiply(PLAYER_LABEL_MULTIPLIER).asString()
         ));
-        pl2.styleProperty().bind(Bindings.concat(
+        plWhite.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", boardPane.heightProperty().multiply(PLAYER_LABEL_MULTIPLIER).asString()
         ));
     }
@@ -380,8 +385,6 @@ public class boardMaskController {
 
     protected void initiateTimeRules(String byoyomiNumber, String byoyomiTime) {
         try {
-            BYOYOMI_NUMBER = Integer.parseInt(byoyomiNumber);
-            BYOYOMI_TIME = Integer.parseInt(byoyomiTime);
             if (BYOYOMI_NUMBER <= 0 || BYOYOMI_TIME < 30) {
                 BYOYOMI_NUMBER = 0;
                 BYOYOMI_TIME = 0;
@@ -490,9 +493,6 @@ public class boardMaskController {
         drawPassButton();
         drawResignButton();
         playerHandler.startTimer();
-
-        //creating output file
-        fileHandler = new FileHandler(this, PLAYER_BLACK.getName(), PLAYER_WHITE.getName(), BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
     }
 
     /*
@@ -626,6 +626,7 @@ public class boardMaskController {
 
     private void drawHandicaps() {
         int dif = BOARD_SIZE == 9 ? 2 : 3;
+
         int lowerValue = dif;
         int higherValue = BOARD_SIZE - dif - 1;
         int midValue = BOARD_SIZE / 2;
@@ -686,9 +687,18 @@ public class boardMaskController {
             initiateByoyomiRules();
 
             playerHandler.moveMade();
-            //fileHandler for passing (addMove with -1, -1)
-            //fileControl.writeAction("passed");
+            fileHandler.pass();
         });
+    }
+
+    public void passButtonClicked(){
+        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " passed! - "
+                + playerHandler.getNextPlayer().getName() + "'s turn");
+
+        initiateByoyomiRules();
+
+        playerHandler.moveMade();
+        fileHandler.pass();
     }
 
     private void drawResignButton() {
@@ -712,55 +722,12 @@ public class boardMaskController {
             modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " resigned! - "
                                 + playerHandler.getNextPlayer().getName() + " won!");
 
-            //TODO: adding logic for passing (add Move -2, -2);
-            //fileControl.writeAction("resigned");
+            fileHandler.resign();
         });
     }
 
-/*
-    private void updateTimer1() {
-        timerBlack.setPadding(new Insets(0, 0, 4, 0));
-    }
-*/
-
     private void initiateByoyomiRules() {
         if (BYOYOMI_NUMBER != 0) {
-            /*
-            if (playerNumber == 1) {
-                System.out.println("timer1: " + timer1.passedSlotSeconds() + "\nByoyomiTime: " + BYOYOMI_TIME);
-                if (timer1.passedSlotSeconds() > BYOYOMI_TIME) {
-                    int slots = timer1.passedSlotSeconds() / BYOYOMI_TIME;
-                    blackByoyomi -= slots;
-                    if (blackByoyomi < 0) {
-                        try {
-                            switchToWinnerMask(2, 3);
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        modeAndMoveDisplay.setText(pl1.getText() + " used all time slots. " + pl2.getText() + " won!");
-                        blackTimeLabel.setText("No time left");
-                    } else {
-                        blackTimeLabel.setText(blackByoyomi + " time period(s) à " + BYOYOMI_TIME + " s");
-                    }
-                }
-            } else if (playerNumber == 2) {
-                if (timer2.passedSlotSeconds() > BYOYOMI_TIME) {
-                    int slots = timer2.passedSlotSeconds() / BYOYOMI_TIME;
-                    whiteByoyomi -= slots;
-                    if (whiteByoyomi < 0) {
-                        try {
-                            switchToWinnerMask(1, 3);
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        modeAndMoveDisplay.setText(pl2.getText() + " used all time slots. " + pl1.getText() + " won!");
-                        whiteTimeLabel.setText("No time left");
-                    } else {
-                        whiteTimeLabel.setText(whiteByoyomi + " time period(s) à " + BYOYOMI_TIME + " s");
-                    }
-                }
-            }
-        }*/
             playerHandler.getCurrentPlayer().getTimer().passedSlotSeconds();
             System.out.println(playerHandler.getCurrentPlayer().getTimer().getPassedSeconds());
             if(playerHandler.getCurrentPlayer().getTimer().getPassedSeconds() > BYOYOMI_TIME) {
@@ -872,70 +839,8 @@ public class boardMaskController {
     }
 */
 
-    //TODO: Implementing calculate score accurately!
-    private int calculateScore(char playerColor, char enemyColor, char[][] board) {
-        int score = 0;
-        int territory = 0;
-        int captured = 0;
-
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                // Check if the point is a player's stone
-                if (board[i][j] == playerColor) {
-                    score++;
-                }
-                // Check if the point is part of player's territory
-                else if (board[i][j] == ' ' && isTerritory(i, j, playerColor, board)) {
-                    territory++;
-                }
-                // Check if the point is a captured enemy's stone
-                else if (board[i][j] == enemyColor && isCaptured(i, j, board)) {
-                    captured++;
-                }
-            }
-        }
-
-        return score + territory + captured;
-    }
-
-    private boolean isTerritory(int i, int j, char playerColor, char[][] board) {
-        return checkSurrounding(i, j, playerColor, board, new boolean[board.length][board[0].length]);
-    }
-
-    private boolean isCaptured(int i, int j, char[][] board) {
-        return checkSurrounding(i, j, board[i][j], board, new boolean[board.length][board[0].length]);
-    }
-
-    private boolean checkSurrounding(int i, int j, char color, char[][] board, boolean[][] visited) {
-        if (i < 0 || j < 0 || i >= board.length || j >= board[0].length) {
-            return false;
-        }
-
-        if (visited[i][j]) {
-            return true;
-        }
-
-        visited[i][j] = true;
-
-        if (board[i][j] == ' ') {
-            return true;
-        }
-
-        if (board[i][j] != color) {
-            return false;
-        }
-
-        boolean result = true;
-        result &= checkSurrounding(i - 1, j, color, board, visited);
-        result &= checkSurrounding(i + 1, j, color, board, visited);
-        result &= checkSurrounding(i, j - 1, color, board, visited);
-        result &= checkSurrounding(i, j + 1, color, board, visited);
-
-        return result;
-    }
-
     private void switchToWinnerMask(int player, int reasonForWinning) throws IOException {
-        //reason for winning 1 - points(2xconsecutive passing), 2 - resigned, 3 - byoyomi
+        //reason for winning 1 - points(2x consecutive passing), 2 - resigned, 3 - byoyomi
         if ((player == 1 || player == 2) && (reasonForWinning >= 1 && reasonForWinning <= 3)) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
             Parent root = loader.load();
@@ -945,21 +850,21 @@ public class boardMaskController {
             winnerMask.setReasonForWinning(reasonForWinning);
 
             if (player == 1) {
-                winnerMask.initiateDisplay(pl1.getText(), pl2.getText(), gameHandler.getTerritoryScore(BLACK) + blackTrappedStones, blackTrappedStones, "Handicaps: ", HANDICAPS,
-                        BYOYOMI_NUMBER, blackByoyomi, BYOYOMI_TIME);
                 terminalInfo("Black won... \n[log end]");
+                winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(), gameHandler.getTerritoryScore(BLACK) + blackTrappedStones, blackTrappedStones, "Handicaps: ", HANDICAPS,
+                        BYOYOMI_NUMBER, blackByoyomi, BYOYOMI_TIME);
             } else {
-                winnerMask.initiateDisplay(pl2.getText(), pl1.getText(), gameHandler.getTerritoryScore(WHITE) + whiteTrappedStones, whiteTrappedStones, "Komi: ", KOMI,
-                        BYOYOMI_NUMBER, whiteByoyomi, BYOYOMI_TIME);
                 terminalInfo("White won... \n[log end]");
+                winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(), gameHandler.getTerritoryScore(WHITE) + whiteTrappedStones, whiteTrappedStones, "Komi: ", KOMI,
+                        BYOYOMI_NUMBER, whiteByoyomi, BYOYOMI_TIME);
             }
 
             Node source = topRegion.getTop();
             Stage stage = (Stage) source.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setMinWidth(600);
-            stage.setMinHeight(580);
+            stage.setMinWidth(minWidth);
+            stage.setMinHeight(minHeight);
             stage.centerOnScreen();
             stage.show();
         }

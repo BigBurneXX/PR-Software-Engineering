@@ -62,8 +62,8 @@ public class FileControl {
         fileMap.put("boardSize", boardSize);
         fileMap.put("komi", komi);
         fileMap.put("handicaps", handicaps);
-        fileMap.put("byoyomiNumber", byoyomiNumberOfTimes);
-        fileMap.put("byoyomiLimit", byoyomiTimeLimit);
+        fileMap.put("byoyomiNumberOfTimes", String.valueOf(byoyomiNumberOfTimes));
+        fileMap.put("byoyomiTimeLimit", String.valueOf(byoyomiTimeLimit));
         fileMap.put("moves", movesLog);
         fileMap.put("boardChanges", boardLog);
 
@@ -77,6 +77,8 @@ public class FileControl {
         }
     }
 
+    //if player passes row = -1, col = 'p'
+    //if player resigns row = -2, col = 'r'
     public void writeMoves(int row, char col, String text){
         movesLog.add(new Move(row, col, text));
         updateMovesLog(row, col, text);
@@ -113,11 +115,6 @@ public class FileControl {
         }
     }
 
-    public void writeAction(String data){
-        /* implementation of pass and resign? */
-        /* resign maybe with boolean value? */
-    }
-
     public void loadFile(File newFile){
         try(BufferedReader reader = Files.newBufferedReader(Paths.get(newFile.getAbsolutePath()))) {
             JSONObject jsonObject = (JSONObject) parser.parse(reader);
@@ -132,7 +129,8 @@ public class FileControl {
                     counter.getAndIncrement();
                 });
             controller.switchToNewGame((String) jsonObject.get("player1Name"), (String) jsonObject.get("player2Name"), jsonObject.get("komi").toString(),
-                    jsonObject.get("handicaps").toString(), ((Long) jsonObject.get("boardSize")).intValue(), movesLoaded);
+                    jsonObject.get("handicaps").toString(), ((Long) jsonObject.get("boardSize")).intValue(), movesLoaded, (String) jsonObject.get("byoyomiNumberOfTimes"),
+                    (String) jsonObject.get("byoyomiTimeLimit"));
         } catch (ParseException | IOException e) {
             terminalInfo("an IO Exception was thrown when trying to load file " + newFile.getName());
         }

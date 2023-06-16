@@ -44,13 +44,13 @@ public class winnerMaskController {
     }
 
     protected void initiateDisplay(String winner, String other, long total, int trapped, String komiOrHandicaps,
-                                   double komiOrHandicap, int byoyomi, int boyoyomiNumber, int time) {
+                                   double komiOrHandicap, int byoyomi, int byoyomiNumber, int time) {
         setName(winner, other);
         setTotalPoints(total);
         setTrapped(trapped);
         setExtraPoints(komiOrHandicaps);
         setExtraPointsValue(komiOrHandicap);
-        setByoyomi(byoyomi, boyoyomiNumber, time);
+        setByoyomi(byoyomi, byoyomiNumber, time);
         initiateButtons();
     }
 

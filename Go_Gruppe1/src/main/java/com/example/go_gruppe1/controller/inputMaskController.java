@@ -165,8 +165,8 @@ public class inputMaskController {
         boardMaskController boardMask = loader.getController();
         boardMask.setSize(inputPane.getWidth(), inputPane.getHeight());
 
-        boardMask.initiateDisplay(player1.getText(), player2.getText(), komiSpinner.getValue().toString(), handicapSpinner.getValue().toString(), getBoardSize());
-        boardMask.initiateTimeRules(timePeriodSpinner.getValue().toString(), durationSpinner.getValue().toString());
+        boardMask.initiateDisplay(player1.getText(), player2.getText(), komiSpinner.getValue().toString(), handicapSpinner.getValue().toString(), getBoardSize(),
+                        timePeriodSpinner.getValue().toString(), durationSpinner.getValue().toString());
         if(wantToLoad)
             boardMask.onOpenFileClick();
 

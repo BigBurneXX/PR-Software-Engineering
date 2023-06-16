@@ -26,6 +26,14 @@ public class FileHandler {
         }
     }
 
+    public void pass(){
+        fileControl.writeMoves(-1, 'p', "");
+    }
+
+    public void resign(){
+        fileControl.writeMoves(-2, 'r', "");
+    }
+
     public void write(int row, char col, String text){
         fileControl.writeMoves(row, col, text);
     }
