@@ -17,31 +17,6 @@ public class GameHandler {
         game = new Game(boardSize);
     }
 
-    /*public static void main(String[] args) {
-        Color[][] board = new Color[9][9];
-
-        board[2][0] = Color.BLACK;
-        board[2][1] = Color.BLACK;
-        board[1][1] = Color.BLACK;
-        board[0][1] = Color.BLACK;
-
-        board[0][7] = Color.BLACK;
-        board[1][7] = Color.BLACK;
-        board[1][8] = Color.BLACK;
-
-        board[5][5] = Color.WHITE;
-
-        ArrayList<ArrayList<Position>> allIslands = getLibertyIslands(board);
-        //allIslands.stream().forEach(libertyGroup -> libertyGroup.stream().forEach(e -> System.out.println(e.row() + " " + e.col())));
-        ArrayList<Position> lastGroup = allIslands.get(0);
-        for(Position p : lastGroup) {
-            System.out.println(p.row() + " " + p.col());
-        }
-        System.out.println(lastGroup.size());
-        System.out.println(isTerritory(board, lastGroup) == Color.BLACK);
-        System.out.println(getTerritoryScore(allIslands, Color.BLACK, board));
-    }*/
-
     public boolean addMove(int row, int col, Color color){
         return game.executeCommand(new PlaceStoneCommand(game.getBoard(), row, col, color));
     }
@@ -66,7 +41,6 @@ public class GameHandler {
             for(int col = 0; col < board[row].length; col++) {
                 if(board[row][col] == null) {
                     ArrayList<Position> libertyGroup = new ArrayList<>();
-                    //libertyGroup.add(new Position(row, col));
                     isPartOfStoneGroup(board, row, col, libertyGroup);
                     allLibertyGroups.add(libertyGroup);
                 }

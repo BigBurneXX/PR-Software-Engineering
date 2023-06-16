@@ -80,8 +80,15 @@ public class winnerMaskController {
         exit.toFront();
     }
 
-    private void setName(String winner, String other) {
-        if (reasonForWinning == 1) {
+    public void setName(String winner, String other) {
+        if(winner.equals("Draw")) {
+            name.setText("It's a draw!");
+            totalPoints.setVisible(false);
+            trapped.setVisible(false);
+            extraPointsValue.setVisible(false);
+            byoyomi.setVisible(false);
+            initiateButtons();
+        } else if (reasonForWinning == 1) {
             name.setText(winner + " won!");
         } else if (reasonForWinning == 2) {
             name.setText(other + " resigned. " + winner + " won!");
