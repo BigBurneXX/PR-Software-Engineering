@@ -1,4 +1,4 @@
-package com.example.go_gruppe1.model;
+package com.example.go_gruppe1.model.player;
 
 import javafx.scene.paint.Color;
 
@@ -13,21 +13,21 @@ public class PlayerHandler {
         final Color hoverBlack = Color.valueOf("#00000070");
         final Color hoverWhite = Color.valueOf("#FFFFFF70");
 
-        playerBlack = new Player(playerBlackName, Color.BLACK, hoverBlack);
-        playerWhite = new Player(playerWhiteName, Color.WHITE, hoverWhite);
+        playerBlack = new Player(playerBlackName, Color.BLACK, hoverBlack, new GoTimer());
+        playerWhite = new Player(playerWhiteName, Color.WHITE, hoverWhite, new GoTimer());
         currentPlayer = playerBlack;
         nextPlayer = playerWhite;
     }
 
     public void moveMade(){
-        currentPlayer.getTimer().stopTimer();
-        nextPlayer.getTimer().startTimer();
-        terminalInfo("passed seconds: " + currentPlayer.getTimer().getPassedSeconds());
+        currentPlayer.timer().stopTimer();
+        nextPlayer.timer().startTimer();
+        terminalInfo("passed seconds: " + currentPlayer.timer().getPassedSeconds());
         changePlayer();
     }
 
     public void startTimer(){
-        currentPlayer.getTimer().startTimer();
+        currentPlayer.timer().startTimer();
     }
 
     public void changePlayer(){

@@ -1,33 +1,27 @@
-package com.example.go_gruppe1.model;
+package com.example.go_gruppe1.model.file;
 
 import com.example.go_gruppe1.controller.boardMaskController;
-import javafx.scene.paint.Color;
+import com.example.go_gruppe1.model.Move;
 import javafx.stage.FileChooser;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class FileControl {
     private File outputFile;
     private boardMaskController controller;
     private final List<Move> movesLog = new ArrayList<>();
-    private final List<Color[][]> boardLog = new ArrayList<>();
-    private final JSONParser parser = new JSONParser();
-    private int moveCounter = 0;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private int fileNameCounter = 0;
 
     public void createFile(boardMaskController controller, String oldFileName, String player1Name, String player2Name,
@@ -55,20 +49,12 @@ public class FileControl {
     }
 
     private void writeStartInfo(String player1Name, String player2Name, int boardSize, double komi, int handicaps,
-                                int byoyomiNumberOfTimes, int byoyomiTimeLimit){
-        Map<String, Object> fileMap = new HashMap<>();
-        fileMap.put("player1Name", player1Name);
-        fileMap.put("player2Name", player2Name);
-        fileMap.put("boardSize", boardSize);
-        fileMap.put("komi", komi);
-        fileMap.put("handicaps", handicaps);
-        fileMap.put("byoyomiNumberOfTimes", String.valueOf(byoyomiNumberOfTimes));
-        fileMap.put("byoyomiTimeLimit", String.valueOf(byoyomiTimeLimit));
-        fileMap.put("moves", movesLog);
-        fileMap.put("boardChanges", boardLog);
+                                int byoyomiNumberOfTimes, int byoyomiTimeLimit) {
+        FileData fileData = new FileData(player1Name, player2Name, boardSize, komi, handicaps, byoyomiNumberOfTimes, byoyomiTimeLimit, movesLog);
+        String json = gson.toJson(fileData);
 
         try (FileWriter fileWriter = new FileWriter(outputFile.getAbsolutePath())) {
-            fileWriter.write(new JSONObject(fileMap).toJSONString());
+            fileWriter.write(json);
             fileWriter.flush();
 
             terminalInfo("JSON data has been written to the file successfully.");
@@ -84,55 +70,37 @@ public class FileControl {
         updateMovesLog(row, col, text);
     }
 
-    protected void updateMovesLog(int row, char col, String text){
-        // Read the existing JSON file
+    private void updateMovesLog(int row, char col, String text) {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(outputFile.getAbsolutePath()))) {
-            // Parse the JSON file incrementally
-            JSONParser parser = new JSONParser();
-            Object fileContents = parser.parse(reader);
+            Type type = new TypeToken<FileData>() {}.getType();
+            FileData fileData = gson.fromJson(reader, type);
 
-            // Retrieve the existing "moves" array
-            JSONObject jsonObject = (JSONObject) fileContents;
-            JSONArray movesArray = (JSONArray) jsonObject.get("moves");
+            if (fileData != null) {
+                fileData.moves().add(new Move(row, col, text));
 
-            // Create a new move record and add it to the "moves" array
-            Map<String, Object> newMoveMap = new HashMap<>();
-            newMoveMap.put(moveCounter + "row", row);
-            newMoveMap.put(moveCounter + "col", String.valueOf(col));
-            newMoveMap.put(moveCounter + "text", text);
-            movesArray.add(new JSONObject(newMoveMap));
-            moveCounter++;
+                try (FileWriter fileWriter = new FileWriter(outputFile.getAbsolutePath())) {
+                    gson.toJson(fileData, fileWriter);
+                    fileWriter.flush();
 
-            // Write the updated JSON object back to the file
-            try (FileWriter fileWriter = new FileWriter(outputFile.getAbsolutePath())) {
-                fileWriter.write(jsonObject.toJSONString());
-                fileWriter.flush();
-
-                terminalInfo("JSON data has been updated and written to the file successfully.");
+                    terminalInfo("JSON data has been updated and written to the file successfully.");
+                }
             }
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void loadFile(File newFile){
-        try(BufferedReader reader = Files.newBufferedReader(Paths.get(newFile.getAbsolutePath()))) {
-            JSONObject jsonObject = (JSONObject) parser.parse(reader);
-            JSONArray jsonArray = (JSONArray) jsonObject.get("moves");
-            List<Move> movesLoaded = new ArrayList<>();
-            AtomicInteger counter = new AtomicInteger();
-            if(jsonArray != null)
-                jsonArray.iterator().forEachRemaining(element -> {
-                    JSONObject toAdd = (JSONObject) element;
-                    movesLoaded.add(new Move(((Long) toAdd.get(counter + "row")).intValue(), toAdd.get(counter + "col").toString().charAt(0),
-                            (String) toAdd.get(counter + "text")));
-                    counter.getAndIncrement();
-                });
-            controller.switchToNewGame((String) jsonObject.get("player1Name"), (String) jsonObject.get("player2Name"), jsonObject.get("komi").toString(),
-                    jsonObject.get("handicaps").toString(), ((Long) jsonObject.get("boardSize")).intValue(), movesLoaded, (String) jsonObject.get("byoyomiNumberOfTimes"),
-                    (String) jsonObject.get("byoyomiTimeLimit"));
-        } catch (ParseException | IOException e) {
-            terminalInfo("an IO Exception was thrown when trying to load file " + newFile.getName());
+    public void loadFile(File newFile) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(newFile.getAbsolutePath()))) {
+            Type type = new TypeToken<FileData>() {}.getType();
+            FileData fileData = gson.fromJson(reader, type);
+
+            if (fileData != null)
+                controller.switchToNewGame(fileData.player1Name(), fileData.player2Name(), String.valueOf(fileData.komi()),
+                        String.valueOf(fileData.handicaps()), fileData.boardSize(), fileData.moves(),
+                        String.valueOf(fileData.byoyomiNumberOfTimes()), String.valueOf(fileData.byoyomiTimeLimit()));
+        } catch (IOException e) {
+            terminalInfo("An IO Exception was thrown when trying to load file " + newFile.getName());
         }
     }
 

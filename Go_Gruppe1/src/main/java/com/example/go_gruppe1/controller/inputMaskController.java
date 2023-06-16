@@ -67,7 +67,7 @@ public class inputMaskController {
         //handicaps
         handicapSpinner.setEditable(false);
 
-        SpinnerValueFactory<Integer> handicapValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5, 0, 1);
+        SpinnerValueFactory.IntegerSpinnerValueFactory handicapValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5, 0, 1);
         handicapSpinner.setValueFactory(handicapValueFactory);
         handicapSpinner.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
@@ -76,9 +76,9 @@ public class inputMaskController {
         //more handicaps are allowed for 19x19
         size19.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                ((SpinnerValueFactory.IntegerSpinnerValueFactory) handicapValueFactory).setMax(9);
+                handicapValueFactory.setMax(9);
             } else {
-                ((SpinnerValueFactory.IntegerSpinnerValueFactory) handicapValueFactory).setMax(5);
+                handicapValueFactory.setMax(5);
             }
         });
 
@@ -93,7 +93,7 @@ public class inputMaskController {
 
         durationSpinner.setEditable(true);
 
-        SpinnerValueFactory<Integer> durationValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1);
+        SpinnerValueFactory.IntegerSpinnerValueFactory durationValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1);
         durationSpinner.setValueFactory(durationValueFactory);
         durationSpinner.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
@@ -101,10 +101,10 @@ public class inputMaskController {
 
         timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue > 0) {
-                ((SpinnerValueFactory.IntegerSpinnerValueFactory) durationValueFactory).setMin(30);
+                durationValueFactory.setMin(30);
                 durationValueFactory.setValue(30);
             } else {
-                ((SpinnerValueFactory.IntegerSpinnerValueFactory) durationValueFactory).setMin(0);
+                durationValueFactory.setMin(0);
                 durationValueFactory.setValue(0);
             }
         });

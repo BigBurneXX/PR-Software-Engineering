@@ -1,6 +1,6 @@
 package com.example.go_gruppe1.controller;
 
-import com.example.go_gruppe1.model.FileControl;
+import com.example.go_gruppe1.model.file.FileControl;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;

@@ -1,12 +1,7 @@
-package com.example.go_gruppe1.model;
+package com.example.go_gruppe1.model.command;
 
-import com.example.go_gruppe1.model.command.Game;
-import com.example.go_gruppe1.model.command.PlaceStoneCommand;
-import com.example.go_gruppe1.model.command.Position;
-import com.example.go_gruppe1.model.command.SimpleBoard;
 import javafx.scene.paint.Color;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.go_gruppe1.model;
+package com.example.go_gruppe1.model.file;
 
 import com.example.go_gruppe1.controller.boardMaskController;
 import javafx.stage.FileChooser;

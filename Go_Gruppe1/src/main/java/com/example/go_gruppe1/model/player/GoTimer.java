@@ -1,4 +1,4 @@
-package com.example.go_gruppe1.model;
+package com.example.go_gruppe1.model.player;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
