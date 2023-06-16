@@ -1,6 +1,6 @@
 package com.example.go_gruppe1.controller;
 
-import com.example.go_gruppe1.model.FileControl;
+import com.example.go_gruppe1.model.file.FileControl;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -44,13 +44,13 @@ public class winnerMaskController {
     }
 
     protected void initiateDisplay(String winner, String other, long total, int trapped, String komiOrHandicaps,
-                                   double komiOrHandicap, int byoyomi, int boyoyomiNumber, int time) {
+                                   double komiOrHandicap, int byoyomi, int byoyomiNumber, int time) {
         setName(winner, other);
         setTotalPoints(total);
         setTrapped(trapped);
         setExtraPoints(komiOrHandicaps);
         setExtraPointsValue(komiOrHandicap);
-        setByoyomi(byoyomi, boyoyomiNumber, time);
+        setByoyomi(byoyomi, byoyomiNumber, time);
         initiateButtons();
     }
 
@@ -80,8 +80,15 @@ public class winnerMaskController {
         exit.toFront();
     }
 
-    private void setName(String winner, String other) {
-        if (reasonForWinning == 1) {
+    public void setName(String winner, String other) {
+        if(winner.equals("Draw")) {
+            name.setText("It's a draw!");
+            totalPoints.setVisible(false);
+            trapped.setVisible(false);
+            extraPointsValue.setVisible(false);
+            byoyomi.setVisible(false);
+            initiateButtons();
+        } else if (reasonForWinning == 1) {
             name.setText(winner + " won!");
         } else if (reasonForWinning == 2) {
             name.setText(other + " resigned. " + winner + " won!");

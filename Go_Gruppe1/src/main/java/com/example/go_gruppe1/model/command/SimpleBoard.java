@@ -10,6 +10,8 @@ public class SimpleBoard {
     private final int size;
     private Color[][] board;
 
+    private int blackTrapped = 0, whiteTrapped = 0;
+
     public SimpleBoard(int size){
         this.size = size;
         board = new Color[size][size];
@@ -47,6 +49,12 @@ public class SimpleBoard {
                     toDelete.add(new Position(r, c));
         for(Position p : toDelete)
             removeStone(p.row(), p.col());
+
+        if(color == Color.BLACK) {
+            whiteTrapped += toDelete.size();
+        } else {
+            blackTrapped += toDelete.size();
+        }
     }
 
     private int checkLiberties(int row, int col, boolean[][] checked){
@@ -81,5 +89,13 @@ public class SimpleBoard {
 
     public int getSize() {
         return size;
+    }
+
+    public int getBlackTrapped() {
+        return blackTrapped;
+    }
+
+    public int getWhiteTrapped() {
+        return whiteTrapped;
     }
 }

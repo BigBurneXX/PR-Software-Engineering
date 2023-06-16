@@ -20,7 +20,7 @@
 
 <BorderPane fx:id="boardPane" prefHeight="600.0" prefWidth="630.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.go_gruppe1.controller.boardMaskController">
    <center>
-      <StackPane fx:id="circlePane" BorderPane.alignment="CENTER">
+      <StackPane BorderPane.alignment="CENTER">
          <GridPane fx:id="board">
             <columnConstraints>
                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -71,7 +71,7 @@
                      <Font name="System" size="54.0" />
                   </font>
                </Label>
-               <Label fx:id="pl1" minHeight="-Infinity" minWidth="-Infinity" text="Player 1 (Black)" textAlignment="RIGHT">
+               <Label fx:id="plBlack" minHeight="-Infinity" minWidth="-Infinity" text="Player 1 (Black)" textAlignment="RIGHT">
                   <font>
                      <Font name="System" size="20.0" />
                   </font>
@@ -110,7 +110,7 @@
                      <Font size="15.0" />
                   </font>
                </Label>
-               <Label fx:id="pl2" minHeight="-Infinity" minWidth="-Infinity" text="Player 2 (White)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+               <Label fx:id="plWhite" minHeight="-Infinity" minWidth="-Infinity" text="Player 2 (White)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                   <font>
                      <Font name="System" size="20.0" />
                   </font>
