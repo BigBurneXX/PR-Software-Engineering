@@ -54,7 +54,7 @@ public class FileControl {
             fileWriter.write(json);
             fileWriter.flush();
 
-            terminalInfo("JSON data has been written to the file successfully.");
+            //terminalInfo("JSON data has been written to the file successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
