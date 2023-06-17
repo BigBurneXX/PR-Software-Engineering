@@ -9,14 +9,11 @@ import javafx.util.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class GoTimer {
-    private long elapsedTime;
     private long startTime;
     private final StringProperty timeProperty;
     private final Timeline timeline;
-    private int passedSeconds;
 
-    public GoTimer(){
-        elapsedTime = 0;
+    protected GoTimer(){
         startTime = 0;
         timeProperty = new SimpleStringProperty("00:00");
 
@@ -24,20 +21,18 @@ public class GoTimer {
         timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
-    public void startTimer(){
+    protected void startTimer(){
         startTime = System.currentTimeMillis();
         timeline.play();
     }
 
-    public void stopTimer(){
+    protected void stopTimer(){
         timeline.stop();
     }
 
-    public void updateTimer(){
+    private void updateTimer(){
         long currentTime = System.currentTimeMillis();
-        long elapsedTimeForTurn = currentTime - startTime;
-        elapsedTime += elapsedTimeForTurn;
-        startTime = currentTime;  // update the start time
+        long elapsedTime = currentTime - startTime;
 
         long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTime) - TimeUnit.MINUTES.toSeconds(minutes);
@@ -45,19 +40,16 @@ public class GoTimer {
         timeProperty.set(String.format("%02d:%02d", minutes, seconds));
     }
 
-    public void passedSlotSeconds() {
+    public int getPassedSeconds() {
         long currentTime = System.currentTimeMillis();
-        long elapsedTimeForTurn = currentTime - startTime;
-        passedSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTime + elapsedTimeForTurn);
-        elapsedTime = 0;
-        System.out.println("passed: " + passedSeconds);
+        long elapsedTime = currentTime - startTime;
+
+        //restart startTime (caution when calling!!!)
+        startTime = System.currentTimeMillis();
+        return (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTime);
     }
 
-    public int getPassedSeconds(){
-        return passedSeconds;
-    }
-
-    public StringProperty timeProperty() {
+    public StringProperty getTimeProperty() {
         return timeProperty;
     }
 }

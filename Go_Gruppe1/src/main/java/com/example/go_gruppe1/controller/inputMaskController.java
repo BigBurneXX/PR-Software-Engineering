@@ -165,8 +165,8 @@ public class inputMaskController {
         boardMaskController boardMask = loader.getController();
         boardMask.setSize(inputPane.getWidth(), inputPane.getHeight());
 
-        String player1Name = player1.getText();
-        String player2Name = player2.getText();
+        String player1Name = player1.getText().isEmpty() ? "Player 1" : player1.getText();
+        String player2Name = player2.getText().isEmpty() ? "Player 2" : player2.getText();
         double komi = komiSpinner.getValue();
         int handicaps = handicapSpinner.getValue();
         int boardSize = getBoardSize();

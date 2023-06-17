@@ -9,7 +9,8 @@ import java.util.Set;
 public class SimpleBoard {
     private final int size;
     private final Color[][] board;
-    private int blackTrapped = 0, whiteTrapped = 0;
+    private int blackTrapped = 0;
+    private int whiteTrapped = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
     public SimpleBoard(int size){
@@ -21,8 +22,8 @@ public class SimpleBoard {
         this.size = toCopy.size;
         //chatGPT suggests Arrays.copyOf();
         this.board = Arrays.stream(toCopy.board).map(Color[]::clone).toArray(Color[][]::new);
-        this.blackTrapped = toCopy.blackTrapped;
-        this.whiteTrapped = toCopy.whiteTrapped;
+        this.blackTrapped = toCopy.getBlackTrapped();
+        this.whiteTrapped = toCopy.getWhiteTrapped();
     }
 
     public boolean setStone(int row, int col, Color color){
@@ -48,6 +49,7 @@ public class SimpleBoard {
             for(int c = 0; c < size; c++)
                 if(checkLiberties(r, c, new boolean[size][size]) == 0 && board[r][c] == color)
                     toDelete.add(new Position(r, c));
+
         for(Position p : toDelete)
             removeStone(p.row(), p.col());
 

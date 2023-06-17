@@ -143,10 +143,6 @@ public class boardMaskController {
     private int boardSize;
     private int handicaps;
     private double komi;
-    private int byoyomiOverruns;
-    private int byoyomiTimeLimit;
-    private int blackByoyomi = 0;
-    private int whiteByoyomi = 0;
     private boolean doublePassed;
 
     /*
@@ -246,7 +242,7 @@ public class boardMaskController {
         passButton.setVisible(true);
         resignButton.setVisible(true);
 
-        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().name() + "'s turn!");
+        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
         bindFont(modeAndMoveDisplay, MOVE_AND_MODE_DISPLAY_MULTIPLIER);
     }
 
@@ -301,23 +297,22 @@ public class boardMaskController {
     protected void initiateDisplay(String player1Name, String player2Name, double komi, int handicaps, int boardSize,
                                    int byoyomiOverruns, int byoyomiTimeLimit) {
 
-        terminalInfo("starting a new game" + "starting a new game" +
-                "Board size: " + boardSize +
-                "Komi: " + komi +
-                "Handicaps: " + handicaps +
-                "Byoyomi overruns: " + byoyomiOverruns +
-                "Byoyomi time limit: " + byoyomiTimeLimit);
+        terminalInfo("starting a new game..." +
+                "\nBoard size: " + boardSize +
+                "\nKomi: " + komi +
+                "\nHandicaps: " + handicaps +
+                "\nByoyomi overruns: " + byoyomiOverruns +
+                "\nByoyomi time limit: " + byoyomiTimeLimit +
+                "\nPlayer 1 (BLACK) Name: " + player1Name +
+                "\nPlayer 2 (WHITE) Name: " + player2Name);
 
         this.komi = komi;
         this.handicaps = handicaps;
         this.boardSize = boardSize;
-        this.byoyomiOverruns = byoyomiOverruns;
-        this.byoyomiTimeLimit = byoyomiTimeLimit;
 
-        gameHandler = new GameHandler(boardSize);
-        initiatePlayers(player1Name, player2Name);
+        initiateHandlers(player1Name, player2Name, byoyomiOverruns, byoyomiTimeLimit);
+        displayPlayerNames(player1Name, player2Name);
         displayTrapped();
-        initiateTimeRules();
 
         onModePlayClick();
         modePlay.setSelected(true);
@@ -327,20 +322,36 @@ public class boardMaskController {
         bindFont(title, TITLE_MULTIPLIER);
     }
 
-    private void initiatePlayers(String p1, String p2) {
-        String playerBlack = p1.isEmpty() ? "Player 1" : p1;
-        String playerWhite = p2.isEmpty() ? "Player 2" : p2;
-
-        playerHandler = new PlayerHandler(playerBlack, playerWhite);
+    private void initiateHandlers(String playerBlack, String playerWhite, int byoyomiOverruns, int byoyomiTimeLimit) {
+        gameHandler = new GameHandler(boardSize);
+        playerHandler = (byoyomiOverruns == 0) ? new PlayerHandler(playerBlack, playerWhite) :
+                new PlayerHandler(playerBlack, playerWhite, byoyomiOverruns, byoyomiTimeLimit);
+        initiateTimeRules(byoyomiOverruns == 0);
         fileHandler = new FileHandler(playerBlack, playerWhite, boardSize, komi, handicaps, byoyomiOverruns, byoyomiTimeLimit);
+    }
 
-        displayPlayerNames(playerBlack, playerWhite);
+    private void initiateTimeRules(boolean notActive) {
+        if (notActive) {
+            blackTimeLabel.setVisible(false);
+            timerBlack.setVisible(false);
+            whiteTimeLabel.setVisible(false);
+            timerWhite.setVisible(false);
+            terminalInfo("Byoyomi deactivated!");
+            return;
+        }
+
+        bindFont(blackTimeLabel, TIME_LABEL_MULTIPLIER);
+        bindFont(whiteTimeLabel, TIME_LABEL_MULTIPLIER);
+        bindFont(timerBlack, TIMER_LABEL_MULTIPLIER);
+        bindFont(timerWhite, TIMER_LABEL_MULTIPLIER);
+
+        blackTimeLabel.textProperty().bind(playerHandler.getPlayerBlack().getTimeLabelText());
+        whiteTimeLabel.textProperty().bind(playerHandler.getPlayerWhite().getTimeLabelText());
+        timerBlack.textProperty().bind(playerHandler.getPlayerBlack().getTimer().getTimeProperty());
+        timerWhite.textProperty().bind(playerHandler.getPlayerWhite().getTimer().getTimeProperty());
     }
 
     private void displayPlayerNames(String playerBlack, String playerWhite){
-        terminalInfo("Player 1 (BLACK) Name: " + playerBlack);
-        terminalInfo("Player 2 (WHITE) Name: " + playerWhite);
-
         plBlack.setText(playerBlack + " (Black)");
         plWhite.setText(playerWhite + " (White)");
 
@@ -354,31 +365,6 @@ public class boardMaskController {
 
         bindFont(whiteTrapped, TRAPPED_LABEL_MULTIPLIER);
         bindFont(blackTrapped, TRAPPED_LABEL_MULTIPLIER);
-    }
-
-    protected void initiateTimeRules() {
-        if (byoyomiOverruns == 0) {
-            blackTimeLabel.setVisible(false);
-            timerBlack.setVisible(false);
-            whiteTimeLabel.setVisible(false);
-            timerWhite.setVisible(false);
-            terminalInfo("Byoyomi deactivated!");
-        } else {
-            blackByoyomi = byoyomiOverruns;
-            whiteByoyomi = byoyomiOverruns;
-            blackTimeLabel.setText(byoyomiOverruns + " time period(s) à " + byoyomiTimeLimit + " s");
-            whiteTimeLabel.setText(byoyomiOverruns + " time period(s) à " + byoyomiTimeLimit + " s");
-            terminalInfo("Number of Byoyomi time overruns: " + byoyomiOverruns);
-            terminalInfo("Byoyomi time limit: " + byoyomiTimeLimit);
-        }
-
-        bindFont(blackTimeLabel, TIME_LABEL_MULTIPLIER);
-        bindFont(whiteTimeLabel, TIME_LABEL_MULTIPLIER);
-        bindFont(timerBlack, TIMER_LABEL_MULTIPLIER);
-        bindFont(timerWhite, TIMER_LABEL_MULTIPLIER);
-
-        timerBlack.textProperty().bind(playerHandler.getPlayerBlack().timer().timeProperty());
-        timerWhite.textProperty().bind(playerHandler.getPlayerWhite().timer().timeProperty());
     }
 
     /*
@@ -531,8 +517,8 @@ public class boardMaskController {
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
 
                 //color for hovering
-                final Color HOVER_BLACK = playerHandler.getPlayerBlack().hoverColor();
-                final Color HOVER_WHITE = playerHandler.getPlayerWhite().hoverColor();
+                final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
+                final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
 
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
@@ -548,7 +534,7 @@ public class boardMaskController {
                 circle.setOnMouseEntered(e -> {
                     if (modePlay.isSelected()) {
                         if (circle.getFill() == TRANSPARENT || circle.getFill() == null) {
-                            circle.setFill(playerHandler.getCurrentPlayer().hoverColor());
+                            circle.setFill(playerHandler.getCurrentPlayer().getHoverColor());
                         }
                     }
                 });
@@ -600,7 +586,7 @@ public class boardMaskController {
             gameHandler.addMove(higherValue, midValue, BLACK);
 
         playerHandler.changePlayer();
-        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().name() + "'s turn");
+        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn");
         drawStones();
     }
 
@@ -630,8 +616,6 @@ public class boardMaskController {
             System.out.println("nice");
             if(doublePassed){
                 System.out.println("game over!!");
-            //if(modeAndMoveDisplay.getText().equals(playerHandler.getNextPlayer().getName() + " passed! - "
-            //        + playerHandler.getCurrentPlayer().getName() + "'s turn")) {
                 long blackPoints = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped();
                 long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi);
                 if(blackPoints > whitePoints) {
@@ -655,10 +639,17 @@ public class boardMaskController {
                 }*/
             }
             doublePassed = true;
-            modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().name() + " passed! - "
-                                + playerHandler.getNextPlayer().name() + "'s turn");
+            modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " passed! - "
+                                + playerHandler.getNextPlayer().getName() + "'s turn");
 
-            initiateByoyomiRules();
+            if(playerHandler.checkByoyomi()){
+                int num = playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? 1 : 2;
+                try {
+                    switchToWinnerMask(num, 3);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
 
             playerHandler.moveMade();
             fileHandler.pass();
@@ -672,56 +663,18 @@ public class boardMaskController {
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
-            int num = playerHandler.getCurrentPlayer().color() == BLACK ? 2 : 1;
+            int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 2 : 1;
             try {
                 switchToWinnerMask(num, 2);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
 
-            modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().name() + " resigned! - "
-                                + playerHandler.getNextPlayer().name() + " won!");
+            modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " resigned! - "
+                                + playerHandler.getNextPlayer().getName() + " won!");
 
             fileHandler.resign();
         });
-    }
-
-    private void initiateByoyomiRules() {
-        if (byoyomiOverruns != 0) {
-            playerHandler.getCurrentPlayer().timer().passedSlotSeconds();
-            System.out.println(playerHandler.getCurrentPlayer().timer().getPassedSeconds());
-            if(playerHandler.getCurrentPlayer().timer().getPassedSeconds() > byoyomiTimeLimit) {
-                int slots = playerHandler.getCurrentPlayer().timer().getPassedSeconds() / byoyomiTimeLimit;
-                System.out.println("slots: " + slots);
-                int currentByoyomi;
-                if (playerHandler.getCurrentPlayer().color().equals(BLACK)) {
-                    blackByoyomi -= slots;
-                    if (blackByoyomi < 0)
-                        blackTimeLabel.setText("No time left");
-                    else
-                        blackTimeLabel.setText(blackByoyomi + " time period(s) à " + byoyomiTimeLimit + " s");
-                    currentByoyomi = blackByoyomi;
-                } else {
-                    whiteByoyomi -= slots;
-                    if (whiteByoyomi < 0)
-                        whiteTimeLabel.setText("No time left");
-                    else
-                        whiteTimeLabel.setText(whiteByoyomi + " time period(s) à " + byoyomiTimeLimit + " s");
-                    currentByoyomi = whiteByoyomi;
-                }
-                System.out.println("curr: " + currentByoyomi);
-                if (currentByoyomi < 0) {
-                    int num = playerHandler.getNextPlayer().color().equals(BLACK) ? 1 : 2;
-                    try {
-                        switchToWinnerMask(num, 3);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().name() + " used all time slots. "
-                            + playerHandler.getNextPlayer().name() + " won!");
-                }
-            }
-        }
     }
 
     /*
@@ -763,9 +716,9 @@ public class boardMaskController {
                 col = GridPane.getColumnIndex(n);
                 fileHandler.write((row-1), ALPHABET[col-1], "");
 
-                Color current = playerHandler.getCurrentPlayer().color();
+                Color current = playerHandler.getCurrentPlayer().getColor();
                 terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by "
-                        + playerHandler.getCurrentPlayer().name());
+                        + playerHandler.getCurrentPlayer().getName());
                 c.setFill(current);
                 if(gameHandler.addMove(row-1, col-1, current)){
                     drawStones();
@@ -773,10 +726,17 @@ public class boardMaskController {
                     return;
                 }
 
-                modeAndMoveDisplay.setText(playerHandler.getNextPlayer().name() + "'s turn!");
+                modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
 
+                if(playerHandler.checkByoyomi()){
+                    int num = playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? 1 : 2;
+                    try {
+                        switchToWinnerMask(num, 3);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
                 playerHandler.moveMade();
-                initiateByoyomiRules();
                 break;
             }
         }
@@ -822,13 +782,13 @@ public class boardMaskController {
                 winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
                         gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
                         gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
-                        byoyomiOverruns, blackByoyomi, byoyomiTimeLimit);
+                        playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
             } else if(player == 2){
                 terminalInfo("White won... \n[log end]");
                 winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
                         (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
                         gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
-                        byoyomiOverruns, whiteByoyomi, byoyomiTimeLimit);
+                        playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
             } else {
                 terminalInfo("Draw... \n[log end]");
                 winnerMask.setName("Draw", "Draw");
