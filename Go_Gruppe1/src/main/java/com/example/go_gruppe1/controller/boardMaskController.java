@@ -149,6 +149,8 @@ public class boardMaskController {
     private int whiteByoyomi = 0;
     private boolean doublePassed;
 
+    private long blackTotal, whiteTotal = 0;
+
     /*
       ================================================================================================================
 
@@ -627,32 +629,29 @@ public class boardMaskController {
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
-            System.out.println("nice");
             if(doublePassed){
                 System.out.println("game over!!");
-            //if(modeAndMoveDisplay.getText().equals(playerHandler.getNextPlayer().getName() + " passed! - "
-            //        + playerHandler.getCurrentPlayer().getName() + "'s turn")) {
-                long blackPoints = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped();
-                long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi);
-                if(blackPoints > whitePoints) {
+                blackTotal = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped();
+                whiteTotal = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi);
+                if(blackTotal > whiteTotal) {
                     try {
                         switchToWinnerMask(1, 1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                } else if(whitePoints > blackPoints) {
+                } else if(whiteTotal > blackTotal) {
                     try {
                         switchToWinnerMask(2, 1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                } /*else {
+                } else {
                     try {
                         switchToWinnerMask(3, 1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                }*/
+                }
             }
             doublePassed = true;
             modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().name() + " passed! - "
@@ -820,14 +819,12 @@ public class boardMaskController {
             if(player == 1) {
                 terminalInfo("Black won... \n[log end]");
                 winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
-                        gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
-                        gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
+                        blackTotal, gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
                         byoyomiOverruns, blackByoyomi, byoyomiTimeLimit);
             } else if(player == 2){
                 terminalInfo("White won... \n[log end]");
                 winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
-                        (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
-                        gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
+                        whiteTotal, gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
                         byoyomiOverruns, whiteByoyomi, byoyomiTimeLimit);
             } else {
                 terminalInfo("Draw... \n[log end]");

@@ -12,6 +12,9 @@ public class SimpleBoard {
     private int blackTrapped = 0, whiteTrapped = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
+    /**
+     * @param size
+     */
     public SimpleBoard(int size){
         this.size = size;
         board = new Color[size][size];
