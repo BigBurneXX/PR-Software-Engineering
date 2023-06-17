@@ -7,7 +7,6 @@ public class PlayerHandler {
     private final Player playerWhite;
     private Player currentPlayer;
     private Player nextPlayer;
-    private boolean logging;
 
     public PlayerHandler(String playerBlackName, String playerWhiteName){
         final Color hoverBlack = Color.valueOf("#00000070");
@@ -51,12 +50,7 @@ public class PlayerHandler {
         return playerWhite;
     }
 
-    public void setLogging(boolean logging){
-        this.logging = logging;
-    }
-
     private void terminalInfo(String data){
-        if(logging)
-            System.out.println(data);
+        System.out.println(data);
     }
 }

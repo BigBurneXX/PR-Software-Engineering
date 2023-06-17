@@ -1,7 +1,5 @@
 package com.example.go_gruppe1.model.command;
 
-import javafx.scene.paint.Color;
-
 import java.util.Stack;
 
 public class Game {

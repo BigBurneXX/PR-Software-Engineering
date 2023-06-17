@@ -8,8 +8,7 @@ import java.util.Set;
 
 public class SimpleBoard {
     private final int size;
-    private Color[][] board;
-
+    private final Color[][] board;
     private int blackTrapped = 0, whiteTrapped = 0;
 
     public SimpleBoard(int size){
@@ -19,20 +18,24 @@ public class SimpleBoard {
 
     public SimpleBoard(SimpleBoard toCopy){
         this.size = toCopy.size;
+        //chatGPT suggests Arrays.copyOf();
         this.board = Arrays.stream(toCopy.board).map(Color[]::clone).toArray(Color[][]::new);
+        this.blackTrapped = toCopy.blackTrapped;
+        this.whiteTrapped = toCopy.whiteTrapped;
     }
 
     public boolean setStone(int row, int col, Color color){
-        Color[][] temporaryBoard = Arrays.stream(board).map(Color[]::clone).toArray(Color[][]::new);
+        //Color[][] temporaryBoard = Arrays.stream(board).map(Color[]::clone).toArray(Color[][]::new);
         board[row][col] = color;
         System.out.println("stone set at " + row + ", " + col);
-        Color toDelete = color == Color.BLACK  ? Color.WHITE : Color.BLACK;
+        Color toDelete = (color == Color.BLACK)  ? Color.WHITE : Color.BLACK;
         removeDead(toDelete);
         if(checkLiberties(row, col, new boolean[size][size]) == 0){
-            board = temporaryBoard;
+            //board = temporaryBoard;
+            removeStone(row, col);
             return true;
         }
-        toDelete = toDelete == Color.BLACK ? Color.WHITE : Color.BLACK;
+        toDelete = (toDelete == Color.BLACK) ? Color.WHITE : Color.BLACK;
         removeDead(toDelete);
         return false;
     }
@@ -60,21 +63,29 @@ public class SimpleBoard {
     private int checkLiberties(int row, int col, boolean[][] checked){
         checked[row][col] = true;
         int liberties = 0;
+
+        //check upper neighbour
         if(row > 0)
             if(board[row-1][col] == null)
                 liberties++;
             else if(board[row][col] == board[row-1][col] && !checked[row-1][col])
                 liberties += checkLiberties(row-1, col, checked);
+
+        //check left neighbour
         if(col+1 < size)
             if(board[row][col+1] == null)
                 liberties++;
             else if(board[row][col] == board[row][col+1] && !checked[row][col+1])
                 liberties += checkLiberties(row, col+1, checked);
+
+        //check lower neighbour
         if(row+1 < size)
             if(board[row+1][col] == null)
                 liberties++;
             else if(board[row][col] == board[row+1][col] && !checked[row+1][col])
                 liberties += checkLiberties(row+1, col, checked);
+
+        //check left neighbour
         if(col > 0)
             if(board[row][col-1] == null)
                 liberties++;
