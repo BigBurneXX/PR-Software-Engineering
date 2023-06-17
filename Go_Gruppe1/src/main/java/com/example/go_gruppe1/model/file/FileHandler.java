@@ -1,6 +1,5 @@
 package com.example.go_gruppe1.model.file;
 
-import com.example.go_gruppe1.controller.boardMaskController;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -8,22 +7,22 @@ import java.io.File;
 public class FileHandler {
     private final FileControl fileControl = new FileControl();
 
-    public FileHandler(boardMaskController controller, String playerBlack, String playerWhite, int boardSize, double komi, int handicaps, int byoyomiNumber, int byoyomiTime){
-        fileControl.createFile(controller, "", playerBlack, playerWhite, boardSize, komi, handicaps, byoyomiNumber, byoyomiTime);
+    public FileHandler(String playerBlack, String playerWhite, int boardSize, double komi, int handicaps, int byoyomiOverruns, int byoyomiTimeLimit){
+        fileControl.createFile("", playerBlack, playerWhite, boardSize, komi, handicaps, byoyomiOverruns, byoyomiTimeLimit);
     }
 
     public void save(){
         fileControl.saveFile();
     }
 
-    public void open(){
+    public FileData open(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select a file");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
         File selectedFile = fileChooser.showOpenDialog(null);
-        if (selectedFile != null) {
-            fileControl.loadFile(selectedFile);
-        }
+        if (selectedFile != null)
+            return fileControl.loadFile(selectedFile);
+        return null;
     }
 
     public void pass(){

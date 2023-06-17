@@ -1,6 +1,7 @@
 package com.example.go_gruppe1.controller;
 
 import com.example.go_gruppe1.model.command.GameHandler;
+import com.example.go_gruppe1.model.file.FileData;
 import com.example.go_gruppe1.model.file.FileHandler;
 import com.example.go_gruppe1.model.Move;
 import com.example.go_gruppe1.model.player.PlayerHandler;
@@ -26,7 +27,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 import static javafx.scene.paint.Color.*;
 
@@ -115,11 +115,6 @@ public class boardMaskController {
      */
 
     private final char[] ALPHABET = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'};
-    private int BOARD_SIZE;
-    private int HANDICAPS;
-    private double KOMI;
-    protected int BYOYOMI_NUMBER;
-    protected int BYOYOMI_TIME;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -137,6 +132,7 @@ public class boardMaskController {
     private final double BOTTOM_REGION_MULTIPLIER = 0.1;
     private final double REGION_MULTIPLIER = 0.7;
     private final double MOVE_AND_MODE_DISPLAY_MULTIPLIER = 0.025;
+    private final double TITLE_MULTIPLIER = 0.08;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -144,7 +140,13 @@ public class boardMaskController {
       ----------------------------------------------------------------------------------------------------------------
      */
     private Circle[][] circlesOfBoard;
-    private int blackByoyomi = 0, whiteByoyomi = 0;
+    private int boardSize;
+    private int handicaps;
+    private double komi;
+    private int byoyomiOverruns;
+    private int byoyomiTimeLimit;
+    private int blackByoyomi = 0;
+    private int whiteByoyomi = 0;
     private boolean doublePassed;
 
     /*
@@ -155,6 +157,7 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    @FXML
     public void onNewGameClick() throws IOException {
         terminalInfo("Starting new game... \n[log end]");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
@@ -181,28 +184,18 @@ public class boardMaskController {
     }
 
     @FXML
-    public void onOpenFileClick() {
+    public void onOpenFileClick(){
         terminalInfo("Loading file... \n[log end]");
-        fileHandler.open();
+        loadGame(fileHandler.open());
     }
 
-    //should potentially be in FileHandler?
-    public void switchToNewGame(String playerBlackName, String playerWhiteName, String komi, String handicaps, int boardSize,
-                                List<Move> moves, String byoyomiOverruns, String byoyomiTimeLimit) throws IOException {
-        terminalInfo("Player 1 (BLACK) Name: " + playerBlackName);
-        terminalInfo("Player 2 (WHITE) Name: " + playerWhiteName);
-        terminalInfo("Komi: " + komi);
-        terminalInfo("Handicaps: " + handicaps);
-        terminalInfo("Board Size: " + boardSize);
-        terminalInfo("Byoyomi number of overruns: " + byoyomiOverruns);
-        terminalInfo("Byoyomi time limit: " + byoyomiTimeLimit);
-
-        initiateDisplay(playerBlackName, playerWhiteName, komi, handicaps, boardSize,
-                        byoyomiOverruns, byoyomiTimeLimit);
+    private void loadGame(FileData fileData){
+        initiateDisplay(fileData.player1Name(), fileData.player2Name(), fileData.komi(), fileData.handicaps(),
+                fileData.boardSize(), fileData.byoyomiOverruns(), fileData.byoyomiTimeLimit());
 
         Color currentColor = BLACK;
 
-        for (Move m : moves) {
+        for (Move m : fileData.moves()) {
             char colLetter = m.col();
 
             if(colLetter == 'p')
@@ -230,6 +223,7 @@ public class boardMaskController {
             playerHandler.changePlayer();
     }
 
+    @FXML
     public void onExitGameClick() {
         terminalInfo("Exiting file... \n[log end]");
         Platform.exit();
@@ -304,25 +298,33 @@ public class boardMaskController {
 
       ================================================================================================================
      */
-    protected void initiateDisplay(String player1Name, String player2Name, String komi, String handicaps, int boardSize,
-                                   String byoyomiNumber, String byoyomiTime) {
-        BOARD_SIZE = boardSize;
-        terminalInfo("starting a new game\nboard size set to: " + BOARD_SIZE);
-        gameHandler = new GameHandler(BOARD_SIZE);
-        displayKomi(komi);
-        displayHandicaps(handicaps);
-        displayTrappedStone(0, blackTrapped);
-        displayTrappedStone(0, whiteTrapped);
-        BYOYOMI_NUMBER = Integer.parseInt(byoyomiNumber);
-        BYOYOMI_TIME = Integer.parseInt(byoyomiTime);
+    protected void initiateDisplay(String player1Name, String player2Name, double komi, int handicaps, int boardSize,
+                                   int byoyomiOverruns, int byoyomiTimeLimit) {
+
+        terminalInfo("starting a new game" + "starting a new game" +
+                "Board size: " + boardSize +
+                "Komi: " + komi +
+                "Handicaps: " + handicaps +
+                "Byoyomi overruns: " + byoyomiOverruns +
+                "Byoyomi time limit: " + byoyomiTimeLimit);
+
+        this.komi = komi;
+        this.handicaps = handicaps;
+        this.boardSize = boardSize;
+        this.byoyomiOverruns = byoyomiOverruns;
+        this.byoyomiTimeLimit = byoyomiTimeLimit;
+
+        gameHandler = new GameHandler(boardSize);
         initiatePlayers(player1Name, player2Name);
-        initiateTimeRules(byoyomiNumber, byoyomiTime);
+        displayTrapped();
+        initiateTimeRules();
+
         onModePlayClick();
         modePlay.setSelected(true);
-        circlesOfBoard = new Circle[BOARD_SIZE + 1][BOARD_SIZE + 1];
+
         drawBoard();
 
-        bindFont(title, 0.08);
+        bindFont(title, TITLE_MULTIPLIER);
     }
 
     private void initiatePlayers(String p1, String p2) {
@@ -330,7 +332,7 @@ public class boardMaskController {
         String playerWhite = p2.isEmpty() ? "Player 2" : p2;
 
         playerHandler = new PlayerHandler(playerBlack, playerWhite);
-        fileHandler = new FileHandler(this, playerBlack, playerWhite, BOARD_SIZE, KOMI, HANDICAPS, BYOYOMI_NUMBER, BYOYOMI_TIME);
+        fileHandler = new FileHandler(playerBlack, playerWhite, boardSize, komi, handicaps, byoyomiOverruns, byoyomiTimeLimit);
 
         displayPlayerNames(playerBlack, playerWhite);
     }
@@ -346,53 +348,28 @@ public class boardMaskController {
         bindFont(plWhite, PLAYER_LABEL_MULTIPLIER);
     }
 
-    private void displayKomi(String komiAdvantage) {
-        terminalInfo("Komi: " + komiAdvantage);
-        KOMI = Double.parseDouble(komiAdvantage);
-    }
-
-    private void displayHandicaps(String handicaps) {
-        terminalInfo("handicaps: " + handicaps);
-        HANDICAPS = Integer.parseInt(handicaps);
-    }
-
-    private void displayTrappedStone(int numberTrapped, Label trappedLabel) {
-        terminalInfo(trappedLabel.getId() + ": " + numberTrapped);
-        trappedLabel.setText("Trapped: " + numberTrapped);
+    private void displayTrapped() {
+        blackTrapped.setText("Trapped: 0");
+        whiteTrapped.setText("Trapped: 0");
 
         bindFont(whiteTrapped, TRAPPED_LABEL_MULTIPLIER);
         bindFont(blackTrapped, TRAPPED_LABEL_MULTIPLIER);
     }
 
-    protected void initiateTimeRules(String byoyomiNumber, String byoyomiTime) {
-        try {
-            if (BYOYOMI_NUMBER <= 0 || BYOYOMI_TIME < 30) {
-                BYOYOMI_NUMBER = 0;
-                BYOYOMI_TIME = 0;
-                blackTimeLabel.setVisible(false);
-                GridPane.setValignment(blackTimeLabel, VPos.CENTER);
-                timerBlack.setVisible(false);
-                whiteTimeLabel.setVisible(false);
-                timerWhite.setVisible(false);
-                terminalInfo("Invalid input of Byoyomi");
-            } else {
-                blackByoyomi = BYOYOMI_NUMBER;
-                whiteByoyomi = BYOYOMI_NUMBER;
-                blackTimeLabel.setText(BYOYOMI_NUMBER + " time period(s) à " + BYOYOMI_TIME + " s");
-                whiteTimeLabel.setText(BYOYOMI_NUMBER + " time period(s) à " + BYOYOMI_TIME + " s");
-                terminalInfo("Number of Byoyomi time periods set to " + BYOYOMI_NUMBER);
-                terminalInfo("Time period duration: " + BYOYOMI_TIME);
-            }
-        } catch (NumberFormatException nfe) {
-            BYOYOMI_NUMBER = 0;
-            BYOYOMI_TIME = 0;
+    protected void initiateTimeRules() {
+        if (byoyomiOverruns == 0) {
             blackTimeLabel.setVisible(false);
-            GridPane.setValignment(blackTimeLabel, VPos.CENTER);
             timerBlack.setVisible(false);
             whiteTimeLabel.setVisible(false);
             timerWhite.setVisible(false);
-
-            terminalInfo("No or false byoyomi input");
+            terminalInfo("Byoyomi deactivated!");
+        } else {
+            blackByoyomi = byoyomiOverruns;
+            whiteByoyomi = byoyomiOverruns;
+            blackTimeLabel.setText(byoyomiOverruns + " time period(s) à " + byoyomiTimeLimit + " s");
+            whiteTimeLabel.setText(byoyomiOverruns + " time period(s) à " + byoyomiTimeLimit + " s");
+            terminalInfo("Number of Byoyomi time overruns: " + byoyomiOverruns);
+            terminalInfo("Byoyomi time limit: " + byoyomiTimeLimit);
         }
 
         bindFont(blackTimeLabel, TIME_LABEL_MULTIPLIER);
@@ -403,7 +380,6 @@ public class boardMaskController {
         timerBlack.textProperty().bind(playerHandler.getPlayerBlack().timer().timeProperty());
         timerWhite.textProperty().bind(playerHandler.getPlayerWhite().timer().timeProperty());
     }
-
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -437,21 +413,21 @@ public class boardMaskController {
         board.getChildren().clear();
         board.getColumnConstraints().clear();
         board.getRowConstraints().clear();
-        for (int i = 0; i <= BOARD_SIZE; i++) {
+        for (int i = 0; i <= boardSize; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
-            colConstraints.setPercentWidth(100.0 / BOARD_SIZE);
+            colConstraints.setPercentWidth(100.0 / boardSize);
             board.getColumnConstraints().add(colConstraints);
 
             RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setPercentHeight(100.0 / BOARD_SIZE);
+            rowConstraints.setPercentHeight(100.0 / boardSize);
             board.getRowConstraints().add(rowConstraints);
         }
 
         boardLabelling();
 
         //add color to board
-        for (int col = 1; col < BOARD_SIZE; col++) {
-            for (int row = 1; row < BOARD_SIZE; row++) {
+        for (int col = 1; col < boardSize; col++) {
+            for (int row = 1; row < boardSize; row++) {
                 Pane cell = new Pane();
                 cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
                 board.add(cell, col, row);
@@ -476,27 +452,27 @@ public class boardMaskController {
 
     private void boardLabelling() {
         //add color and labelling but without borders
-        for (int i = 0; i <= BOARD_SIZE; i++) {
+        for (int i = 0; i <= boardSize; i++) {
             //top color
             Pane topLetterCell = new Pane();
             topLetterCell.setStyle("-fx-background-color:  #C4A484");
             board.add(topLetterCell, i, 0);
 
             //right color
-            if (i != 0 && i != BOARD_SIZE) {
+            if (i != 0 && i != boardSize) {
                 Pane rightCell = new Pane();
                 rightCell.setStyle("-fx-background-color:  #C4A484");
-                board.add(rightCell, BOARD_SIZE, i);
+                board.add(rightCell, boardSize, i);
             }
 
             //bottom color
             Pane bottomLetterCell = new Pane();
             bottomLetterCell.setStyle("-fx-background-color:  #C4A484");
-            board.add(bottomLetterCell, i, BOARD_SIZE);
+            board.add(bottomLetterCell, i, boardSize);
 
             double sizeBinding = 0.035;
             int padding = 5;
-            if (BOARD_SIZE == 19) {
+            if (boardSize == 19) {
                 sizeBinding = 0.02;
                 padding = 4;
             }
@@ -504,7 +480,7 @@ public class boardMaskController {
             //right labelling
             if (i != 0) {
                 Label rightNumberCell = new Label();
-                rightNumberCell.setText(String.valueOf(BOARD_SIZE - i + 1));
+                rightNumberCell.setText(String.valueOf(boardSize - i + 1));
                 rightNumberCell.setCenterShape(true);
                 bindFontIntensive(rightNumberCell, sizeBinding);
                 rightNumberCell.setPadding(new Insets(0, padding, 0, 0));
@@ -513,19 +489,19 @@ public class boardMaskController {
                 rightNumberCell.translateYProperty().bind(rightNumberCell.heightProperty().divide(2).multiply(-1));
                 topLetterCell.toBack();
                 bottomLetterCell.toBack();
-                board.add(rightNumberCell, BOARD_SIZE, i);
+                board.add(rightNumberCell, boardSize, i);
             }
 
 
             //left color
-            if (i != 0 && i != BOARD_SIZE) {
+            if (i != 0 && i != boardSize) {
                 Pane leftNumberCell = new Pane();
                 leftNumberCell.setStyle("-fx-background-color:  #C4A484");
                 board.add(leftNumberCell, 0, i);
             }
 
             //bottom labelling
-            if (i < BOARD_SIZE) {
+            if (i < boardSize) {
                 Label letter = new Label();
                 letter.setText(String.valueOf(ALPHABET[i]));
                 letter.setCenterShape(true);
@@ -534,24 +510,25 @@ public class boardMaskController {
                 GridPane.setHalignment(letter, HPos.RIGHT);
                 GridPane.setValignment(letter, VPos.BOTTOM);
                 letter.translateXProperty().bind(bottomLetterCell.widthProperty().multiply(-0.8));
-                board.add(letter, i + 1, BOARD_SIZE);
+                board.add(letter, i + 1, boardSize);
             }
         }
     }
 
-
     //adding circles to all potential locations on the board
     private void addCirclesToBoard() {
-        for (int row = 1; row <= BOARD_SIZE; row++) {
-            for (int col = 1; col <= BOARD_SIZE; col++) {
+        circlesOfBoard = new Circle[boardSize + 1][boardSize + 1];
+
+        for (int row = 1; row <= boardSize; row++) {
+            for (int col = 1; col <= boardSize; col++) {
                 Circle circle = new Circle(10, TRANSPARENT);
                 board.add(circle, col, row);
                 circlesOfBoard[row][col] = circle;
 
                 //make stones resizable and adjust X and Y properties
-                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE).divide(4));
-                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(BOARD_SIZE * 2.4).multiply(-1));
-                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(BOARD_SIZE * 3.9).multiply(-1));
+                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4));
+                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(boardSize * 2.4).multiply(-1));
+                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
 
                 //color for hovering
                 final Color HOVER_BLACK = playerHandler.getPlayerBlack().hoverColor();
@@ -588,38 +565,40 @@ public class boardMaskController {
     }
 
     private void drawHandicaps() {
-        int dif = BOARD_SIZE == 9 ? 2 : 3;
+        if(handicaps == 0)
+            return;
 
-        int lowerValue = dif;
-        int higherValue = BOARD_SIZE - dif - 1;
-        int midValue = BOARD_SIZE / 2;
+        int lowerValue = (boardSize == 9) ? 2 : 3;
+        int higherValue = boardSize - lowerValue - 1;
+        int midValue = boardSize / 2;
 
-        if (HANDICAPS >= 1)
+        if (handicaps >= 1)
             gameHandler.addMove(lowerValue, higherValue, BLACK);
 
-        if (HANDICAPS >= 2)
+        if (handicaps >= 2)
             gameHandler.addMove(higherValue, lowerValue, BLACK);
 
-        if (HANDICAPS >= 3)
+        if (handicaps >= 3)
             gameHandler.addMove(higherValue, higherValue, BLACK);
 
-        if (HANDICAPS >= 4)
+        if (handicaps >= 4)
             gameHandler.addMove(lowerValue, lowerValue, BLACK);
 
-        if (HANDICAPS >= 5)
+        if (handicaps >= 5)
             gameHandler.addMove(midValue, midValue, BLACK);
 
-        if (HANDICAPS >= 6)
+        if (handicaps >= 6)
             gameHandler.addMove(midValue, lowerValue, BLACK);
 
-        if (HANDICAPS >= 7)
+        if (handicaps >= 7)
             gameHandler.addMove(midValue, higherValue, BLACK);
 
-        if (HANDICAPS >= 8)
+        if (handicaps >= 8)
             gameHandler.addMove(lowerValue, midValue, BLACK);
 
-        if (HANDICAPS == 9)
+        if (handicaps == 9)
             gameHandler.addMove(higherValue, midValue, BLACK);
+
         playerHandler.changePlayer();
         modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().name() + "'s turn");
         drawStones();
@@ -654,7 +633,7 @@ public class boardMaskController {
             //if(modeAndMoveDisplay.getText().equals(playerHandler.getNextPlayer().getName() + " passed! - "
             //        + playerHandler.getCurrentPlayer().getName() + "'s turn")) {
                 long blackPoints = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped();
-                long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + KOMI);
+                long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi);
                 if(blackPoints > whitePoints) {
                     try {
                         switchToWinnerMask(1, 1);
@@ -708,11 +687,11 @@ public class boardMaskController {
     }
 
     private void initiateByoyomiRules() {
-        if (BYOYOMI_NUMBER != 0) {
+        if (byoyomiOverruns != 0) {
             playerHandler.getCurrentPlayer().timer().passedSlotSeconds();
             System.out.println(playerHandler.getCurrentPlayer().timer().getPassedSeconds());
-            if(playerHandler.getCurrentPlayer().timer().getPassedSeconds() > BYOYOMI_TIME) {
-                int slots = playerHandler.getCurrentPlayer().timer().getPassedSeconds() / BYOYOMI_TIME;
+            if(playerHandler.getCurrentPlayer().timer().getPassedSeconds() > byoyomiTimeLimit) {
+                int slots = playerHandler.getCurrentPlayer().timer().getPassedSeconds() / byoyomiTimeLimit;
                 System.out.println("slots: " + slots);
                 int currentByoyomi;
                 if (playerHandler.getCurrentPlayer().color().equals(BLACK)) {
@@ -720,14 +699,14 @@ public class boardMaskController {
                     if (blackByoyomi < 0)
                         blackTimeLabel.setText("No time left");
                     else
-                        blackTimeLabel.setText(blackByoyomi + " time period(s) à " + BYOYOMI_TIME + " s");
+                        blackTimeLabel.setText(blackByoyomi + " time period(s) à " + byoyomiTimeLimit + " s");
                     currentByoyomi = blackByoyomi;
                 } else {
                     whiteByoyomi -= slots;
                     if (whiteByoyomi < 0)
                         whiteTimeLabel.setText("No time left");
                     else
-                        whiteTimeLabel.setText(whiteByoyomi + " time period(s) à " + BYOYOMI_TIME + " s");
+                        whiteTimeLabel.setText(whiteByoyomi + " time period(s) à " + byoyomiTimeLimit + " s");
                     currentByoyomi = whiteByoyomi;
                 }
                 System.out.println("curr: " + currentByoyomi);
@@ -743,6 +722,28 @@ public class boardMaskController {
                 }
             }
         }
+    }
+
+    /*
+      ================================================================================================================
+
+                                            GUI helper functions
+
+      ================================================================================================================
+     */
+
+    private void bindFont(Node n, double multiplier){
+        n.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", boardPane.heightProperty().multiply(multiplier).asString()
+        ));
+    }
+
+    private void bindFontIntensive(Node n, double multiplier){
+        n.styleProperty().bind(Bindings.concat(
+                "-fx-text-fill: #483C32; ",
+                "-fx-font-weight: bold; ",
+                "-fx-font-size: ", board.heightProperty().multiply(multiplier).asString()
+        ));
     }
 
     /*
@@ -782,6 +783,8 @@ public class boardMaskController {
 
         doublePassed = false;
         drawStones();
+
+        //text property binding maybe??
         blackTrapped.setText("Trapped: " + gameHandler.getBoard().getBlackTrapped());
         whiteTrapped.setText("Trapped: " + gameHandler.getBoard().getWhiteTrapped());
     }
@@ -789,8 +792,8 @@ public class boardMaskController {
     private void drawStones() {
         Color[][] boardToDraw = gameHandler.getBoard().getBoard();
         StringBuilder printBoard = new StringBuilder();
-        for(int r = 0; r < BOARD_SIZE; r++) {
-            for (int c = 0; c < BOARD_SIZE; c++) {
+        for(int r = 0; r < boardSize; r++) {
+            for (int c = 0; c < boardSize; c++) {
                 circlesOfBoard[r + 1][c + 1].setFill(boardToDraw[r][c] == null ? TRANSPARENT : boardToDraw[r][c] == BLACK ? BLACK : WHITE);
                 Color toCompare = (Color) circlesOfBoard[r + 1][c + 1].getFill();
                 printBoard.append(TRANSPARENT == toCompare || null == toCompare ? "empty\t" :
@@ -816,12 +819,16 @@ public class boardMaskController {
 
             if(player == 1) {
                 terminalInfo("Black won... \n[log end]");
-                winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(), gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(), gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", HANDICAPS,
-                        BYOYOMI_NUMBER, blackByoyomi, BYOYOMI_TIME);
+                winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
+                        gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
+                        gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
+                        byoyomiOverruns, blackByoyomi, byoyomiTimeLimit);
             } else if(player == 2){
                 terminalInfo("White won... \n[log end]");
-                winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(), (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + KOMI), gameHandler.getBoard().getWhiteTrapped(), "Komi: ", KOMI,
-                        BYOYOMI_NUMBER, whiteByoyomi, BYOYOMI_TIME);
+                winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
+                        (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
+                        gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
+                        byoyomiOverruns, whiteByoyomi, byoyomiTimeLimit);
             } else {
                 terminalInfo("Draw... \n[log end]");
                 winnerMask.setName("Draw", "Draw");
@@ -845,25 +852,11 @@ public class boardMaskController {
       ================================================================================================================
      */
 
-    private void bindFont(Node n, double multiplier){
-        n.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", boardPane.heightProperty().multiply(multiplier).asString()
-        ));
-    }
-
-    private void bindFontIntensive(Node n, double multiplier){
-        n.styleProperty().bind(Bindings.concat(
-                "-fx-text-fill: #483C32; ",
-                "-fx-font-weight: bold; ",
-                "-fx-font-size: ", board.heightProperty().multiply(multiplier).asString()
-        ));
-    }
-
     private void terminalInfo(String data) {
         System.out.println(data);
     }
 
     private int indexToNum(int row) {
-        return (BOARD_SIZE + 1) - row;
+        return (boardSize + 1) - row;
     }
 }

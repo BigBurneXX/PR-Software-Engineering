@@ -1,6 +1,5 @@
 package com.example.go_gruppe1.model.file;
 
-import com.example.go_gruppe1.controller.boardMaskController;
 import com.example.go_gruppe1.model.Move;
 import javafx.stage.FileChooser;
 import com.google.gson.Gson;
@@ -19,14 +18,12 @@ import java.util.List;
 
 public class FileControl {
     private File outputFile;
-    private boardMaskController controller;
     private final List<Move> movesLog = new ArrayList<>();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private int fileNameCounter = 0;
 
-    public void createFile(boardMaskController controller, String oldFileName, String player1Name, String player2Name,
-                           int boardSize, double komi, int handicaps, int byoyomiNumberOfTimes, int byoyomiTimeLimit){
-        this.controller = controller;
+    public void createFile(String oldFileName, String player1Name, String player2Name,
+                           int boardSize, double komi, int handicaps, int byoyomiOverruns, int byoyomiTimeLimit){
         try{
             String newFileName = oldFileName.endsWith(".json") ?
                     oldFileName.endsWith("_" + (fileNameCounter-1) + ".json") ?
@@ -35,12 +32,12 @@ public class FileControl {
                     player1Name + "_" + player2Name + ".json";
             outputFile = new File(newFileName);
             if (outputFile.createNewFile()) {
-                writeStartInfo(player1Name,player2Name,boardSize,komi, handicaps, byoyomiNumberOfTimes, byoyomiTimeLimit);
+                writeStartInfo(player1Name,player2Name,boardSize,komi, handicaps, byoyomiOverruns, byoyomiTimeLimit);
                 terminalInfo("File " + outputFile.getName() + " created.");
             }else {
                 terminalInfo("File " + outputFile.getName() + " already exists!");
                 fileNameCounter++;
-                createFile(controller, outputFile.getName(), player1Name, player2Name, boardSize, komi, handicaps, byoyomiNumberOfTimes, byoyomiTimeLimit);
+                createFile(outputFile.getName(), player1Name, player2Name, boardSize, komi, handicaps, byoyomiOverruns, byoyomiTimeLimit);
             }
         } catch (IOException e ){
             terminalInfo("File " + outputFile.getName() + " creation failed!");
@@ -49,11 +46,11 @@ public class FileControl {
     }
 
     private void writeStartInfo(String player1Name, String player2Name, int boardSize, double komi, int handicaps,
-                                int byoyomiNumberOfTimes, int byoyomiTimeLimit) {
-        FileData fileData = new FileData(player1Name, player2Name, boardSize, komi, handicaps, byoyomiNumberOfTimes, byoyomiTimeLimit, movesLog);
-        String json = gson.toJson(fileData);
+                                int byoyomiOverruns, int byoyomiTimeLimit) {
+        FileData fileData = new FileData(player1Name, player2Name, boardSize, komi, handicaps, byoyomiOverruns, byoyomiTimeLimit, movesLog);
 
         try (FileWriter fileWriter = new FileWriter(outputFile.getAbsolutePath())) {
+            String json = gson.toJson(fileData);
             fileWriter.write(json);
             fileWriter.flush();
 
@@ -90,18 +87,15 @@ public class FileControl {
         }
     }
 
-    public void loadFile(File newFile) {
+    public FileData loadFile(File newFile) {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(newFile.getAbsolutePath()))) {
             Type type = new TypeToken<FileData>() {}.getType();
             FileData fileData = gson.fromJson(reader, type);
-
-            if (fileData != null)
-                controller.switchToNewGame(fileData.player1Name(), fileData.player2Name(), String.valueOf(fileData.komi()),
-                        String.valueOf(fileData.handicaps()), fileData.boardSize(), fileData.moves(),
-                        String.valueOf(fileData.byoyomiNumberOfTimes()), String.valueOf(fileData.byoyomiTimeLimit()));
+            return fileData;
         } catch (IOException e) {
             terminalInfo("An IO Exception was thrown when trying to load file " + newFile.getName());
         }
+        return null;
     }
 
     public void saveFile(){

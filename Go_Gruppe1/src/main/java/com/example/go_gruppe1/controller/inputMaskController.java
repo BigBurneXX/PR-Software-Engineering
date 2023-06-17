@@ -46,15 +46,17 @@ public class inputMaskController {
         initiateButtons();
     }
 
+    @FXML
     public void onStartGameClick(ActionEvent event) throws IOException {
         switchToBoardMask(event, false);
     }
 
+    @FXML
     public void onLoadGameClick(ActionEvent event) throws IOException {
         switchToBoardMask(event, true);
     }
 
-    protected void initiateSpinner() {
+    private void initiateSpinner() {
         //komi
         komiSpinner.setEditable(false);
 
@@ -111,7 +113,7 @@ public class inputMaskController {
 
     }
 
-    protected void initiateLabels() {
+    private void initiateLabels() {
         double binding = 0.04;
         title.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", inputPane.heightProperty().multiply(0.1).asString()
@@ -156,8 +158,6 @@ public class inputMaskController {
         load.toFront();
     }
 
-
-
     private void switchToBoardMask(ActionEvent event, boolean wantToLoad) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/boardMaskGUI.fxml"));
         Parent root = loader.load();
@@ -165,8 +165,16 @@ public class inputMaskController {
         boardMaskController boardMask = loader.getController();
         boardMask.setSize(inputPane.getWidth(), inputPane.getHeight());
 
-        boardMask.initiateDisplay(player1.getText(), player2.getText(), komiSpinner.getValue().toString(), handicapSpinner.getValue().toString(), getBoardSize(),
-                        timePeriodSpinner.getValue().toString(), durationSpinner.getValue().toString());
+        String player1Name = player1.getText();
+        String player2Name = player2.getText();
+        double komi = komiSpinner.getValue();
+        int handicaps = handicapSpinner.getValue();
+        int boardSize = getBoardSize();
+        int byoyomiOverruns = timePeriodSpinner.getValue();
+        int byoyomiTimeLimit = durationSpinner.getValue();
+
+        boardMask.initiateDisplay(player1Name, player2Name, komi, handicaps, boardSize, byoyomiOverruns, byoyomiTimeLimit);
+
         if(wantToLoad)
             boardMask.onOpenFileClick();
 

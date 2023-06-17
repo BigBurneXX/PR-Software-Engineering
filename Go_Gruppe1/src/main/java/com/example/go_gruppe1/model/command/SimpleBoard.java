@@ -10,6 +10,7 @@ public class SimpleBoard {
     private final int size;
     private final Color[][] board;
     private int blackTrapped = 0, whiteTrapped = 0;
+    private final Set<Position> toDelete = new HashSet<>();
 
     public SimpleBoard(int size){
         this.size = size;
@@ -25,13 +26,11 @@ public class SimpleBoard {
     }
 
     public boolean setStone(int row, int col, Color color){
-        //Color[][] temporaryBoard = Arrays.stream(board).map(Color[]::clone).toArray(Color[][]::new);
         board[row][col] = color;
         System.out.println("stone set at " + row + ", " + col);
         Color toDelete = (color == Color.BLACK)  ? Color.WHITE : Color.BLACK;
         removeDead(toDelete);
         if(checkLiberties(row, col, new boolean[size][size]) == 0){
-            //board = temporaryBoard;
             removeStone(row, col);
             return true;
         }
@@ -45,7 +44,6 @@ public class SimpleBoard {
     }
 
     private void removeDead(Color color){
-        Set<Position> toDelete = new HashSet<>();
         for(int r = 0; r < size; r++)
             for(int c = 0; c < size; c++)
                 if(checkLiberties(r, c, new boolean[size][size]) == 0 && board[r][c] == color)
@@ -53,11 +51,11 @@ public class SimpleBoard {
         for(Position p : toDelete)
             removeStone(p.row(), p.col());
 
-        if(color == Color.BLACK) {
+        if(color == Color.BLACK)
             whiteTrapped += toDelete.size();
-        } else {
+        else
             blackTrapped += toDelete.size();
-        }
+        toDelete.clear();
     }
 
     private int checkLiberties(int row, int col, boolean[][] checked){
@@ -96,10 +94,6 @@ public class SimpleBoard {
 
     public Color[][] getBoard(){
         return board;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     public int getBlackTrapped() {
