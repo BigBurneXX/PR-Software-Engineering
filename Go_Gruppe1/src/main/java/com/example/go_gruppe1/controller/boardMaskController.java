@@ -24,6 +24,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -133,6 +135,9 @@ public class boardMaskController {
     private final double REGION_MULTIPLIER = 0.7;
     private final double MOVE_AND_MODE_DISPLAY_MULTIPLIER = 0.025;
     private final double TITLE_MULTIPLIER = 0.08;
+
+    private int currentSelectionRow = 1;
+    private int currentSelectionCol = 1;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -426,6 +431,9 @@ public class boardMaskController {
         drawPassButton();
         drawResignButton();
         playerHandler.startTimer();
+        //board.setFocusTraversable(true);
+        //board.requestFocus();
+        setupKeyboardControls();
     }
 
     /*
@@ -802,6 +810,53 @@ public class boardMaskController {
             stage.setMinHeight(MIN_HEIGHT);
             stage.centerOnScreen();
         }
+    }
+    private void setupKeyboardControls() {
+        board.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            switch (event.getCode()) {
+                case W:  // move selection up
+                    moveSelection(0, -1);
+                    break;
+                case S:  // move selection down
+                    moveSelection(0, 1);
+                    break;
+                case A:  // move selection left
+                    moveSelection(-1, 0);
+                    break;
+                case D:  // move selection right
+                    moveSelection(1, 0);
+                    break;
+                case SPACE:  // place stone
+                    placeStoneAtSelection();
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    public void moveSelection(int dx, int dy) {
+        // Update row
+        currentSelectionRow += dy;
+        if (currentSelectionRow < 1) {
+            currentSelectionRow = 1;
+        } else if (currentSelectionRow > boardSize) {
+            currentSelectionRow = boardSize;
+        }
+
+        // Update column
+        currentSelectionCol += dx;
+        if (currentSelectionCol < 1) {
+            currentSelectionCol = 1;
+        } else if (currentSelectionCol > boardSize) {
+            currentSelectionCol = boardSize;
+        }
+    }
+
+
+    public void placeStoneAtSelection() {
+        Circle selectedCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
+        setStone(selectedCircle);
     }
 
     /*
