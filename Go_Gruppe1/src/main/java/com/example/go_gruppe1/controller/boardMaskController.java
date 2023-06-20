@@ -412,8 +412,8 @@ public class boardMaskController {
 
         //keyboard logic?
         //board.setFocusTraversable(true);
-        //board.requestFocus();
-        //setupKeyboardControls();
+        board.requestFocus();
+        setupKeyboardControls();
     }
 
     private void setBoardProperties(){
@@ -460,6 +460,7 @@ public class boardMaskController {
             for (int row = 1; row < boardSize; row++) {
                 Pane cell = new Pane();
                 cell.setStyle("-fx-background-color:  #C4A484; -fx-border-color: #483C32");
+                cell.toBack();
                 board.add(cell, col, row);
             }
         }
@@ -488,6 +489,7 @@ public class boardMaskController {
                     if (modePlay.isSelected())
                         if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK))
                             setStone(circle);
+                            circle.toFront();
 
                 });
 
@@ -497,6 +499,7 @@ public class boardMaskController {
                     if (modePlay.isSelected()) {
                         if (circle.getFill() == TRANSPARENT || circle.getFill() == null) {
                             circle.setFill(playerHandler.getCurrentPlayer().getHoverColor());
+                            circle.toFront();
                         }
                     }
                 });
