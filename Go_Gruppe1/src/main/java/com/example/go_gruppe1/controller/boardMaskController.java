@@ -209,7 +209,7 @@ public class boardMaskController {
                 int colIndex = Arrays.binarySearch(ALPHABET, colLetter);
                 String text = m.text();
 
-                terminalInfo("Stone (" + (currentColor == BLACK ? "BLACK" : "WHITE") +
+                terminalInfo("Stone (" + (currentColor.equals(BLACK) ? "BLACK" : "WHITE") +
                         ") placed at: " + row + colLetter);
 
                 fileHandler.write((row - 1), colLetter, text);
@@ -512,6 +512,42 @@ public class boardMaskController {
         }
     }
 
+    private void setStone(Circle c) {
+        int row = GridPane.getRowIndex(c);
+        int col = GridPane.getColumnIndex(c);
+        fileHandler.write((row - 1), ALPHABET[col - 1], "");
+
+        Color current = playerHandler.getCurrentPlayer().getColor();
+        terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by "
+                + playerHandler.getCurrentPlayer().getName());
+        c.setFill(current);
+
+        if (gameHandler.addMove(row - 1, col - 1, current)) {
+            drawStones();
+            modeAndMoveDisplay.setText("This is suicide. Please select another position");
+            return;
+        }
+
+        modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
+
+        if (playerHandler.checkByoyomi()) {
+            try {
+                switchToWinnerMask(playerHandler.getCurrentPlayer(), 3);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        playerHandler.moveMade();
+
+        doublePassed = false;
+        drawStones();
+
+        // text property binding maybe??
+        blackTrapped.setText("Trapped: " + gameHandler.getBoard().getBlackTrapped());
+        whiteTrapped.setText("Trapped: " + gameHandler.getBoard().getWhiteTrapped());
+    }
+
     private void addBoardLabelling() {
         //add color and labelling but without borders
         for (int i = 0; i <= boardSize; i++) {
@@ -692,7 +728,7 @@ public class boardMaskController {
         //resign logic
         resignButton.setOnMouseClicked(e -> {
             try {
-                switchToWinnerMask(playerHandler.getCurrentPlayer(), 2);
+                switchToWinnerMask(playerHandler.getNextPlayer(), 2);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -729,46 +765,10 @@ public class boardMaskController {
     /*
       ================================================================================================================
 
-                                            other helper functions
+                                            other functions
 
       ================================================================================================================
      */
-
-    private void setStone(Circle c) {
-        int row = GridPane.getRowIndex(c);
-        int col = GridPane.getColumnIndex(c);
-        fileHandler.write((row - 1), ALPHABET[col - 1], "");
-
-        Color current = playerHandler.getCurrentPlayer().getColor();
-        terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by "
-                + playerHandler.getCurrentPlayer().getName());
-        c.setFill(current);
-
-        if (gameHandler.addMove(row - 1, col - 1, current)) {
-            drawStones();
-            modeAndMoveDisplay.setText("This is suicide. Please select another position");
-            return;
-        }
-
-        modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
-
-        if (playerHandler.checkByoyomi()) {
-            try {
-                switchToWinnerMask(playerHandler.getCurrentPlayer(), 3);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-        playerHandler.moveMade();
-
-        doublePassed = false;
-        drawStones();
-
-        // text property binding maybe??
-        blackTrapped.setText("Trapped: " + gameHandler.getBoard().getBlackTrapped());
-        whiteTrapped.setText("Trapped: " + gameHandler.getBoard().getWhiteTrapped());
-    }
 
     private void drawStones() {
         Color[][] boardToDraw = gameHandler.getBoard().getBoard();
@@ -795,14 +795,20 @@ public class boardMaskController {
         winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
         winnerMask.setReasonForWinning(reasonForWinning);
 
+        String playerWon = playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? "Black" : "White";
+        terminalInfo(playerWon + " won... \n[log end]");
+        //generic winner declaration
+        //winnerMask.initiateDisplay(
+        //
+        //          getTrapped,
+        //          playerHandler.getByoyomiOverruns(), playerHandler.getNextPlayer().getByoyomi(), playerHandler.getByoyomiTimeLimit());
+
         if (player == playerHandler.getPlayerBlack()) {
-            terminalInfo("Black won... \n[log end]");
             winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
                     gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
                     gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
                     playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
         } else if (player == playerHandler.getPlayerWhite()) {
-            terminalInfo("White won... \n[log end]");
             winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
                     (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
                     gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
@@ -820,44 +826,6 @@ public class boardMaskController {
         stage.setMinHeight(MIN_HEIGHT);
         stage.centerOnScreen();
     }
-    /*
-    private void switchToWinnerMask(Player player, int reasonForWinning) throws IOException {
-        //reason for winning 1 - points(2x consecutive passing), 2 - resigned, 3 - byoyomi
-        //player is 3 when there's a draw
-        if (reasonForWinning >= 1 && reasonForWinning <= 3) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
-            Parent root = loader.load();
-
-            winnerMaskController winnerMask = loader.getController();
-            winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
-            winnerMask.setReasonForWinning(reasonForWinning);
-
-            if(player.equals(playerHandler.getPlayerBlack())) {
-                terminalInfo("Black won... \n[log end]");
-                winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
-                        gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
-                        gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
-                        playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
-            } else if(player.equals(playerHandler.getPlayerWhite())){
-                terminalInfo("White won... \n[log end]");
-                winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
-                        (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
-                        gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
-                        playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
-            } else {
-                terminalInfo("Draw... \n[log end]");
-                winnerMask.setName("Draw", "Draw");
-            }
-
-            Node source = topRegion.getTop();
-            Stage stage = (Stage) source.getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setMinWidth(MIN_WIDTH);
-            stage.setMinHeight(MIN_HEIGHT);
-            stage.centerOnScreen();
-        }
-    }*/
 
     private void setupKeyboardControls() {
         board.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
