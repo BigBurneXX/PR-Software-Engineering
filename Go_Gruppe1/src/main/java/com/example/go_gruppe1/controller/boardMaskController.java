@@ -4,6 +4,7 @@ import com.example.go_gruppe1.model.command.GameHandler;
 import com.example.go_gruppe1.model.file.FileData;
 import com.example.go_gruppe1.model.file.FileHandler;
 import com.example.go_gruppe1.model.Move;
+import com.example.go_gruppe1.model.player.Player;
 import com.example.go_gruppe1.model.player.PlayerHandler;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -24,7 +25,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
@@ -379,6 +379,44 @@ public class boardMaskController {
      */
 
     private void drawBoard() {
+        //bind height and width property
+        setBoardProperties();
+
+        //create grid
+        createGrid();
+
+        //add color to board
+        addColorToBoard();
+
+        //adding circles to all potential locations on the board
+        addCirclesToBoard();
+
+        //add board labeling
+        addBoardLabelling();
+
+        //draw all (if any) handicaps
+        drawHandicaps();
+
+        //add all logic and binding concerning the navigation arrows
+        addArrowLogic(leftArrow, true);
+        addArrowLogic(rightArrow, false);
+
+        //add all logic and binding concerning the pass-button
+        addPassButtonLogic();
+
+        //add all logic and binding concerning the resign-button
+        addResignButtonLogic();
+
+        //immediately start the timer for the first player (black if no handicaps were placed, white if handicaps were placed)
+        playerHandler.startTimer();
+
+        //keyboard logic?
+        //board.setFocusTraversable(true);
+        //board.requestFocus();
+        //setupKeyboardControls();
+    }
+
+    private void setBoardProperties(){
         //set padding, so stones are not covered by top region
         board.setPadding(new Insets(20, 0, 0, 0));
 
@@ -387,6 +425,7 @@ public class boardMaskController {
 
         //bind upper region to 20% of window height
         topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(TOP_REGION_MULTIPLIER));
+
 
         //set left, right and center (board) region to 60% of window height
         leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
@@ -399,8 +438,9 @@ public class boardMaskController {
         //bind left and right width to remaining width of the window of what's left from taking 60% of the height
         leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
         rightRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
+    }
 
-        //create grid
+    private void createGrid(){
         board.getChildren().clear();
         board.getColumnConstraints().clear();
         board.getRowConstraints().clear();
@@ -413,10 +453,9 @@ public class boardMaskController {
             rowConstraints.setPercentHeight(100.0 / boardSize);
             board.getRowConstraints().add(rowConstraints);
         }
+    }
 
-        boardLabelling();
-
-        //add color to board
+    private void addColorToBoard(){
         for (int col = 1; col < boardSize; col++) {
             for (int row = 1; row < boardSize; row++) {
                 Pane cell = new Pane();
@@ -424,27 +463,56 @@ public class boardMaskController {
                 board.add(cell, col, row);
             }
         }
-
-        addCirclesToBoard();
-        drawHandicaps();
-        drawNavigationArrows();
-        drawPassButton();
-        drawResignButton();
-        playerHandler.startTimer();
-        //board.setFocusTraversable(true);
-        //board.requestFocus();
-        setupKeyboardControls();
     }
 
-    /*
-      ================================================================================================================
+    private void addCirclesToBoard() {
+        circlesOfBoard = new Circle[boardSize + 1][boardSize + 1];
 
-                                            draw board helper functions
+        for (int row = 1; row <= boardSize; row++) {
+            for (int col = 1; col <= boardSize; col++) {
+                Circle circle = new Circle(10, TRANSPARENT);
+                board.add(circle, col, row);
+                circlesOfBoard[row][col] = circle;
 
-      ================================================================================================================
-     */
+                //make stones resizable and adjust X and Y properties
+                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4));
+                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(boardSize * 2.4).multiply(-1));
+                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
 
-    private void boardLabelling() {
+                //color for hovering
+                final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
+                final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
+
+                //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
+                circle.setOnMouseClicked(e -> {
+                    if (modePlay.isSelected())
+                        if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK))
+                            setStone(circle);
+
+                });
+
+                //when the mouse is hovering over a transparent circle this circle is coloured white or black
+                //Note: the hover color is 30% transparent
+                circle.setOnMouseEntered(e -> {
+                    if (modePlay.isSelected()) {
+                        if (circle.getFill() == TRANSPARENT || circle.getFill() == null) {
+                            circle.setFill(playerHandler.getCurrentPlayer().getHoverColor());
+                        }
+                    }
+                });
+
+                //when the mouse is no longer hovering over the circle the colour is removed
+                circle.setOnMouseExited(e -> {
+                    if (modePlay.isSelected()) {
+                        if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK))
+                            circle.setFill(TRANSPARENT);
+                    }
+                });
+            }
+        }
+    }
+
+    private void addBoardLabelling() {
         //add color and labelling but without borders
         for (int i = 0; i <= boardSize; i++) {
             //top color
@@ -509,55 +577,6 @@ public class boardMaskController {
         }
     }
 
-    //adding circles to all potential locations on the board
-    private void addCirclesToBoard() {
-        circlesOfBoard = new Circle[boardSize + 1][boardSize + 1];
-
-        for (int row = 1; row <= boardSize; row++) {
-            for (int col = 1; col <= boardSize; col++) {
-                Circle circle = new Circle(10, TRANSPARENT);
-                board.add(circle, col, row);
-                circlesOfBoard[row][col] = circle;
-
-                //make stones resizable and adjust X and Y properties
-                circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4));
-                circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(boardSize * 2.4).multiply(-1));
-                circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
-
-                //color for hovering
-                final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
-                final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
-
-                //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
-                circle.setOnMouseClicked(e -> {
-                    if (modePlay.isSelected())
-                        if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK))
-                            setStone(circle);
-
-                });
-
-                //when the mouse is hovering over a transparent circle this circle is coloured white or black
-                //side note: these colours are a little different from the white and black that a circle is filled with
-                //           when clicked so that .equals will return false
-                circle.setOnMouseEntered(e -> {
-                    if (modePlay.isSelected()) {
-                        if (circle.getFill() == TRANSPARENT || circle.getFill() == null) {
-                            circle.setFill(playerHandler.getCurrentPlayer().getHoverColor());
-                        }
-                    }
-                });
-
-                //when the mouse is no longer hovering over the circle the colour is removed
-                circle.setOnMouseExited(e -> {
-                    if (modePlay.isSelected()) {
-                        if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK))
-                            circle.setFill(TRANSPARENT);
-                    }
-                });
-            }
-        }
-    }
-
     private void drawHandicaps() {
         if(handicaps == 0)
             return;
@@ -598,23 +617,25 @@ public class boardMaskController {
         drawStones();
     }
 
-    private void drawNavigationArrows() {
-        leftArrow.setOnMouseClicked(e -> {
-            gameHandler.undo();
+    private void addArrowLogic(Polygon arrow, boolean isLeftArrow){
+        //add on mouse clicked logic of an arrow
+        //if left is clicked    -->   undo last move
+        //if right is clicked   -->   redo last move
+        arrow.setOnMouseClicked(e -> {
+            if(isLeftArrow)
+                gameHandler.undo();
+            else
+                gameHandler.redo();
             drawStones();
         });
-        leftArrow.translateXProperty().bind(leftRegion.widthProperty().divide(2));
-        leftArrow.translateYProperty().bind(leftRegion.heightProperty().divide(2));
 
-        rightArrow.setOnMouseClicked(e -> {
-            gameHandler.redo();
-            drawStones();
-        });
-        rightArrow.translateXProperty().bind(rightRegion.widthProperty().divide(2));
-        rightRegion.translateYProperty().bind(rightRegion.heightProperty().divide(2));
+        //bind properties to ensure qualitative resizing
+        Region region = (Region) arrow.getParent();
+        arrow.translateXProperty().bind(region.widthProperty().divide(2));
+        arrow.translateYProperty().bind(region.heightProperty().divide(2));
     }
 
-    private void drawPassButton() {
+    private void addPassButtonLogic() {
         passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
         bindFontIntensive(passButton, 0.03);
         passButton.setFocusTraversable(false);
@@ -628,13 +649,13 @@ public class boardMaskController {
                 long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi);
                 if(blackPoints > whitePoints) {
                     try {
-                        switchToWinnerMask(1, 1);
+                        switchToWinnerMask(playerHandler.getPlayerBlack(), 1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 } else if(whitePoints > blackPoints) {
                     try {
-                        switchToWinnerMask(2, 1);
+                        switchToWinnerMask(playerHandler.getPlayerWhite(), 1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -651,9 +672,8 @@ public class boardMaskController {
                                 + playerHandler.getNextPlayer().getName() + "'s turn");
 
             if(playerHandler.checkByoyomi()){
-                int num = playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? 1 : 2;
                 try {
-                    switchToWinnerMask(num, 3);
+                    switchToWinnerMask(playerHandler.getCurrentPlayer(), 3);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -664,16 +684,15 @@ public class boardMaskController {
         });
     }
 
-    private void drawResignButton() {
+    private void addResignButtonLogic() {
         resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
         bindFontIntensive(resignButton, 0.03);
         resignButton.setFocusTraversable(false);
 
         //resign logic
         resignButton.setOnMouseClicked(e -> {
-            int num = playerHandler.getCurrentPlayer().getColor() == BLACK ? 2 : 1;
             try {
-                switchToWinnerMask(num, 2);
+                switchToWinnerMask(playerHandler.getCurrentPlayer(), 2);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -716,43 +735,37 @@ public class boardMaskController {
      */
 
     private void setStone(Circle c) {
-        int row;
-        int col;
-        for (Node n : board.getChildren()) {
-            if (n instanceof Circle && n.equals(c)) {
-                row = GridPane.getRowIndex(n);
-                col = GridPane.getColumnIndex(n);
-                fileHandler.write((row-1), ALPHABET[col-1], "");
+        int row = GridPane.getRowIndex(c);
+        int col = GridPane.getColumnIndex(c);
+        fileHandler.write((row - 1), ALPHABET[col - 1], "");
 
-                Color current = playerHandler.getCurrentPlayer().getColor();
-                terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by "
-                        + playerHandler.getCurrentPlayer().getName());
-                c.setFill(current);
-                if(gameHandler.addMove(row-1, col-1, current)){
-                    drawStones();
-                    modeAndMoveDisplay.setText("This is suicide. Please select another position");
-                    return;
-                }
+        Color current = playerHandler.getCurrentPlayer().getColor();
+        terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by "
+                + playerHandler.getCurrentPlayer().getName());
+        c.setFill(current);
 
-                modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
+        if (gameHandler.addMove(row - 1, col - 1, current)) {
+            drawStones();
+            modeAndMoveDisplay.setText("This is suicide. Please select another position");
+            return;
+        }
 
-                if(playerHandler.checkByoyomi()){
-                    int num = playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? 1 : 2;
-                    try {
-                        switchToWinnerMask(num, 3);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-                playerHandler.moveMade();
-                break;
+        modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
+
+        if (playerHandler.checkByoyomi()) {
+            try {
+                switchToWinnerMask(playerHandler.getCurrentPlayer(), 3);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         }
+
+        playerHandler.moveMade();
 
         doublePassed = false;
         drawStones();
 
-        //text property binding maybe??
+        // text property binding maybe??
         blackTrapped.setText("Trapped: " + gameHandler.getBoard().getBlackTrapped());
         whiteTrapped.setText("Trapped: " + gameHandler.getBoard().getWhiteTrapped());
     }
@@ -774,10 +787,44 @@ public class boardMaskController {
         terminalInfo(printBoard.toString());
     }
 
-    private void switchToWinnerMask(int player, int reasonForWinning) throws IOException {
+    private void switchToWinnerMask(Player player, int reasonForWinning) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
+        Parent root = loader.load();
+
+        winnerMaskController winnerMask = loader.getController();
+        winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
+        winnerMask.setReasonForWinning(reasonForWinning);
+
+        if (player == playerHandler.getPlayerBlack()) {
+            terminalInfo("Black won... \n[log end]");
+            winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
+                    gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
+                    gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
+                    playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
+        } else if (player == playerHandler.getPlayerWhite()) {
+            terminalInfo("White won... \n[log end]");
+            winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
+                    (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
+                    gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
+                    playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
+        } else {
+            terminalInfo("Draw... \n[log end]");
+            winnerMask.setName("Draw", "Draw");
+        }
+
+        Node source = topRegion.getTop();
+        Stage stage = (Stage) source.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setMinWidth(MIN_WIDTH);
+        stage.setMinHeight(MIN_HEIGHT);
+        stage.centerOnScreen();
+    }
+    /*
+    private void switchToWinnerMask(Player player, int reasonForWinning) throws IOException {
         //reason for winning 1 - points(2x consecutive passing), 2 - resigned, 3 - byoyomi
         //player is 3 when there's a draw
-        if ((player == 1 || player == 2 || player == 3 ) && (reasonForWinning >= 1 && reasonForWinning <= 3)) {
+        if (reasonForWinning >= 1 && reasonForWinning <= 3) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
             Parent root = loader.load();
 
@@ -785,13 +832,13 @@ public class boardMaskController {
             winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
             winnerMask.setReasonForWinning(reasonForWinning);
 
-            if(player == 1) {
+            if(player.equals(playerHandler.getPlayerBlack())) {
                 terminalInfo("Black won... \n[log end]");
                 winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
                         gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
                         gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
                         playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
-            } else if(player == 2){
+            } else if(player.equals(playerHandler.getPlayerWhite())){
                 terminalInfo("White won... \n[log end]");
                 winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
                         (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
@@ -810,27 +857,23 @@ public class boardMaskController {
             stage.setMinHeight(MIN_HEIGHT);
             stage.centerOnScreen();
         }
-    }
+    }*/
+
     private void setupKeyboardControls() {
         board.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
-                case W:  // move selection up
-                    moveSelection(0, -1);
-                    break;
-                case S:  // move selection down
-                    moveSelection(0, 1);
-                    break;
-                case A:  // move selection left
-                    moveSelection(-1, 0);
-                    break;
-                case D:  // move selection right
-                    moveSelection(1, 0);
-                    break;
-                case SPACE:  // place stone
-                    placeStoneAtSelection();
-                    break;
-                default:
-                    break;
+                case W ->  // move selection up
+                        moveSelection(0, -1);
+                case S ->  // move selection down
+                        moveSelection(0, 1);
+                case A ->  // move selection left
+                        moveSelection(-1, 0);
+                case D ->  // move selection right
+                        moveSelection(1, 0);
+                case SPACE ->  // place stone
+                        placeStoneAtSelection();
+                default -> {
+                }
             }
         });
     }

@@ -44,12 +44,11 @@ public class winnerMaskController {
     }
 
     protected void initiateDisplay(String winner, String other, long total, int trapped, String komiOrHandicaps,
-                                   double komiOrHandicap, int byoyomi, int byoyomiNumber, int time) {
+                                   double komiOrHandicapValue, int byoyomi, int byoyomiNumber, int time) {
         setName(winner, other);
         setTotalPoints(total);
         setTrapped(trapped);
-        setExtraPoints(komiOrHandicaps);
-        setExtraPointsValue(komiOrHandicap);
+        setExtraPointsValue(komiOrHandicaps, komiOrHandicapValue);
         setByoyomi(byoyomi, byoyomiNumber, time);
         initiateButtons();
     }
@@ -119,13 +118,8 @@ public class winnerMaskController {
         ));
     }
 
-    private void setExtraPoints(String komiOrHandicaps) {
-        extraPointsValue.setText(komiOrHandicaps + " ");
-    }
-
-    private void setExtraPointsValue(double komiOrHandicaps) {
-        String komiOrHandicap = extraPointsValue.getText();
-        extraPointsValue.setText(komiOrHandicap + komiOrHandicaps);
+    private void setExtraPointsValue(String komiOrHandicaps, double value) {
+        extraPointsValue.setText(komiOrHandicaps + value);
         extraPointsValue.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", pane.heightProperty().multiply(0.035).asString()
         ));
