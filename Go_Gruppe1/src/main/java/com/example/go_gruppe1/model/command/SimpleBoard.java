@@ -23,7 +23,6 @@ public class SimpleBoard {
 
     public SimpleBoard(SimpleBoard toCopy){
         this.size = toCopy.size;
-        //chatGPT suggests Arrays.copyOf();
         this.board = Arrays.stream(toCopy.board).map(Color[]::clone).toArray(Color[][]::new);
         this.blackTrapped = toCopy.getBlackTrapped();
         this.whiteTrapped = toCopy.getWhiteTrapped();
