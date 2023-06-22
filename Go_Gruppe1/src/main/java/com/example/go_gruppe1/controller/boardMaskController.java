@@ -137,7 +137,7 @@ public class boardMaskController {
     private final double TITLE_MULTIPLIER = 0.08;
 
     private int currentSelectionRow = 1;
-    private int currentSelectionCol = 1;
+    private int currentSelectionCol = 2;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -411,8 +411,14 @@ public class boardMaskController {
         playerHandler.startTimer();
 
         //keyboard logic?
-        //board.setFocusTraversable(true);
+
+        // Set the board to be focusable
+        board.setFocusTraversable(true);
+
+        // Request focus on the board
         board.requestFocus();
+
+        // Set up keyboard controls
         setupKeyboardControls();
     }
 
@@ -831,20 +837,25 @@ public class boardMaskController {
     }
 
     private void setupKeyboardControls() {
-        board.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+        board.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case W ->  // move selection up
-                        moveSelection(0, -1);
-                case S ->  // move selection down
-                        moveSelection(0, 1);
-                case A ->  // move selection left
-                        moveSelection(-1, 0);
-                case D ->  // move selection right
-                        moveSelection(1, 0);
-                case SPACE ->  // place stone
-                        placeStoneAtSelection();
-                default -> {
-                }
+                case W:
+                    moveSelection(0, -1);
+                    break;
+                case S:
+                    moveSelection(0, 1);
+                    break;
+                case A:
+                    moveSelection(-1, 0);
+                    break;
+                case D:
+                    moveSelection(1, 0);
+                    break;
+                case SPACE:
+                    placeStoneAtSelection();
+                    break;
+                default:
+                    break;
             }
         });
     }
