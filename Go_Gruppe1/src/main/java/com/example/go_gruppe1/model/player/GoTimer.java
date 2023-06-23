@@ -13,6 +13,9 @@ public class GoTimer {
     private final StringProperty timeProperty;
     private final Timeline timeline;
 
+    /**
+     * initiates timer with start time 0
+     */
     protected GoTimer(){
         startTime = 0;
         timeProperty = new SimpleStringProperty("00:00");
@@ -21,15 +24,24 @@ public class GoTimer {
         timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
+    /**
+     * starts timer
+     */
     protected void startTimer(){
         startTime = System.currentTimeMillis();
         timeline.play();
     }
 
+    /**
+     * stops timer
+     */
     protected void stopTimer(){
         timeline.stop();
     }
 
+    /**
+     * updates timer with passed time
+     */
     private void updateTimer(){
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - startTime;
@@ -40,6 +52,9 @@ public class GoTimer {
         timeProperty.set(String.format("%02d:%02d", minutes, seconds));
     }
 
+    /**
+     * @return seconds passed from move
+     */
     public int getPassedSeconds() {
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - startTime;
@@ -49,6 +64,9 @@ public class GoTimer {
         return (int) TimeUnit.MILLISECONDS.toSeconds(elapsedTime);
     }
 
+    /**
+     * @return time as String
+     */
     public StringProperty getTimeProperty() {
         return timeProperty;
     }

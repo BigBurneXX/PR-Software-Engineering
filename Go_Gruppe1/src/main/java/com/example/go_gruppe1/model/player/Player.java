@@ -12,6 +12,15 @@ public class Player {
     private StringProperty timeLabelText;
     private int byoyomi;
 
+    /**
+     * @param name player name
+     * @param color player color (black or white)
+     * @param hoverColor player hover color (light black or light white)
+     * @param byoyomi # of byoyomi time periods
+     * @param byoyomiTimeLimit time of byoyomi period
+     *
+     * initiates a player for Go with its attributes
+     */
     public Player(String name, Color color, Color hoverColor, int byoyomi, int byoyomiTimeLimit) {
         this.name = name;
         this.color = color;
@@ -23,34 +32,62 @@ public class Player {
         }
     }
 
+    /**
+     * @return player name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return player color (black or white)
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * @return player hover color (light black or light white)
+     */
     public Color getHoverColor() {
         return hoverColor;
     }
 
+    /**
+     * @return player timer
+     */
     public GoTimer getTimer() {
         return timer;
     }
 
+    /**
+     * @return player passed time for one move
+     */
     public StringProperty getTimeLabelText() {
         return timeLabelText;
     }
 
+    /**
+     * @return # of byoyomi time periods
+     */
     public int getByoyomi() {
         return byoyomi;
     }
 
+    /**
+     * @param byoyomi
+     *
+     * sets byoyomi time periods
+     */
     public void setByoyomi(int byoyomi) {
         this.byoyomi = byoyomi;
     }
 
+    /**
+     * @param newLabelText
+     *
+     * sets current time for player
+     */
     public void setTimeLabelText(String newLabelText) {
         timeLabelText.set(newLabelText);
     }
