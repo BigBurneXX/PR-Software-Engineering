@@ -139,6 +139,8 @@ public class boardMaskController {
     private int currentSelectionRow = 1;
     private int currentSelectionCol = 1;
 
+    private static final double STROKE_WIDTH = 2.0;
+
     /*
       ----------------------------------------------------------------------------------------------------------------
                                         global variables
@@ -411,8 +413,13 @@ public class boardMaskController {
         playerHandler.startTimer();
 
         //keyboard logic?
-        //board.setFocusTraversable(true);
+        // Set the board to be focusable
+        board.setFocusTraversable(true);
+
+        // Request focus on the board
         board.requestFocus();
+
+        // Set up keyboard controls
         setupKeyboardControls();
     }
 
@@ -831,25 +838,40 @@ public class boardMaskController {
     }
 
     private void setupKeyboardControls() {
-        board.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+        board.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case W ->  // move selection up
-                        moveSelection(0, -1);
-                case S ->  // move selection down
-                        moveSelection(0, 1);
-                case A ->  // move selection left
-                        moveSelection(-1, 0);
-                case D ->  // move selection right
-                        moveSelection(1, 0);
-                case SPACE ->  // place stone
-                        placeStoneAtSelection();
-                default -> {
-                }
+                case W:
+                    moveSelection(0, -1);
+                    break;
+                case S:
+                    moveSelection(0, 1);
+                    break;
+                case A:
+                    moveSelection(-1, 0);
+                    break;
+                case D:
+                    moveSelection(1, 0);
+                    break;
+                case SPACE:
+                    placeStoneAtSelection();
+                    // Request focus again after placing a stone
+                    board.requestFocus();
+                    break;
+                default:
+                    break;
             }
         });
     }
 
+
     public void moveSelection(int dx, int dy) {
+        // Unhighlight the previous position
+        if (currentSelectionRow > 0 && currentSelectionRow <= boardSize &&
+                currentSelectionCol > 0 && currentSelectionCol <= boardSize) {
+            Circle previousCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
+            previousCircle.setStroke(null);
+        }
+
         // Update row
         currentSelectionRow += dy;
         if (currentSelectionRow < 1) {
@@ -865,7 +887,13 @@ public class boardMaskController {
         } else if (currentSelectionCol > boardSize) {
             currentSelectionCol = boardSize;
         }
+
+        // Highlight the new position
+        circlesOfBoard[currentSelectionRow][currentSelectionCol].setStroke(playerHandler.getCurrentPlayer().getColor());
+        circlesOfBoard[currentSelectionRow][currentSelectionCol].setStrokeWidth(STROKE_WIDTH); // use a constant stroke width
     }
+
+
 
 
     public void placeStoneAtSelection() {
