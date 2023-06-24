@@ -152,7 +152,7 @@ public class winnerMaskController {
     }
 
     private void setKomi(double value) {
-        extraPointsValue.setText("Komi " + value);
+        extraPointsValue.setText("Komi: " + value);
         extraPointsValue.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", pane.heightProperty().multiply(0.035).asString()
         ));

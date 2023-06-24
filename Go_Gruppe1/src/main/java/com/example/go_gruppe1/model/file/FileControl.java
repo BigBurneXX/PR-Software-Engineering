@@ -1,6 +1,5 @@
 package com.example.go_gruppe1.model.file;
 
-import com.example.go_gruppe1.model.Move;
 import javafx.stage.FileChooser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
