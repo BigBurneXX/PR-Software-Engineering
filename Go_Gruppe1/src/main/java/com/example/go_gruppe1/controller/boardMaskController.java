@@ -710,13 +710,7 @@ public class boardMaskController {
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
-                } /*else {
-                    try {
-                        switchToWinnerMask(3, 1);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }*/
+                }
             }
             doublePassed = true;
             modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " passed! - "
