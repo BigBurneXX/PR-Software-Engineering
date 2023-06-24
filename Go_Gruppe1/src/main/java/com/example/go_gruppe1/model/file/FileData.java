@@ -1,7 +1,5 @@
 package com.example.go_gruppe1.model.file;
 
-import com.example.go_gruppe1.model.Move;
-
 import java.util.List;
 
 /**

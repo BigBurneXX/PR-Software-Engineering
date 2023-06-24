@@ -3,7 +3,7 @@ package com.example.go_gruppe1.controller;
 import com.example.go_gruppe1.model.command.GameHandler;
 import com.example.go_gruppe1.model.file.FileData;
 import com.example.go_gruppe1.model.file.FileHandler;
-import com.example.go_gruppe1.model.Move;
+import com.example.go_gruppe1.model.file.Move;
 import com.example.go_gruppe1.model.player.Player;
 import com.example.go_gruppe1.model.player.PlayerHandler;
 import javafx.application.Platform;
@@ -494,9 +494,10 @@ public class boardMaskController {
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
                 circle.setOnMouseClicked(e -> {
                     if (modePlay.isSelected())
-                        if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK))
+                        if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK)) {
                             setStone(circle);
                             circle.toFront();
+                        }
 
                 });
 
@@ -542,7 +543,7 @@ public class boardMaskController {
 
         if (playerHandler.checkByoyomi()) {
             try {
-                switchToWinnerMask(playerHandler.getCurrentPlayer(), 3);
+                switchToWinnerMask(3);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -554,8 +555,8 @@ public class boardMaskController {
         drawStones();
 
         // text property binding maybe??
-        blackTrapped.setText("Trapped: " + gameHandler.getBoard().getBlackTrapped());
-        whiteTrapped.setText("Trapped: " + gameHandler.getBoard().getWhiteTrapped());
+        blackTrapped.setText("Trapped: " + gameHandler.getBoard().getTrapped(BLACK));
+        whiteTrapped.setText("Trapped: " + gameHandler.getBoard().getTrapped(WHITE));
     }
 
     private void addBoardLabelling() {
@@ -691,17 +692,21 @@ public class boardMaskController {
             System.out.println("nice");
             if(doublePassed){
                 System.out.println("game over!!");
-                long blackPoints = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped();
-                long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi);
+                long blackPoints = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getTrapped(BLACK);
+                long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getTrapped(WHITE) + komi);
                 if(blackPoints > whitePoints) {
                     try {
-                        switchToWinnerMask(playerHandler.getPlayerBlack(), 1);
+                        if(!playerHandler.getCurrentPlayer().equals(playerHandler.getPlayerBlack()))
+                            playerHandler.changePlayer();
+                        switchToWinnerMask(1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 } else if(whitePoints > blackPoints) {
                     try {
-                        switchToWinnerMask(playerHandler.getPlayerWhite(), 1);
+                        if(!playerHandler.getCurrentPlayer().equals(playerHandler.getPlayerWhite()))
+                            playerHandler.changePlayer();
+                        switchToWinnerMask(1);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -719,7 +724,7 @@ public class boardMaskController {
 
             if(playerHandler.checkByoyomi()){
                 try {
-                    switchToWinnerMask(playerHandler.getCurrentPlayer(), 3);
+                    switchToWinnerMask(3);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -738,7 +743,8 @@ public class boardMaskController {
         //resign logic
         resignButton.setOnMouseClicked(e -> {
             try {
-                switchToWinnerMask(playerHandler.getNextPlayer(), 2);
+                playerHandler.changePlayer();
+                switchToWinnerMask(2);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -797,7 +803,7 @@ public class boardMaskController {
         terminalInfo(printBoard.toString());
     }
 
-    private void switchToWinnerMask(Player player, int reasonForWinning) throws IOException {
+    private void switchToWinnerMask(int reasonForWinning) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
         Parent root = loader.load();
 
@@ -805,14 +811,23 @@ public class boardMaskController {
         winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
         winnerMask.setReasonForWinning(reasonForWinning);
 
-        String playerWon = playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? "Black" : "White";
+        Player player = playerHandler.getCurrentPlayer();
+        String playerWon = playerHandler.getCurrentPlayer().getName() + " " + (playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? "(Black)" : "(White)");
+        String playerLost = playerHandler.getNextPlayer().getName() + " " + (playerHandler.getNextPlayer().getColor().equals(BLACK) ? "(Black)" : "(White)");
         terminalInfo(playerWon + " won... \n[log end]");
-        //generic winner declaration
-        //winnerMask.initiateDisplay(
-        //
-        //          getTrapped,
-        //          playerHandler.getByoyomiOverruns(), playerHandler.getNextPlayer().getByoyomi(), playerHandler.getByoyomiTimeLimit());
-
+        switch(reasonForWinning){
+            case 1:
+                //2x passed
+                winnerMask.initiateDisplay(playerWon, gameHandler.getTerritoryScore(player.getColor()), gameHandler.getBoard().getTrapped(player.getColor()), komi);
+                break;
+            case 2:
+                //resigned
+                winnerMask.initiateDisplay(playerWon, playerLost, true);
+            case 3:
+                //byoyomi time run out
+                winnerMask.initiateDisplay(playerWon, playerLost, false);
+        }
+        /*
         if (player == playerHandler.getPlayerBlack()) {
             winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
                     gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
@@ -826,7 +841,7 @@ public class boardMaskController {
         } else {
             terminalInfo("Draw... \n[log end]");
             winnerMask.setName("Draw", "Draw");
-        }
+        }*/
 
         Node source = topRegion.getTop();
         Stage stage = (Stage) source.getScene().getWindow();

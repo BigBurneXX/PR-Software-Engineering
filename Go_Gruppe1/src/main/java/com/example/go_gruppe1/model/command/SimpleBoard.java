@@ -13,9 +13,6 @@ public class SimpleBoard {
     private int whiteTrapped = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
-    /**
-     * @param size
-     */
     public SimpleBoard(int size){
         this.size = size;
         board = new Color[size][size];
@@ -24,8 +21,8 @@ public class SimpleBoard {
     public SimpleBoard(SimpleBoard toCopy){
         this.size = toCopy.size;
         this.board = Arrays.stream(toCopy.board).map(Color[]::clone).toArray(Color[][]::new);
-        this.blackTrapped = toCopy.getBlackTrapped();
-        this.whiteTrapped = toCopy.getWhiteTrapped();
+        this.blackTrapped = toCopy.getTrapped(Color.BLACK);
+        this.whiteTrapped = toCopy.getTrapped(Color.WHITE);
     }
 
     public boolean setStone(int row, int col, Color color){
@@ -100,11 +97,7 @@ public class SimpleBoard {
         return board;
     }
 
-    public int getBlackTrapped() {
-        return blackTrapped;
-    }
-
-    public int getWhiteTrapped() {
-        return whiteTrapped;
+    public int getTrapped(Color color) {
+        return color.equals(Color.BLACK) ? blackTrapped : whiteTrapped;
     }
 }
