@@ -1,0 +1,136 @@
+{
+  "player1Name": "Player 1",
+  "player2Name": "Player 2",
+  "boardSize": 9,
+  "komi": 0.0,
+  "handicaps": 0,
+  "byoyomiOverruns": 0,
+  "byoyomiTimeLimit": 0,
+  "moves": [
+    {
+      "row": 3,
+      "col": "E",
+      "text": ""
+    },
+    {
+      "row": 4,
+      "col": "E",
+      "text": ""
+    },
+    {
+      "row": 4,
+      "col": "F",
+      "text": ""
+    },
+    {
+      "row": 4,
+      "col": "D",
+      "text": ""
+    },
+    {
+      "row": 3,
+      "col": "D",
+      "text": ""
+    },
+    {
+      "row": 5,
+      "col": "D",
+      "text": ""
+    },
+    {
+      "row": 4,
+      "col": "C",
+      "text": ""
+    },
+    {
+      "row": 6,
+      "col": "D",
+      "text": ""
+    },
+    {
+      "row": 5,
+      "col": "C",
+      "text": ""
+    },
+    {
+      "row": 5,
+      "col": "E",
+      "text": ""
+    },
+    {
+      "row": 5,
+      "col": "F",
+      "text": ""
+    },
+    {
+      "row": 6,
+      "col": "E",
+      "text": ""
+    },
+    {
+      "row": 6,
+      "col": "F",
+      "text": ""
+    },
+    {
+      "row": 7,
+      "col": "E",
+      "text": ""
+    },
+    {
+      "row": 7,
+      "col": "F",
+      "text": ""
+    },
+    {
+      "row": 8,
+      "col": "E",
+      "text": ""
+    },
+    {
+      "row": 8,
+      "col": "F",
+      "text": ""
+    },
+    {
+      "row": 7,
+      "col": "D",
+      "text": ""
+    },
+    {
+      "row": 6,
+      "col": "C",
+      "text": ""
+    },
+    {
+      "row": 8,
+      "col": "D",
+      "text": ""
+    },
+    {
+      "row": 7,
+      "col": "C",
+      "text": ""
+    },
+    {
+      "row": 8,
+      "col": "C",
+      "text": ""
+    },
+    {
+      "row": 8,
+      "col": "B",
+      "text": ""
+    },
+    {
+      "row": -1,
+      "col": "p",
+      "text": ""
+    },
+    {
+      "row": -1,
+      "col": "p",
+      "text": ""
+    }
+  ]
+}

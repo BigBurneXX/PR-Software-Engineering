@@ -43,6 +43,28 @@ public class winnerMaskController {
         }
     }
 
+    protected void initiateDisplay(String winner, long score, int trapped, double komi){
+        setName(winner);
+        setTrapped(trapped);
+        setScore(score);
+        if(komi == 0.0)
+            extraPointsValue.setVisible(false);
+        else
+            setKomi(komi);
+        byoyomi.setVisible(false);
+        initiateButtons();
+    }
+
+    protected void initiateDisplay(String winner, String other, boolean hasResigned){
+        setName(winner, other);
+        totalPoints.setVisible(false);
+        trapped.setVisible(false);
+        extraPointsValue.setVisible(false);
+        byoyomi.setVisible(false);
+        initiateButtons();
+    }
+
+    /*
     protected void initiateDisplay(String winner, String other, long total, int trapped, String komiOrHandicaps,
                                    double komiOrHandicapValue, int byoyomi, int byoyomiNumber, int time) {
         setName(winner, other);
@@ -51,7 +73,7 @@ public class winnerMaskController {
         setExtraPointsValue(komiOrHandicaps, komiOrHandicapValue);
         setByoyomi(byoyomi, byoyomiNumber, time);
         initiateButtons();
-    }
+    }*/
 
     private void initiateButtons() {
         newGame.prefWidthProperty().bind(pane.heightProperty().multiply(0.2));
@@ -80,16 +102,7 @@ public class winnerMaskController {
     }
 
     public void setName(String winner, String other) {
-        if(winner.equals("Draw")) {
-            name.setText("It's a draw!");
-            totalPoints.setVisible(false);
-            trapped.setVisible(false);
-            extraPointsValue.setVisible(false);
-            byoyomi.setVisible(false);
-            initiateButtons();
-        } else if (reasonForWinning == 1) {
-            name.setText(winner + " won!");
-        } else if (reasonForWinning == 2) {
+        if (reasonForWinning == 2) {
             name.setText(other + " resigned. " + winner + " won!");
         } else {
             name.setText(other + "'s time is up. " + winner + " won!");
@@ -104,7 +117,27 @@ public class winnerMaskController {
         ));
     }
 
-    private void setTotalPoints(long total) {
+    public void setName(String winner){
+        if(winner.equals("Draw")) {
+            name.setText("It's a draw!");
+            totalPoints.setVisible(false);
+            trapped.setVisible(false);
+            extraPointsValue.setVisible(false);
+            byoyomi.setVisible(false);
+            initiateButtons();
+        } else
+            name.setText(winner + " won!");
+
+        name.setWrapText(true);
+        name.setTextOverrun(OverrunStyle.CENTER_ELLIPSIS);
+        GridPane.setVgrow(name, Priority.ALWAYS);
+
+        name.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", pane.heightProperty().multiply(0.046).asString()
+        ));
+    }
+
+    private void setScore(long total) {
         totalPoints.setText("Total Points: " + total);
         totalPoints.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", pane.heightProperty().multiply(0.042).asString()
@@ -118,8 +151,8 @@ public class winnerMaskController {
         ));
     }
 
-    private void setExtraPointsValue(String komiOrHandicaps, double value) {
-        extraPointsValue.setText(komiOrHandicaps + value);
+    private void setKomi(double value) {
+        extraPointsValue.setText("Komi " + value);
         extraPointsValue.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", pane.heightProperty().multiply(0.035).asString()
         ));

@@ -13,8 +13,6 @@ module com.example.go_gruppe1 {
     opens com.example.go_gruppe1.controller to javafx.fxml;
     exports com.example.go_gruppe1.model;
     opens com.example.go_gruppe1.model to javafx.fxml;
-    exports com.example.go_gruppe1.oldClasses;
-    opens com.example.go_gruppe1.oldClasses to javafx.fxml;
     exports com.example.go_gruppe1.model.file;
     opens com.example.go_gruppe1.model.file to javafx.fxml;
     exports com.example.go_gruppe1.model.player;
