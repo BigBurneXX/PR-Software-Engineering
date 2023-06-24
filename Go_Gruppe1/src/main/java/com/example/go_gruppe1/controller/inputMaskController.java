@@ -40,12 +40,6 @@ public class inputMaskController {
     @FXML
     private Button start, load;
 
-    public void initiateDisplay() {
-        initiateSpinner();
-        initiateLabels();
-        initiateButtons();
-    }
-
     @FXML
     public void onStartGameClick(ActionEvent event) throws IOException {
         switchToBoardMask(event, false);
@@ -56,106 +50,75 @@ public class inputMaskController {
         switchToBoardMask(event, true);
     }
 
+    public void initiateDisplay() {
+        initiateSpinner();
+        initiateLabels();
+        initiateButtons();
+    }
+
     private void initiateSpinner() {
-        //komi
-        komiSpinner.setEditable(false);
+        createSpinnerFactory( komiSpinner, 9.5, 0.5, false);
 
-        SpinnerValueFactory<Double> komiValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 9.5, 0, 0.5);
-        komiSpinner.setValueFactory(komiValueFactory);
-        komiSpinner.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
-        ));
-
-        //handicaps
-        handicapSpinner.setEditable(false);
-
-        SpinnerValueFactory.IntegerSpinnerValueFactory handicapValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5, 0, 1);
-        handicapSpinner.setValueFactory(handicapValueFactory);
-        handicapSpinner.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
-        ));
-
+        SpinnerValueFactory.IntegerSpinnerValueFactory handicapValueFactory =  createSpinnerFactory(handicapSpinner, 5, 1, false);
         //more handicaps are allowed for 19x19
         size19.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
+            if (newValue)
                 handicapValueFactory.setMax(9);
-            } else {
-                handicapValueFactory.setMax(5);
-            }
         });
 
-        //byoyomi
-        timePeriodSpinner.setEditable(true);
+        createSpinnerFactory(timePeriodSpinner, Integer.MAX_VALUE, 1, true);
 
-        SpinnerValueFactory<Integer> timePeriodValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1);
-        timePeriodSpinner.setValueFactory(timePeriodValueFactory);
-        timePeriodSpinner.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
-        ));
-
-        durationSpinner.setEditable(true);
-
-        SpinnerValueFactory.IntegerSpinnerValueFactory durationValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1);
-        durationSpinner.setValueFactory(durationValueFactory);
-        durationSpinner.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(0.02).asString()
-        ));
+        SpinnerValueFactory.IntegerSpinnerValueFactory durationValueFactory = createSpinnerFactory(durationSpinner, Integer.MAX_VALUE, 1, true);
 
         timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue > 0) {
                 durationValueFactory.setMin(30);
                 durationValueFactory.setValue(30);
-            } else {
-                durationValueFactory.setMin(0);
-                durationValueFactory.setValue(0);
             }
         });
+    }
 
+    private SpinnerValueFactory.IntegerSpinnerValueFactory createSpinnerFactory(Spinner<Integer> spinner, int max, int stepSize, boolean editable){
+        spinner.setEditable(editable);
+        bindFont(spinner, 0.02);
+
+        SpinnerValueFactory.IntegerSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, stepSize);
+        spinner.setValueFactory(spinnerValueFactory);
+        return spinnerValueFactory;
+    }
+
+    private SpinnerValueFactory.DoubleSpinnerValueFactory createSpinnerFactory(Spinner<Double> spinner, double max, double min, boolean editable){
+        spinner.setEditable(editable);
+        bindFont(spinner, 0.02);
+
+        SpinnerValueFactory.DoubleSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, max, 0, min);
+        spinner.setValueFactory(spinnerValueFactory);
+        return spinnerValueFactory;
     }
 
     private void initiateLabels() {
         double binding = 0.04;
-        title.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(0.1).asString()
-        ));
-
-        sizeText.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
-        ));
-
-        namesText.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
-        ));
-
-        komiText.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
-        ));
-
-        handicapText.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
-        ));
-
-        byoyomiText.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", inputPane.heightProperty().multiply(binding).asString()
-        ));
+        bindFont(title, 0.01);
+        bindFont(sizeText, binding);
+        bindFont(namesText, binding);
+        bindFont(komiText, binding);
+        bindFont(handicapText, binding);
+        bindFont(byoyomiText, binding);
     }
 
     private void initiateButtons() {
-        start.prefWidthProperty().bind(inputPane.heightProperty().multiply(15));
-        start.styleProperty().bind(Bindings.concat(
-                "-fx-text-fill: #483C32; ",
-                "-fx-font-weight: bold; ",
-                "-fx-font-size: ", inputPane.heightProperty().multiply(0.035).asString()
-        ));
-        start.toFront();
+        initiateButton(start);
+        initiateButton(load);
+    }
 
-        load.prefWidthProperty().bind(inputPane.heightProperty().multiply(15));
-        load.styleProperty().bind(Bindings.concat(
+    private void initiateButton(Button button){
+        button.prefWidthProperty().bind(inputPane.heightProperty().multiply(15));
+        button.styleProperty().bind(Bindings.concat(
                 "-fx-text-fill: #483C32; ",
                 "-fx-font-weight: bold; ",
                 "-fx-font-size: ", inputPane.heightProperty().multiply(0.035).asString()
         ));
-        load.toFront();
+        button.toFront();
     }
 
     private void switchToBoardMask(ActionEvent event, boolean wantToLoad) throws IOException{
@@ -188,18 +151,23 @@ public class inputMaskController {
     }
 
     public int getBoardSize() {
-        if (size9.isSelected()) {
+        if (size9.isSelected())
             return 9;
-        } else if (size13.isSelected()) {
+        else if (size13.isSelected())
             return 13;
-        } else {
+        else
             return 19;
-        }
     }
 
     protected void setSize(double width, double height) {
         inputPane.setPrefHeight(height);
         inputPane.setPrefWidth(width);
         inputPane.setMinSize(600, 580);
+    }
+
+    private void bindFont(Node n, double multiplier){
+        n.styleProperty().bind(Bindings.concat(
+                "-fx-font-size: ", inputPane.heightProperty().multiply(multiplier).asString()
+        ));
     }
 }
