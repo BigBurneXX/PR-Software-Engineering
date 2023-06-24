@@ -689,9 +689,7 @@ public class boardMaskController {
 
         //pass logic
         passButton.setOnMouseClicked(e -> {
-            System.out.println("nice");
             if(doublePassed){
-                System.out.println("game over!!");
                 long blackPoints = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getTrapped(BLACK);
                 long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getTrapped(WHITE) + komi);
                 if(blackPoints > whitePoints) {
@@ -809,7 +807,6 @@ public class boardMaskController {
 
         winnerMaskController winnerMask = loader.getController();
         winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
-        winnerMask.setReasonForWinning(reasonForWinning);
 
         Player player = playerHandler.getCurrentPlayer();
         String playerWon = playerHandler.getCurrentPlayer().getName() + " " + (playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? "(Black)" : "(White)");
@@ -827,21 +824,7 @@ public class boardMaskController {
                 //byoyomi time run out
                 winnerMask.initiateDisplay(playerWon, playerLost, false);
         }
-        /*
-        if (player == playerHandler.getPlayerBlack()) {
-            winnerMask.initiateDisplay(plBlack.getText(), plWhite.getText(),
-                    gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getBlackTrapped(),
-                    gameHandler.getBoard().getBlackTrapped(), "Handicaps: ", handicaps,
-                    playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
-        } else if (player == playerHandler.getPlayerWhite()) {
-            winnerMask.initiateDisplay(plWhite.getText(), plBlack.getText(),
-                    (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getWhiteTrapped() + komi),
-                    gameHandler.getBoard().getWhiteTrapped(), "Komi: ", komi,
-                    playerHandler.getByoyomiOverruns(), playerHandler.getPlayerBlack().getByoyomi(), playerHandler.getByoyomiTimeLimit());
-        } else {
-            terminalInfo("Draw... \n[log end]");
-            winnerMask.setName("Draw", "Draw");
-        }*/
+        terminalInfo("switching to winner Mask...\n[log end]");
 
         Node source = topRegion.getTop();
         Stage stage = (Stage) source.getScene().getWindow();
