@@ -13,36 +13,18 @@ public class SimpleBoard {
     private int whiteTrapped = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
-    /**
-     * @param size size of board
-     *
-     * initiates a new board with the selected size
-     */
     public SimpleBoard(int size){
         this.size = size;
         board = new Color[size][size];
     }
 
-    /**
-     * @param toCopy board that needs to be copies
-     *
-     * initiates a given board
-     */
     public SimpleBoard(SimpleBoard toCopy){
         this.size = toCopy.size;
         this.board = Arrays.stream(toCopy.board).map(Color[]::clone).toArray(Color[][]::new);
-        this.blackTrapped = toCopy.getBlackTrapped();
-        this.whiteTrapped = toCopy.getWhiteTrapped();
+        this.blackTrapped = toCopy.getTrapped(Color.BLACK);
+        this.whiteTrapped = toCopy.getTrapped(Color.WHITE);
     }
 
-    /**
-     * @param row location of set stone
-     * @param col location of set stone
-     * @param color color of set stone
-     * @return true if stone is dead
-     *
-     * sets stone and checks if it has liberties (if not it is added to dead stone list)
-     */
     public boolean setStone(int row, int col, Color color){
         board[row][col] = color;
         System.out.println("stone set at " + row + ", " + col);
@@ -57,21 +39,10 @@ public class SimpleBoard {
         return false;
     }
 
-    /**
-     * @param row location of stone to be removed
-     * @param col location of stone to be removed
-     *
-     * removes stone from board
-     */
     private void removeStone(int row, int col){
         board[row][col] = null;
     }
 
-    /**
-     * @param color stone color
-     *
-     * removes dead stones from board
-     */
     private void removeDead(Color color){
         for(int r = 0; r < size; r++)
             for(int c = 0; c < size; c++)
@@ -88,14 +59,6 @@ public class SimpleBoard {
         toDelete.clear();
     }
 
-    /**
-     * @param row location of checked stone
-     * @param col location of checked stone
-     * @param checked grid to follow checked locations
-     * @return number of liberties
-     *
-     * checks the number of liberties of a stone
-     */
     private int checkLiberties(int row, int col, boolean[][] checked){
         checked[row][col] = true;
         int liberties = 0;
@@ -130,24 +93,11 @@ public class SimpleBoard {
         return liberties;
     }
 
-    /**
-     * @return board with set colors
-     */
     public Color[][] getBoard(){
         return board;
     }
 
-    /**
-     * @return number of black trapped stones
-     */
-    public int getBlackTrapped() {
-        return blackTrapped;
-    }
-
-    /**
-     * @return number of white trapped stones
-     */
-    public int getWhiteTrapped() {
-        return whiteTrapped;
+    public int getTrapped(Color color) {
+        return color.equals(Color.BLACK) ? blackTrapped : whiteTrapped;
     }
 }

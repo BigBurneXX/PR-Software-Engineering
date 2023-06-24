@@ -8,42 +8,22 @@ import java.util.List;
 public class GameHandler {
     private final Game game;
 
-    /**
-     * @param boardSize size of board
-     *
-     * initiates handler for a game with selected board size
-     */
     public GameHandler(int boardSize){
         game = new Game(boardSize);
     }
 
-    /**
-     * @param row location of move to be made
-     * @param col location of move to be made
-     * @param color color of stone to be set
-     * @return true if move could be made
-     */
     public boolean addMove(int row, int col, Color color){
         return game.executeCommand(new PlaceStoneCommand(game.getBoard(), row, col, color));
     }
 
-    /**
-     * repeats the last move
-     */
     public void redo(){
         game.redoLastMove();
     }
 
-    /**
-     * resets board to state before the last move
-     */
     public void undo(){
         game.undoLastMove();
     }
 
-    /**
-     * @return returns board of the game
-     */
     public SimpleBoard getBoard(){
         return game.getBoard();
     }
