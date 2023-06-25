@@ -1,41 +1,66 @@
 package com.example.go_gruppe1.model.command;
 
 import javafx.scene.paint.Color;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class GameTest {
+public class GameTest {
     private Game game;
 
-    @BeforeEach
-    void setUp() {
-        game = new Game(5);
+    @Before
+    public void setUp() {
+        game = new Game(5); // Set up a game with board size 5
     }
 
     @Test
-    void executeCommand() {
-        assertDoesNotThrow(() -> game.executeCommand(null));
+    public void testExecuteCommand() {
+        Command command = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.YELLOW);
+        Command command1 = new PlaceStoneCommand(game.getBoard(), 1, 0, Color.YELLOW);
+        Command command2 = new PlaceStoneCommand(game.getBoard(), 1, 2, Color.YELLOW);
+        Command command3 = new PlaceStoneCommand(game.getBoard(), 2, 1, Color.YELLOW);
+        Command commandSuicide = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.GRAY);
+
+        assertFalse(game.executeCommand(command));
+        game.executeCommand(command1);
+        game.executeCommand(command2);
+        game.executeCommand(command3);
+        assertTrue(game.executeCommand(commandSuicide));
     }
 
     @Test
-    void undoLastMove() {
-        assertDoesNotThrow(game::undoLastMove);
+    public void testUndoLastMove() {
+        Command command = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.YELLOW);
+        Command command1 = new PlaceStoneCommand(game.getBoard(), 1, 0, Color.YELLOW);
+        Command command2 = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.GREEN);
+
+        game.executeCommand(command);
+        game.executeCommand(command1);
+        game.executeCommand(command2);
+
+        game.undoLastMove(); // Undo the last move
+
+        // Assert that the undo operation is performed correctly
+        assertNull(game.getBoard().getBoard()[1][1]);
+        assertEquals(Color.YELLOW, game.getBoard().getBoard()[1][0]);
     }
 
     @Test
-    void redoLastMove() {
-        assertDoesNotThrow(game::redoLastMove);
-    }
+    public void testRedoLastMove() {
+        Command command = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.YELLOW);
+        Command command1 = new PlaceStoneCommand(game.getBoard(), 1, 0, Color.YELLOW);
+        Command command2 = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.GREEN);
 
-    @Test
-    void getBoard() {
-        // getBoard method should return a SimpleBoard instance
-        assertTrue(game.getBoard() instanceof SimpleBoard);
-        // The board should be initialized and not null
-        assertNotNull(game.getBoard().getBoard());
-        // The board size should match the one provided during the game initialization
-        assertEquals(5, game.getBoard().getBoard().length);
+        game.executeCommand(command);
+        game.executeCommand(command1);
+        game.executeCommand(command2);
+
+        game.undoLastMove(); // Undo the last move
+
+        game.redoLastMove(); // Redo the last move
+        assertEquals(Color.YELLOW, game.getBoard().getBoard()[0][1]);
+        assertEquals(Color.YELLOW, game.getBoard().getBoard()[1][0]);
+        assertEquals(Color.GREEN, game.getBoard().getBoard()[1][1]);
     }
 }

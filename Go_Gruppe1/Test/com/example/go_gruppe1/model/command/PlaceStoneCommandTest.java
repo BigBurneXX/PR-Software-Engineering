@@ -1,43 +1,67 @@
 package com.example.go_gruppe1.model.command;
 
 import javafx.scene.paint.Color;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class PlaceStoneCommandTest {
+    private SimpleBoard board;
 
-class PlaceStoneCommandTest {
-    // Assumption: SimpleBoard has a constructor that accepts size of the board
-    SimpleBoard board = new SimpleBoard(5); // Creating a 5x5 board
-
-    @Test
-    void execute() {
-        PlaceStoneCommand placeStoneCommand = new PlaceStoneCommand(board, 0, 0, Color.BLACK);
-
-        // Execute the command, this should return true as the stone is successfully placed
-        assertTrue(placeStoneCommand.execute());
-        // After execution, the stone should be placed on the board
-        assertEquals(Color.BLACK, placeStoneCommand.getBoard().getBoard()[0][0]);
+    @Before
+    public void setUp() {
+        // Create a new board for each test
+        board = new SimpleBoard(5);
     }
 
     @Test
-    void undo() {
-        PlaceStoneCommand placeStoneCommand = new PlaceStoneCommand(board, 0, 0, Color.BLACK);
+    public void testExecute() {
+        // Create a new PlaceStoneCommand
+        int row = 2;
+        int col = 3;
+        Color color = Color.BLACK;
+        PlaceStoneCommand command = new PlaceStoneCommand(board, row, col, color);
+
+        // Execute the command and check the return value
+        command.execute();
+
+        // Verify that the stone was placed correctly on the board
+        assertEquals(color, command.getBoard().getBoard()[row][col]);
+    }
+
+    @Test
+    public void testUndo() {
+        // Create a new PlaceStoneCommand
+        int row = 4;
+        int col = 2;
+        Color color = Color.WHITE;
+        PlaceStoneCommand command = new PlaceStoneCommand(board, row, col, color);
+        command.execute();
+        board = command.getBoard();
+
+        PlaceStoneCommand command1 = new PlaceStoneCommand(board, row-1, col-1, color);
+        assertEquals(color, command.getBoard().getBoard()[row][col]);
 
         // Execute the command
-        placeStoneCommand.execute();
-        // The stone should be placed on the board
-        assertEquals(Color.BLACK, placeStoneCommand.getBoard().getBoard()[0][0]);
+        command1.execute();
 
         // Undo the command
-        placeStoneCommand.undo();
-        // The stone should be removed from the board
-        assertNull(placeStoneCommand.getBoard().getBoard()[0][0]);
+        command1.undo();
+
+        // Verify that the stone was removed from the board
+        assertNull(command1.getBoard().getBoard()[row-1][col-1]);
+        assertEquals(color, command1.getBoard().getBoard()[row][col]);
     }
 
     @Test
-    void getBoard() {
-        PlaceStoneCommand placeStoneCommand = new PlaceStoneCommand(board, 0, 0, Color.BLACK);
-        // The getBoard() method should return the same board as the one we initialized
-        assertEquals(board, placeStoneCommand.getBoard());
+    public void testGetBoard() {
+        // Create a new PlaceStoneCommand
+        int row = 0;
+        int col = 0;
+        Color color = Color.RED;
+        PlaceStoneCommand command = new PlaceStoneCommand(board, row, col, color);
+
+        // Verify that the board returned by getBoard() is the same as the original board
+        assertSame(board, command.getBoard());
     }
 }

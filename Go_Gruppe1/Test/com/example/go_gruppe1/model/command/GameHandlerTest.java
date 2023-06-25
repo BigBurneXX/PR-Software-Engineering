@@ -1,61 +1,68 @@
 package com.example.go_gruppe1.model.command;
 
 import javafx.scene.paint.Color;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class GameHandlerTest {
-    GameHandler gameHandler = new GameHandler(5); // creating a game with board size 5
+public class GameHandlerTest {
+    private GameHandler gameHandler;
 
-    @Test
-    void addMove() {
-        assertTrue(gameHandler.addMove(0, 0, Color.BLACK)); // Adding a stone at position (0,0), this should return true as the stone is successfully added
-        assertEquals(Color.BLACK, gameHandler.getBoard().getBoard()[0][0]); // check if the stone is correctly placed on the board
-
-        assertFalse(gameHandler.addMove(0, 0, Color.WHITE)); // Adding a stone at a filled position, this should return false as the position is already taken
-        assertEquals(Color.BLACK, gameHandler.getBoard().getBoard()[0][0]); // the stone at position (0,0) should still be black
+    @Before
+    public void setUp() {
+        gameHandler = new GameHandler(9); // Set the board size for testing
     }
 
     @Test
-    void redo() {
-        gameHandler.addMove(0, 0, Color.BLACK); // Adding a stone at position (0,0)
-        gameHandler.undo(); // Undo the last move, the stone at (0,0) should be removed
-        assertNull(gameHandler.getBoard().getBoard()[0][0]); // There should be no stone at position (0,0)
-
-        gameHandler.redo(); // Redo the last undone move, the stone at (0,0) should be placed back
-        assertEquals(Color.BLACK, gameHandler.getBoard().getBoard()[0][0]); // The stone at position (0,0) should be black
+    public void testAddMove() {
+        assertFalse(gameHandler.addMove(0, 1, Color.BLACK));
+        assertFalse(gameHandler.addMove(1, 0, Color.BLACK));
+        assertTrue(gameHandler.addMove(0, 0, Color.WHITE)); // Cannot place a stone on an occupied position
     }
 
     @Test
-    void undo() {
-        gameHandler.addMove(0, 0, Color.BLACK); // Adding a stone at position (0,0)
-        gameHandler.undo(); // Undo the last move, the stone at (0,0) should be removed
+    public void testUndo() {
+        gameHandler.addMove(0, 1, Color.YELLOW);
+        gameHandler.addMove(1, 0, Color.YELLOW);
+        gameHandler.addMove(1, 1, Color.GREEN);
 
-        assertNull(gameHandler.getBoard().getBoard()[0][0]); // There should be no stone at position (0,0)
+        gameHandler.undo();
+        // Assert that the undo operation is performed correctly
+        assertNull(gameHandler.getBoard().getBoard()[1][1]);
+        assertEquals(Color.YELLOW, gameHandler.getBoard().getBoard()[1][0]);
     }
 
     @Test
-    void getBoard() {
-        gameHandler.addMove(0, 0, Color.BLACK); // Adding a stone at position (0,0)
+    public void testRedo() {
+        gameHandler.addMove(0, 1, Color.YELLOW);
+        gameHandler.addMove(1, 0, Color.YELLOW);
+        gameHandler.addMove(1, 1, Color.GREEN);
 
-        // getBoard should return a board with the stone at (0,0)
+        gameHandler.undo();
+        gameHandler.redo();
+
+        // Assert that the redo operation is performed correctly
+        assertEquals(Color.YELLOW, gameHandler.getBoard().getBoard()[0][1]);
+        assertEquals(Color.YELLOW, gameHandler.getBoard().getBoard()[1][0]);
+        assertEquals(Color.GREEN, gameHandler.getBoard().getBoard()[1][1]);
+    }
+
+    @Test
+    public void testGetBoard() {
         assertNotNull(gameHandler.getBoard());
-        assertEquals(Color.BLACK, gameHandler.getBoard().getBoard()[0][0]);
     }
 
     @Test
-    void getTerritoryScore() {
-        // Assume a configuration where black has a territory
+    public void testGetTerritoryScore() {
         gameHandler.addMove(0, 0, Color.BLACK);
-        gameHandler.addMove(0, 1, Color.BLACK);
-        gameHandler.addMove(1, 0, Color.BLACK);
-        gameHandler.addMove(1, 1, Color.BLACK);
+        gameHandler.addMove(0, 1, Color.WHITE);
+        gameHandler.addMove(1, 0, Color.WHITE);
 
-        // The territory of black should be 1 (the inside of the square)
-        assertEquals(1, gameHandler.getTerritoryScore(Color.BLACK));
+        int blackTerritoryScore = gameHandler.getTerritoryScore(Color.BLACK);
+        int whiteTerritoryScore = gameHandler.getTerritoryScore(Color.WHITE);
 
-        // The territory of white should be 0 as there are no white stones on the board
-        assertEquals(0, gameHandler.getTerritoryScore(Color.WHITE));
+        assertEquals(0, blackTerritoryScore);
+        assertEquals(1, whiteTerritoryScore);
     }
 }

@@ -38,7 +38,7 @@ public class PlaceStoneCommand implements Command {
      * set board to state before last move
      */
     public void undo() {
-        board = new SimpleBoard(beforeChange);
+        board = beforeChange;
     }
 
     /**
