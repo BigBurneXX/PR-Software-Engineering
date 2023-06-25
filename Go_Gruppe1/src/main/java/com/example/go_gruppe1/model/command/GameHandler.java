@@ -16,12 +16,12 @@ public class GameHandler {
         return game.executeCommand(new PlaceStoneCommand(game.getBoard(), row, col, color));
     }
 
-    public void redo(){
-        game.redoLastMove();
-    }
-
     public void undo(){
         game.undoLastMove();
+    }
+
+    public void redo(){
+        game.redoLastMove();
     }
 
     public SimpleBoard getBoard(){

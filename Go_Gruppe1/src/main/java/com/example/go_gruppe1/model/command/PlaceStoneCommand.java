@@ -22,7 +22,7 @@ public class PlaceStoneCommand implements Command {
     }
 
     public void undo() {
-        board = new SimpleBoard(beforeChange);
+        board = beforeChange;
     }
 
     public SimpleBoard getBoard(){

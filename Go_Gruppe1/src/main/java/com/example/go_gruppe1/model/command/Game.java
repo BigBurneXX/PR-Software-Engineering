@@ -16,14 +16,16 @@ public class Game {
     public boolean executeCommand(Command command) {
         undoStack.push(command);
         redoStack.clear();
-        return command.execute();
+        boolean isSuicide = command.execute();
+        board = command.getBoard();
+        return isSuicide;
     }
 
     public void undoLastMove() {
         if (!undoStack.isEmpty()) {
             Command command = undoStack.pop();
             command.undo();
-            board = new SimpleBoard(command.getBoard());
+            board = command.getBoard();
             redoStack.push(command);
         }
     }
