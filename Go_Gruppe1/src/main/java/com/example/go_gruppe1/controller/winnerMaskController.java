@@ -21,7 +21,7 @@ import java.io.IOException;
 public class winnerMaskController {
 
     @FXML
-    private GridPane pane;
+    GridPane pane;
 
     @FXML
     private Label name, totalPoints, trapped, komi, territory;
@@ -145,11 +145,11 @@ public class winnerMaskController {
         pane.setMinSize(600, 580);
     }
 
-    private double getWidth() {
+    double getWidth() {
         return pane.getWidth();
     }
 
-    private double getHeight() {
+    double getHeight() {
         return pane.getHeight();
     }
 

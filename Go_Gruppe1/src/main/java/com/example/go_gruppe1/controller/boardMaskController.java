@@ -876,7 +876,6 @@ public class boardMaskController {
         });
     }
 
-
     public void moveSelection(int dx, int dy) {
         // Unhighlight the previous position
         if (currentSelectionRow > 0 && currentSelectionRow <= boardSize &&
@@ -905,9 +904,6 @@ public class boardMaskController {
         circlesOfBoard[currentSelectionRow][currentSelectionCol].setStroke(playerHandler.getCurrentPlayer().getColor());
         circlesOfBoard[currentSelectionRow][currentSelectionCol].setStrokeWidth(STROKE_WIDTH); // use a constant stroke width
     }
-
-
-
 
     public void placeStoneAtSelection() {
         Circle selectedCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
