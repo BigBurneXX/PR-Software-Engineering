@@ -9,6 +9,14 @@ public class PlaceStoneCommand implements Command {
     private final int col;
     private final Color color;
 
+    /**
+     * @param board board of game
+     * @param row location of stone to be placed
+     * @param col location of stone to be placed
+     * @param color color of stone to be placed
+     *
+     * initiates command when stone is to be placed
+     */
     public PlaceStoneCommand(SimpleBoard board, int row, int col, Color color) {
         this.board = board;
         this.beforeChange = new SimpleBoard(board);
@@ -17,14 +25,25 @@ public class PlaceStoneCommand implements Command {
         this.color = color;
     }
 
+    /**
+     * @return true if stone is trapped and removed
+     *
+     * sets stone
+     */
     public boolean execute() {
         return board.setStone(row, col, color);
     }
 
+    /**
+     * set board to state before last move
+     */
     public void undo() {
         board = new SimpleBoard(beforeChange);
     }
 
+    /**
+     * @return board of game
+     */
     public SimpleBoard getBoard(){
         return board;
     }

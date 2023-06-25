@@ -13,11 +13,21 @@ public class SimpleBoard {
     private int whiteTrapped = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
+    /**
+     * @param size size of board
+     *
+     * initiates a new empty board
+     */
     public SimpleBoard(int size){
         this.size = size;
         board = new Color[size][size];
     }
 
+    /**
+     * @param toCopy board to be copied
+     *
+     * initiates a board from a given game state
+     */
     public SimpleBoard(SimpleBoard toCopy){
         this.size = toCopy.size;
         this.board = Arrays.stream(toCopy.board).map(Color[]::clone).toArray(Color[][]::new);
@@ -25,6 +35,15 @@ public class SimpleBoard {
         this.whiteTrapped = toCopy.getTrapped(Color.WHITE);
     }
 
+    /**
+     * @param row location of stone to be set
+     * @param col location of stone to be set
+     * @param color color of stone to be set
+     *
+     * @return true if stone is trapped and removed
+     *
+     * sets stone to board and deletes dead stones
+     */
     public boolean setStone(int row, int col, Color color){
         board[row][col] = color;
         System.out.println("stone set at " + row + ", " + col);
@@ -39,10 +58,21 @@ public class SimpleBoard {
         return false;
     }
 
+    /**
+     * @param row location of stone to be removed
+     * @param col location of stone to be removed
+     *
+     * removes stone from board
+     */
     private void removeStone(int row, int col){
         board[row][col] = null;
     }
 
+    /**
+     * @param color color of stone to be deleted
+     *
+     * adds dead stones to list and removes them from board and therefore increments trapped counters
+     */
     private void removeDead(Color color){
         for(int r = 0; r < size; r++)
             for(int c = 0; c < size; c++)
@@ -59,6 +89,14 @@ public class SimpleBoard {
         toDelete.clear();
     }
 
+    /**
+     * @param row location of stone to be checked
+     * @param col location of stone to be checked
+     * @param checked matrix to keep track of checked positions
+     * @return number of liberties
+     *
+     * cecks number of liberties of a position on board
+     */
     private int checkLiberties(int row, int col, boolean[][] checked){
         checked[row][col] = true;
         int liberties = 0;
@@ -93,10 +131,21 @@ public class SimpleBoard {
         return liberties;
     }
 
+    /**
+     * @return board
+     *
+     * returns board with set colors black & white & null if no stone is set
+     */
     public Color[][] getBoard(){
         return board;
     }
 
+    /**
+     * @param color color of trapped stones
+     * @return number of trapped stones
+     *
+     * returns trapped counter of a player
+     */
     public int getTrapped(Color color) {
         return color.equals(Color.BLACK) ? blackTrapped : whiteTrapped;
     }
