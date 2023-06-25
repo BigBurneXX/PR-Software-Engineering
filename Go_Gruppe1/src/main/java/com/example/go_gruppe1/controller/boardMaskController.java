@@ -8,6 +8,7 @@ import com.example.go_gruppe1.model.player.Player;
 import com.example.go_gruppe1.model.player.PlayerHandler;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -20,10 +21,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -527,27 +531,39 @@ public class boardMaskController {
         for (int row = 1; row <= boardSize; row++) {
             for (int col = 1; col <= boardSize; col++) {
                 Circle circle = new Circle(10, TRANSPARENT);
+                Rectangle rectangle = new Rectangle(10, 10, TRANSPARENT);
+
                 board.add(circle, col, row);
+                board.add(rectangle, col, row);
+
                 circlesOfBoard[row][col] = circle;
+                rectangle.toFront();
 
                 //make stones resizable and adjust X and Y properties
                 circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4));
                 circle.translateYProperty().bind(boardPane.heightProperty().multiply(0.7).divide(boardSize * 2.4).multiply(-1));
                 circle.translateXProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize * 3.9).multiply(-1));
 
+                //make highlighting resizable
+                DoubleBinding rectangleHeightProperty = boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4);
+                DoubleBinding rectangleWidthProperty =  boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4);
+                DoubleBinding rectangleTranslateXProperty = circle.centerXProperty().subtract(rectangle.widthProperty().divide(2));
+                DoubleBinding rectangleTranslateYProperty = circle.centerYProperty().subtract(rectangle.heightProperty().
+                        multiply(6).divide(4));
+
+                rectangle.heightProperty().bind(rectangleHeightProperty);
+                rectangle.widthProperty().bind(rectangleWidthProperty);
+                rectangle.translateXProperty().bind(rectangleTranslateXProperty);
+                rectangle.translateYProperty().bind(rectangleTranslateYProperty);
+
+
                 //color for hovering
                 final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
                 final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
 
                 //when the mouse is clicked the circle will be filled with a white or black colour depending on whose turn it is
-                circle.setOnMouseClicked(e -> {
-                    if (modePlay.isSelected())
-                        if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK)) {
-                            setStone(circle);
-                            circle.toFront();
-                        }
-
-                });
+                circle.setOnMouseClicked(e -> onMouseClicked(e, rectangle, circle));
+                rectangle.setOnMouseClicked(e -> onMouseClicked(e, rectangle, circle));
 
                 //when the mouse is hovering over a transparent circle this circle is coloured white or black
                 //Note: the hover color is 30% transparent
@@ -567,6 +583,27 @@ public class boardMaskController {
                             circle.setFill(TRANSPARENT);
                     }
                 });
+            }
+        }
+    }
+
+    private void onMouseClicked(MouseEvent event, Rectangle rectangle, Circle circle){
+        final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
+        final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
+
+        if(event.getButton() == MouseButton.SECONDARY){
+            if(!rectangle.getFill().equals(TRANSPARENT))
+                rectangle.setFill(TRANSPARENT);
+            else if(circle.getFill().equals(WHITE))
+                rectangle.setFill(BLUE);
+            else
+                rectangle.setFill((circle.getFill().equals(BLACK) ||
+                        playerHandler.getCurrentPlayer().getHoverColor().equals(HOVER_BLACK)) ? YELLOW : BLUE);
+            rectangle.toFront();
+        } else if (modePlay.isSelected()) {
+            if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK)) {
+                setStone(circle);
+                circle.toFront();
             }
         }
     }
