@@ -86,7 +86,7 @@ public class FileControl {
      * @param row location of set stone
      * @param col location of set stone
      * @param text location of set stone (alphabetical)
-     *
+     * <p>
      * writes move to list
      * if player passes row = -1, col = 'p'
      * if player resigns row = -2, col = 'r'
