@@ -37,7 +37,7 @@
    <top>
       <BorderPane fx:id="topRegion" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <center>
-            <GridPane fx:id="infoPane" prefHeight="129.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <GridPane prefHeight="129.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -79,11 +79,11 @@
                      <Insets left="20.0" />
                   </GridPane.margin>
                </Label>
-               <Button fx:id="passButton" minWidth="90.0" mnemonicParsing="false" text="PASS" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+               <Button fx:id="passButton" minWidth="90.0" onAction="#onPassButtonClick" text="_PASS" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                   <font>
                      <Font name="System" size="13.0" />
                   </font></Button>
-               <Button fx:id="resignButton" minWidth="90.0" mnemonicParsing="false" text="RESIGN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+               <Button fx:id="resignButton" minWidth="90.0" onAction="#onResignButtonClick" text="_RESIGN" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                   <font>
                      <Font name="System" size="13.0" />
                   </font></Button>
@@ -130,19 +130,19 @@
          </center>
          <top>
             <MenuBar BorderPane.alignment="CENTER">
-               <Menu mnemonicParsing="false" text="File">
-                  <MenuItem mnemonicParsing="false" onAction="#onNewGameClick" text="New..." />
-                  <MenuItem mnemonicParsing="false" onAction="#onSaveFileAsClick" text="Save as..." />
-                  <MenuItem mnemonicParsing="false" onAction="#onOpenFileClick" text="Open..." />
-                  <MenuItem mnemonicParsing="false" onAction="#onExitGameClick" text="Exit" />
+               <Menu text="_File">
+                  <MenuItem onAction="#onNewGameClick" text="_New..." />
+                  <MenuItem onAction="#onSaveFileAsClick" text="_Save as..." />
+                  <MenuItem onAction="#onOpenFileClick" text="_Open..." />
+                  <MenuItem onAction="#onExitGameClick" text="_Exit" />
                </Menu>
-               <Menu mnemonicParsing="false" text="Mode">
-                  <RadioMenuItem fx:id="modePlay" mnemonicParsing="false" onAction="#onModePlayClick" text="Play">
+               <Menu text="_Mode">
+                  <RadioMenuItem fx:id="modePlay" onAction="#onModePlayClick" text="_Play">
                      <toggleGroup>
                         <ToggleGroup fx:id="mode" />
                      </toggleGroup>
                   </RadioMenuItem>
-                  <RadioMenuItem fx:id="modeNavigate" mnemonicParsing="false" onAction="#onModeNavigateClick" text="Navigate" toggleGroup="$mode" />
+                  <RadioMenuItem onAction="#onModeNavigateClick" text="_Navigate" toggleGroup="$mode" />
                </Menu>
             </MenuBar>
          </top>

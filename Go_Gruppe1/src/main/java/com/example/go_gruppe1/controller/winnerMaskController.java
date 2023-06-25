@@ -31,7 +31,7 @@ public class winnerMaskController {
     private final FileControl fileControl = new FileControl();
 
     protected void initiateDisplay(String winner, long territory, int trapped, double komiValue){
-        setName(winner);
+        declareWinner(winner + " won!");
         setScore(territory, trapped);
         setTerritory(territory);
         setTrapped(trapped);
@@ -46,6 +46,11 @@ public class winnerMaskController {
         setName(winner, other, hasResigned);
         makeButtonsInvisible();
         initiateButtons();
+    }
+
+    protected void initiateDisplay(){
+        makeButtonsInvisible();
+        declareWinner("It's a draw");
     }
 
     private void makeButtonsInvisible(){
@@ -72,18 +77,8 @@ public class winnerMaskController {
     }
 
     private void setName(String winner, String other, boolean hasResigned) {
-        if(hasResigned)
-            declareWinner(other + " resigned. " + winner + " won!");
-        else
-            declareWinner(other + "'s time is up. " + winner + " won!");
-    }
-
-    private void setName(String winner){
-        if(winner.equals("Draw")) {
-            makeButtonsInvisible();
-            declareWinner("It's a draw!");
-        } else
-            declareWinner(winner + " won!");
+        String cause = hasResigned ? " resigned" : "'s time is up";
+        declareWinner(other + cause + ". " + winner + " won!");
     }
 
     private void declareWinner(String declaration){

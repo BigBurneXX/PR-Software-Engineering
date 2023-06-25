@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class inputMaskController {
-
     @FXML
     private GridPane inputPane;
 
@@ -35,7 +34,7 @@ public class inputMaskController {
     private Label title;
 
     @FXML
-    private Text sizeText, namesText, komiText, handicapText,byoyomiText;
+    private Text sizeText, namesText, komiText, handicapText, byoyomiText;
 
     @FXML
     private Button start, load;
@@ -57,48 +56,62 @@ public class inputMaskController {
     }
 
     private void initiateSpinner() {
-        createSpinnerFactory( komiSpinner, 9.5, 0.5, false);
+        createSpinnerFactory(komiSpinner, 9.5, "Komi");
 
-        SpinnerValueFactory.IntegerSpinnerValueFactory handicapValueFactory =  createSpinnerFactory(handicapSpinner, 5, 1, false);
+        SpinnerValueFactory.IntegerSpinnerValueFactory handicapValueFactory =  createSpinnerFactory(handicapSpinner, 5, "Handicaps");
         //more handicaps are allowed for 19x19
         size19.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue)
                 handicapValueFactory.setMax(9);
         });
 
-        createSpinnerFactory(timePeriodSpinner, Integer.MAX_VALUE, 1, true);
+        createSpinnerFactory(timePeriodSpinner, Integer.MAX_VALUE, "TimeOverruns");
+        SpinnerValueFactory.IntegerSpinnerValueFactory durationValueFactory = createSpinnerFactory(durationSpinner, Integer.MAX_VALUE, "TimeLimit");
+        timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> durationValueFactory.setMin(newValue > 0 ? 30 : 0));
+    }
 
-        SpinnerValueFactory.IntegerSpinnerValueFactory durationValueFactory = createSpinnerFactory(durationSpinner, Integer.MAX_VALUE, 1, true);
+    private SpinnerValueFactory.IntegerSpinnerValueFactory createSpinnerFactory(Spinner<Integer> spinner, int max, String name){
+        bindFont(spinner, 0.02);
 
-        timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue > 0) {
-                durationValueFactory.setMin(30);
-                durationValueFactory.setValue(30);
+        SpinnerValueFactory.IntegerSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, 1);
+        spinner.setValueFactory(spinnerValueFactory);
+        spinnerValueFactory.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null)
+                spinnerValueFactory.setValue(0);
+            else if(oldValue > spinnerValueFactory.getMax()){
+                createAlert(name, spinnerValueFactory.getMax());
             }
         });
-    }
 
-    private SpinnerValueFactory.IntegerSpinnerValueFactory createSpinnerFactory(Spinner<Integer> spinner, int max, int stepSize, boolean editable){
-        spinner.setEditable(editable);
-        bindFont(spinner, 0.02);
-
-        SpinnerValueFactory.IntegerSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max, 0, stepSize);
-        spinner.setValueFactory(spinnerValueFactory);
         return spinnerValueFactory;
     }
 
-    private SpinnerValueFactory.DoubleSpinnerValueFactory createSpinnerFactory(Spinner<Double> spinner, double max, double min, boolean editable){
-        spinner.setEditable(editable);
+    private SpinnerValueFactory.DoubleSpinnerValueFactory createSpinnerFactory(Spinner<Double> spinner, double max, String name){
         bindFont(spinner, 0.02);
 
-        SpinnerValueFactory.DoubleSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, max, 0, min);
+        SpinnerValueFactory.DoubleSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0, max, 0, 0.5);
         spinner.setValueFactory(spinnerValueFactory);
+        spinnerValueFactory.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null)
+                spinnerValueFactory.setValue(0.0);
+            else if(oldValue > spinnerValueFactory.getMax())
+                createAlert(name, spinnerValueFactory.getMax());
+        });
+
         return spinnerValueFactory;
+    }
+
+    private void createAlert(String name, double max){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(name + "-Warning");
+        alert.setHeaderText(name + " cannot be greater than " + max + "!");
+        alert.setContentText(name + " is/are set to possible maximum: " + max);
+        alert.show();
     }
 
     private void initiateLabels() {
         double binding = 0.04;
-        bindFont(title, 0.01);
+        bindFont(title, 0.1);
         bindFont(sizeText, binding);
         bindFont(namesText, binding);
         bindFont(komiText, binding);

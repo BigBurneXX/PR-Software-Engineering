@@ -124,7 +124,7 @@
           <Insets left="20.0" />
         </GridPane.margin>
     </Text>
-   <Text fx:id="timePeriodsText" layoutX="30.0" layoutY="410.0" strokeType="OUTSIDE" strokeWidth="0.0" text="# Time Periods:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+   <Text layoutX="30.0" layoutY="410.0" strokeType="OUTSIDE" strokeWidth="0.0" text="# Time Periods:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
       <font>
          <Font name="System" size="15.0" />
       </font>
@@ -132,7 +132,7 @@
          <Insets right="40.0" />
       </GridPane.margin>
    </Text>
-   <Text fx:id="durationText" layoutX="227.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seconds:" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+   <Text layoutX="227.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seconds:" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
       <font>
          <Font name="System" size="15.0" />
       </font>
@@ -144,12 +144,12 @@
       <GridPane.margin>
          <Insets right="20.0" />
       </GridPane.margin></Spinner>
-    <Button fx:id="start" alignment="CENTER" contentDisplay="CENTER" minWidth="200.0" mnemonicParsing="false" onAction="#onStartGameClick" text="Start Game" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6">
+    <Button fx:id="start" alignment="CENTER" contentDisplay="CENTER" minWidth="200.0" onAction="#onStartGameClick" text="_Start Game" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6">
         <font>
             <Font name="System" size="20.0" />
         </font>
     </Button>
-    <Button fx:id="load" alignment="CENTER" contentDisplay="CENTER" minWidth="200.0" mnemonicParsing="false" onAction="#onLoadGameClick" text="Load Game" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+    <Button fx:id="load" alignment="CENTER" contentDisplay="CENTER" minWidth="200.0" onAction="#onLoadGameClick" text="_Load Game" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
         <font>
             <Font name="System" size="20.0" />
         </font>

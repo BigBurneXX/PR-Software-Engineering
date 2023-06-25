@@ -25,7 +25,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class boardMaskController {
      */
 
     @FXML
-    private GridPane board, infoPane;
+    private GridPane board;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -59,7 +58,7 @@ public class boardMaskController {
     @FXML
     private Button passButton, resignButton;
     @FXML
-    private RadioMenuItem modePlay, modeNavigate;
+    private RadioMenuItem modePlay;
 
     /*
       ----------------------------------------------------------------------------------------------------------------
@@ -126,19 +125,7 @@ public class boardMaskController {
 
     private final int MIN_WIDTH = 600;
     private final int MIN_HEIGHT = 580;
-    private final double PLAYER_LABEL_MULTIPLIER = 0.04;
-    private final double TRAPPED_LABEL_MULTIPLIER = 0.026;
-    private final double TIMER_LABEL_MULTIPLIER = 0.026;
-    private final double TIME_LABEL_MULTIPLIER = 0.023;
-    private final double TOP_REGION_MULTIPLIER = 0.2;
-    private final double BOTTOM_REGION_MULTIPLIER = 0.1;
-    private final double REGION_MULTIPLIER = 0.7;
     private final double MOVE_AND_MODE_DISPLAY_MULTIPLIER = 0.025;
-    private final double TITLE_MULTIPLIER = 0.08;
-
-    private int currentSelectionRow = 1;
-    private int currentSelectionCol = 1;
-
     private static final double STROKE_WIDTH = 2.0;
 
     /*
@@ -151,11 +138,13 @@ public class boardMaskController {
     private int handicaps;
     private double komi;
     private boolean doublePassed;
+    private int currentSelectionRow = 1;
+    private int currentSelectionCol = 1;
 
     /*
       ================================================================================================================
 
-                                            file onActionMethods
+                                       file onActionMethods and helper methods
 
       ================================================================================================================
      */
@@ -214,7 +203,7 @@ public class boardMaskController {
                 terminalInfo("Stone (" + (currentColor.equals(BLACK) ? "BLACK" : "WHITE") +
                         ") placed at: " + row + colLetter);
 
-                fileHandler.write((row - 1), colLetter, text);
+                fileHandler.write(indexToNum(row - 1), colLetter, text);
                 gameHandler.addMove(row, colIndex, currentColor);
 
                 circlesOfBoard[colIndex + 1][row + 1].setFill(currentColor);
@@ -235,7 +224,7 @@ public class boardMaskController {
     /*
       ================================================================================================================
 
-                                            mode onActionMethods
+                                        mode onActionMethods and helper methods
 
       ================================================================================================================
      */
@@ -243,11 +232,7 @@ public class boardMaskController {
     @FXML
     public void onModePlayClick() {
         terminalInfo("Play mode activated!");
-        leftArrow.setVisible(false);
-        rightArrow.setVisible(false);
-
-        passButton.setVisible(true);
-        resignButton.setVisible(true);
+        changeModeVisibility(true);
 
         modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + "'s turn!");
         bindFont(modeAndMoveDisplay, MOVE_AND_MODE_DISPLAY_MULTIPLIER);
@@ -256,15 +241,74 @@ public class boardMaskController {
     @FXML
     public void onModeNavigateClick() {
         terminalInfo("Navigation mode activated!");
-
-        leftArrow.setVisible(true);
-        rightArrow.setVisible(true);
-
-        passButton.setVisible(false);
-        resignButton.setVisible(false);
+        changeModeVisibility(false);
 
         modeAndMoveDisplay.setText("Navigation mode activated");
         bindFont(modeAndMoveDisplay, MOVE_AND_MODE_DISPLAY_MULTIPLIER);
+    }
+
+    private void changeModeVisibility(boolean isPlay){
+        leftArrow.setVisible(!isPlay);
+        rightArrow.setVisible(!isPlay);
+
+        passButton.setVisible(isPlay);
+        resignButton.setVisible(isPlay);
+    }
+
+    /*
+      ================================================================================================================
+
+                                            button onActionMethods
+
+      ================================================================================================================
+     */
+
+    @FXML
+    public void onPassButtonClick(){
+        fileHandler.pass();
+
+        if(doublePassed){
+            //switching to winnerMask
+            Player current = playerHandler.getCurrentPlayer();
+            Player next = playerHandler.getNextPlayer();
+            double currentPlayerPoints = gameHandler.getTerritoryScore(current.getColor()) +
+                                            gameHandler.getBoard().getTrapped(current.getColor());
+
+            double nextPlayerPoints = gameHandler.getTerritoryScore(next.getColor()) +
+                                            gameHandler.getBoard().getTrapped(next.getColor());
+
+            //result > 0 --> currentPlayer won
+            //result = 0 --> draw
+            //result < 0 --> nextPlayer won
+            double result = currentPlayerPoints - nextPlayerPoints;
+            result = (current.getColor().equals(WHITE) ? result + komi : result - komi);
+
+            switch (Double.compare(result, 0)) {
+                case 1 -> switchToWinnerMask(1);
+                case -1 -> {
+                    playerHandler.changePlayer();
+                    switchToWinnerMask(1);
+                }
+                default -> switchToWinnerMask(4);
+            }
+        }
+        doublePassed = true;
+        modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " passed! - "
+                + playerHandler.getNextPlayer().getName() + "'s turn");
+
+        if(playerHandler.checkByoyomi())
+            switchToWinnerMask(3);
+
+        playerHandler.moveMade();
+    }
+
+    @FXML
+    public void onResignButtonClick(){
+        //switch player for the other player wins
+        playerHandler.changePlayer();
+
+        fileHandler.resign();
+        switchToWinnerMask(2);
     }
 
     /*
@@ -326,7 +370,7 @@ public class boardMaskController {
 
         drawBoard();
 
-        bindFont(title, TITLE_MULTIPLIER);
+        bindFont(title, 0.08);
     }
 
     private void initiateHandlers(String playerBlack, String playerWhite, int byoyomiOverruns, int byoyomiTimeLimit) {
@@ -347,10 +391,13 @@ public class boardMaskController {
             return;
         }
 
-        bindFont(blackTimeLabel, TIME_LABEL_MULTIPLIER);
-        bindFont(whiteTimeLabel, TIME_LABEL_MULTIPLIER);
-        bindFont(timerBlack, TIMER_LABEL_MULTIPLIER);
-        bindFont(timerWhite, TIMER_LABEL_MULTIPLIER);
+        double timeLabelMultiplier = 0.023;
+        bindFont(blackTimeLabel, timeLabelMultiplier);
+        bindFont(whiteTimeLabel, timeLabelMultiplier);
+
+        double timerMultiplier = 0.026;
+        bindFont(timerBlack, timerMultiplier);
+        bindFont(timerWhite, timerMultiplier);
 
         blackTimeLabel.textProperty().bind(playerHandler.getPlayerBlack().getTimeLabelText());
         whiteTimeLabel.textProperty().bind(playerHandler.getPlayerWhite().getTimeLabelText());
@@ -362,6 +409,7 @@ public class boardMaskController {
         plBlack.setText(playerBlack + " (Black)");
         plWhite.setText(playerWhite + " (White)");
 
+        double PLAYER_LABEL_MULTIPLIER = 0.04;
         bindFont(plBlack, PLAYER_LABEL_MULTIPLIER);
         bindFont(plWhite, PLAYER_LABEL_MULTIPLIER);
     }
@@ -370,6 +418,7 @@ public class boardMaskController {
         blackTrapped.setText("Trapped: 0");
         whiteTrapped.setText("Trapped: 0");
 
+        double TRAPPED_LABEL_MULTIPLIER = 0.026;
         bindFont(whiteTrapped, TRAPPED_LABEL_MULTIPLIER);
         bindFont(blackTrapped, TRAPPED_LABEL_MULTIPLIER);
     }
@@ -403,11 +452,9 @@ public class boardMaskController {
         addArrowLogic(leftArrow, true);
         addArrowLogic(rightArrow, false);
 
-        //add all logic and binding concerning the pass-button
-        addPassButtonLogic();
-
-        //add all logic and binding concerning the resign-button
-        addResignButtonLogic();
+        //add binding for all buttons
+        addButtonBinding(passButton);
+        addButtonBinding(resignButton);
 
         //immediately start the timer for the first player (black if no handicaps were placed, white if handicaps were placed)
         playerHandler.startTimer();
@@ -428,19 +475,20 @@ public class boardMaskController {
         board.setPadding(new Insets(20, 0, 0, 0));
 
         //bind bottom region to 10% of window height
-        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(BOTTOM_REGION_MULTIPLIER));
+        bottomRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.1));
 
         //bind upper region to 20% of window height
-        topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(TOP_REGION_MULTIPLIER));
+        topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
 
 
         //set left, right and center (board) region to 60% of window height
-        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
-        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
-        board.prefHeightProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
+        double regionMultiplier = 0.7;
+        leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
+        rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
+        board.prefHeightProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
 
         //bind center width to 60% of window height, so it's a square
-        board.prefWidthProperty().bind(boardPane.heightProperty().multiply(REGION_MULTIPLIER));
+        board.prefWidthProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
 
         //bind left and right width to remaining width of the window of what's left from taking 60% of the height
         leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
@@ -526,7 +574,7 @@ public class boardMaskController {
     private void setStone(Circle c) {
         int row = GridPane.getRowIndex(c);
         int col = GridPane.getColumnIndex(c);
-        fileHandler.write((row - 1), ALPHABET[col - 1], "");
+        fileHandler.write(indexToNum(row - 1), ALPHABET[col - 1], "");
 
         Color current = playerHandler.getCurrentPlayer().getColor();
         terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by "
@@ -542,11 +590,7 @@ public class boardMaskController {
         modeAndMoveDisplay.setText(playerHandler.getNextPlayer().getName() + "'s turn!");
 
         if (playerHandler.checkByoyomi()) {
-            try {
-                switchToWinnerMask(3);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            switchToWinnerMask(3);
         }
 
         playerHandler.moveMade();
@@ -682,76 +726,10 @@ public class boardMaskController {
         arrow.translateYProperty().bind(region.heightProperty().divide(2));
     }
 
-    private void addPassButtonLogic() {
-        passButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
-        bindFontIntensive(passButton, 0.03);
-        passButton.setFocusTraversable(false);
-
-        //pass logic
-        passButton.setOnMouseClicked(e -> {
-            if(doublePassed){
-                long blackPoints = gameHandler.getTerritoryScore(BLACK) + gameHandler.getBoard().getTrapped(BLACK);
-                long whitePoints = (long) (gameHandler.getTerritoryScore(WHITE) + gameHandler.getBoard().getTrapped(WHITE) + komi);
-                if(blackPoints > whitePoints) {
-                    try {
-                        if(!playerHandler.getCurrentPlayer().equals(playerHandler.getPlayerBlack()))
-                            playerHandler.changePlayer();
-                        switchToWinnerMask(1);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else if(whitePoints > blackPoints) {
-                    try {
-                        if(!playerHandler.getCurrentPlayer().equals(playerHandler.getPlayerWhite()))
-                            playerHandler.changePlayer();
-                        switchToWinnerMask(1);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } /*else {
-                    try {
-                        switchToWinnerMask(3, 1);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }*/
-            }
-            doublePassed = true;
-            modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " passed! - "
-                                + playerHandler.getNextPlayer().getName() + "'s turn");
-
-            if(playerHandler.checkByoyomi()){
-                try {
-                    switchToWinnerMask(3);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-            playerHandler.moveMade();
-            fileHandler.pass();
-        });
-    }
-
-    private void addResignButtonLogic() {
-        resignButton.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
-        bindFontIntensive(resignButton, 0.03);
-        resignButton.setFocusTraversable(false);
-
-        //resign logic
-        resignButton.setOnMouseClicked(e -> {
-            try {
-                playerHandler.changePlayer();
-                switchToWinnerMask(2);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-
-            modeAndMoveDisplay.setText(playerHandler.getCurrentPlayer().getName() + " resigned! - "
-                                + playerHandler.getNextPlayer().getName() + " won!");
-
-            fileHandler.resign();
-        });
+    private void addButtonBinding(Button button){
+        button.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
+        bindFontIntensive(button, 0.03);
+        button.setFocusTraversable(false);
     }
 
     /*
@@ -801,62 +779,62 @@ public class boardMaskController {
         terminalInfo(printBoard.toString());
     }
 
-    private void switchToWinnerMask(int reasonForWinning) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
-        Parent root = loader.load();
+    private void switchToWinnerMask(int reasonForWinning)  {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
+            Parent root = loader.load();
 
-        winnerMaskController winnerMask = loader.getController();
-        winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
+            winnerMaskController winnerMask = loader.getController();
+            winnerMask.setSize(boardPane.getWidth(), boardPane.getHeight());
 
-        Player player = playerHandler.getCurrentPlayer();
-        String playerWon = playerHandler.getCurrentPlayer().getName() + " " + (playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? "(Black)" : "(White)");
-        String playerLost = playerHandler.getNextPlayer().getName() + " " + (playerHandler.getNextPlayer().getColor().equals(BLACK) ? "(Black)" : "(White)");
-        terminalInfo(playerWon + " won... \n[log end]");
-        switch(reasonForWinning){
-            case 1:
-                //2x passed
-                winnerMask.initiateDisplay(playerWon, gameHandler.getTerritoryScore(player.getColor()), gameHandler.getBoard().getTrapped(player.getColor()), komi);
-                break;
-            case 2:
-                //resigned
-                winnerMask.initiateDisplay(playerWon, playerLost, true);
-            case 3:
-                //byoyomi time run out
-                winnerMask.initiateDisplay(playerWon, playerLost, false);
+            Player player = playerHandler.getCurrentPlayer();
+            String playerWon = playerHandler.getCurrentPlayer().getName() + " " +
+                        (playerHandler.getCurrentPlayer().getColor().equals(BLACK) ? "(Black)" : "(White)");
+            String playerLost = playerHandler.getNextPlayer().getName() + " " +
+                        (playerHandler.getNextPlayer().getColor().equals(BLACK) ? "(Black)" : "(White)");
+
+            terminalInfo(playerWon + " won... \n[log end]");
+            switch (reasonForWinning) {
+                case 1 ->
+                        //2x passed
+                        winnerMask.initiateDisplay(playerWon, gameHandler.getTerritoryScore(player.getColor()),
+                                                        gameHandler.getBoard().getTrapped(player.getColor()), komi);
+                case 2 ->
+                        //resigned
+                        winnerMask.initiateDisplay(playerWon, playerLost, true);
+                case 3 ->
+                        //byoyomi time run out
+                        winnerMask.initiateDisplay(playerWon, playerLost, false);
+                case 4 ->
+                        //draw
+                        winnerMask.initiateDisplay();
+            }
+            terminalInfo("switching to winner Mask...\n[log end]");
+
+            Node source = topRegion.getTop();
+            Stage stage = (Stage) source.getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setMinWidth(MIN_WIDTH);
+            stage.setMinHeight(MIN_HEIGHT);
+            stage.centerOnScreen();
+        } catch (IOException e){
+            terminalInfo(e.getMessage());
         }
-        terminalInfo("switching to winner Mask...\n[log end]");
-
-        Node source = topRegion.getTop();
-        Stage stage = (Stage) source.getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMinHeight(MIN_HEIGHT);
-        stage.centerOnScreen();
     }
 
     private void setupKeyboardControls() {
         board.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case W:
-                    moveSelection(0, -1);
-                    break;
-                case S:
-                    moveSelection(0, 1);
-                    break;
-                case A:
-                    moveSelection(-1, 0);
-                    break;
-                case D:
-                    moveSelection(1, 0);
-                    break;
-                case SPACE:
+                case W -> moveSelection(0, -1);
+                case S -> moveSelection(0, 1);
+                case A -> moveSelection(-1, 0);
+                case D -> moveSelection(1, 0);
+                case SPACE -> {
                     placeStoneAtSelection();
                     // Request focus again after placing a stone
                     board.requestFocus();
-                    break;
-                default:
-                    break;
+                }
             }
         });
     }
@@ -912,6 +890,6 @@ public class boardMaskController {
     }
 
     private int indexToNum(int row) {
-        return (boardSize + 1) - row;
+        return boardSize - row;
     }
 }
