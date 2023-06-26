@@ -1,5 +1,6 @@
 package com.example.go_gruppe1.model.command;
 
+import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class GameHandler {
     /**
      * @param boardSize size of board
      *
-     * initiates gamehandler for game with selected board size
+     * initiates gameHandler for game with selected board size
      */
     public GameHandler(int boardSize){
         game = new Game(boardSize);
@@ -21,10 +22,16 @@ public class GameHandler {
      * @param row location of move to be made
      * @param col location of move to be made
      * @param color color of stone to be set
-     * @return true if stone is trapped and removed
+     * @return 0 if stone placement is fine, 1 if stone placement is suicide and 2 if stone placement violates ko logic
      */
-    public boolean addMove(int row, int col, Color color){
-        return game.executeCommand(new PlaceStoneCommand(game.getBoard(), row, col, color));
+    public int addMove(int row, int col, Color color){
+        return addMove(row, col, color, "");
+    }
+    public int addMove(int row, int col, Color color, String description){
+        // 0 if move is fine
+        // 1 if move is suicide
+        // 2 if move violates ko logic
+        return game.executeCommand(new PlaceStoneCommand(game.getBoard(), row, col, color, description));
     }
 
     /**
@@ -47,6 +54,7 @@ public class GameHandler {
     public SimpleBoard getBoard(){
         return game.getBoard();
     }
+    public StringProperty getDescription() {return game.getDescription();}
 
     private ArrayList<ArrayList<Position>> getLibertyIslands() {
         Color[][] board = getBoard().getBoard();

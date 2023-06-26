@@ -8,6 +8,7 @@ public class PlaceStoneCommand implements Command {
     private final int row;
     private final int col;
     private final Color color;
+    private final String description;
 
     /**
      * @param board board of game
@@ -18,19 +19,24 @@ public class PlaceStoneCommand implements Command {
      * initiates command when stone is to be placed
      */
     public PlaceStoneCommand(SimpleBoard board, int row, int col, Color color) {
+        this(board, row, col, color, "");
+    }
+
+    public PlaceStoneCommand(SimpleBoard board, int row, int col, Color color, String description) {
         this.board = board;
         this.beforeChange = new SimpleBoard(board);
         this.row = row;
         this.col = col;
         this.color = color;
+        this.description = description;
     }
 
     /**
-     * @return true if stone is trapped and removed
+     * @return 0 if stone placement is fine and 1 if stone placement is suicide
      *
      * sets stone
      */
-    public boolean execute() {
+    public int execute() {
         return board.setStone(row, col, color);
     }
 
@@ -44,7 +50,11 @@ public class PlaceStoneCommand implements Command {
     /**
      * @return board of game
      */
-    public SimpleBoard getBoard(){
+    public SimpleBoard getBoard() {
         return board;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

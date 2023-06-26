@@ -36,12 +36,12 @@ public class SimpleBoardTest {
 
     @Test
     public void testSetStone() {
-        assertFalse(board.setStone(0, 0, Color.BLACK));
+        assertEquals(0, board.setStone(0, 0, Color.BLACK));
         board.setStone(1, 0, Color.WHITE);
         board.setStone(0, 1, Color.WHITE);
         board.setStone(1, 2, Color.WHITE);
         board.setStone(2, 1, Color.WHITE);
-        assertTrue(board.setStone(1, 1, Color.BLACK));
+        assertEquals(1, board.setStone(1, 1, Color.BLACK));
     }
 
     @Test

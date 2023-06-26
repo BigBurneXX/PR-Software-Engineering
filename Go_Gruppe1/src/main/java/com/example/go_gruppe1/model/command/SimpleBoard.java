@@ -40,22 +40,22 @@ public class SimpleBoard {
      * @param col location of stone to be set
      * @param color color of stone to be set
      *
-     * @return true if stone is trapped and removed
+     * @return 1 if stone placement would be suicide and 0 otherwise
      *
      * sets stone to board and deletes dead stones
      */
-    public boolean setStone(int row, int col, Color color){
+    public int setStone(int row, int col, Color color){
         board[row][col] = color;
         System.out.println("stone set at " + row + ", " + col);
         Color toDelete = (color == Color.BLACK)  ? Color.WHITE : Color.BLACK;
         removeDead(toDelete);
         if(checkLiberties(row, col, new boolean[size][size]) == 0){
             removeStone(row, col);
-            return true;
+            return 1;
         }
         toDelete = (toDelete == Color.BLACK) ? Color.WHITE : Color.BLACK;
         removeDead(toDelete);
-        return false;
+        return 0;
     }
 
     /**
@@ -95,7 +95,7 @@ public class SimpleBoard {
      * @param checked matrix to keep track of checked positions
      * @return number of liberties
      *
-     * cecks number of liberties of a position on board
+     * checks number of liberties of a position on board
      */
     private int checkLiberties(int row, int col, boolean[][] checked){
         checked[row][col] = true;

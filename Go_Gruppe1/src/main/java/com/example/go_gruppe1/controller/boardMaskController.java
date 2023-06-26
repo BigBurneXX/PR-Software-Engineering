@@ -186,6 +186,10 @@ public class boardMaskController {
     }
 
     private void loadGame(FileData fileData){
+        if(fileData == null){
+            modeAndMoveDisplay.setText("no file selected");
+            return;
+        }
         initiateDisplay(fileData.player1Name(), fileData.player2Name(), fileData.komi(), fileData.handicaps(),
                 fileData.boardSize(), fileData.byoyomiOverruns(), fileData.byoyomiTimeLimit());
 
@@ -199,24 +203,28 @@ public class boardMaskController {
             else if (colLetter == 'r')
                 resignButton.getOnMouseClicked().handle(null);
             else {
-
-                int row = m.row();
+                System.out.print("m.row() " + m.row() + ", ");
+                System.out.println("m.col() " + colLetter);
+                int row = switchNumAndIndex(m.row());
+                System.out.print("row: " + row + ", ");
                 int colIndex = Arrays.binarySearch(ALPHABET, colLetter);
+                System.out.println("col: " + colIndex);
                 String text = m.text();
 
                 terminalInfo("Stone (" + (currentColor.equals(BLACK) ? "BLACK" : "WHITE") +
-                        ") placed at: " + row + colLetter);
+                        ") placed at: " + m.row() + colLetter);
 
-                fileHandler.write(indexToNum(row - 1), colLetter, text);
-                gameHandler.addMove(row, colIndex, currentColor);
+                fileHandler.write(m.row(), colLetter, text);
+                gameHandler.addMove(row, colIndex, currentColor, text);
 
                 circlesOfBoard[colIndex + 1][row + 1].setFill(currentColor);
-                setSampleSolutionDisplay(text);
+                //setSampleSolutionDisplay(text);
                 currentColor = (currentColor == BLACK ? WHITE : BLACK);
             }
         }
         if(currentColor.equals(BLACK))
             playerHandler.changePlayer();
+        drawStones();
     }
 
     @FXML
@@ -323,11 +331,6 @@ public class boardMaskController {
       ================================================================================================================
      */
 
-    private void setSampleSolutionDisplay(String text) {
-        terminalInfo("Sample solution text: " + text);
-        sampleSolutionDisplay.setText(text);
-    }
-
     protected void setSize(double width, double height) {
         boardPane.setPrefHeight(height);
         boardPane.setPrefWidth(width);
@@ -368,6 +371,7 @@ public class boardMaskController {
         initiateHandlers(player1Name, player2Name, byoyomiOverruns, byoyomiTimeLimit);
         displayPlayerNames(player1Name, player2Name);
         displayTrapped();
+        sampleSolutionDisplay.textProperty().bind(gameHandler.getDescription());
 
         onModePlayClick();
         modePlay.setSelected(true);
@@ -611,16 +615,18 @@ public class boardMaskController {
     private void setStone(Circle c) {
         int row = GridPane.getRowIndex(c);
         int col = GridPane.getColumnIndex(c);
-        fileHandler.write(indexToNum(row - 1), ALPHABET[col - 1], "");
+        fileHandler.write(switchNumAndIndex(row - 1), ALPHABET[col - 1], "");
 
         Color current = playerHandler.getCurrentPlayer().getColor();
         terminalInfo("Stone (" + current + ") placed at: " + row + ALPHABET[col - 1] + " by "
                 + playerHandler.getCurrentPlayer().getName());
         c.setFill(current);
 
-        if (gameHandler.addMove(row - 1, col - 1, current)) {
+        int isValidMove = gameHandler.addMove(row-1, col-1, current);
+        if (isValidMove != 0) {
             drawStones();
-            modeAndMoveDisplay.setText("This is suicide. Please select another position");
+            modeAndMoveDisplay.setText(isValidMove == 1 ? "This is suicide. Please select another position" :
+                    "This violates the ko logic. Please select another position");
             return;
         }
 
@@ -922,7 +928,7 @@ public class boardMaskController {
         System.out.println(data);
     }
 
-    private int indexToNum(int row) {
-        return boardSize - row;
+    private int switchNumAndIndex (int row) {
+        return (boardSize - row);
     }
 }

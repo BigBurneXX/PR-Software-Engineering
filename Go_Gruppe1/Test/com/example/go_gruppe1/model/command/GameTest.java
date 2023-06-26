@@ -22,11 +22,11 @@ public class GameTest {
         Command command3 = new PlaceStoneCommand(game.getBoard(), 2, 1, Color.YELLOW);
         Command commandSuicide = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.GRAY);
 
-        assertFalse(game.executeCommand(command));
+        assertEquals(0, game.executeCommand(command));
         game.executeCommand(command1);
         game.executeCommand(command2);
         game.executeCommand(command3);
-        assertTrue(game.executeCommand(commandSuicide));
+        assertEquals(1, game.executeCommand(commandSuicide));
     }
 
     @Test

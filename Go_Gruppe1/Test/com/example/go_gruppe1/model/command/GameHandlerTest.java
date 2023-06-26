@@ -16,9 +16,9 @@ public class GameHandlerTest {
 
     @Test
     public void testAddMove() {
-        assertFalse(gameHandler.addMove(0, 1, Color.BLACK));
-        assertFalse(gameHandler.addMove(1, 0, Color.BLACK));
-        assertTrue(gameHandler.addMove(0, 0, Color.WHITE)); // Cannot place a stone on an occupied position
+        assertEquals(0, gameHandler.addMove(0, 1, Color.BLACK));
+        assertEquals(0, gameHandler.addMove(1, 0, Color.BLACK));
+        assertEquals(1, gameHandler.addMove(0, 0, Color.WHITE)); // Cannot place a stone on an occupied position
     }
 
     @Test
