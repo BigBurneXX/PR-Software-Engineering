@@ -56,13 +56,15 @@ public class GameHandlerTest {
     @Test
     public void testGetTerritoryScore() {
         gameHandler.addMove(0, 0, Color.BLACK);
-        gameHandler.addMove(0, 1, Color.WHITE);
-        gameHandler.addMove(1, 0, Color.WHITE);
+        gameHandler.addMove(1, 1, Color.WHITE);
+        gameHandler.addMove(2, 2, Color.WHITE);
+        gameHandler.addMove(3, 3, Color.BLACK);
 
         int blackTerritoryScore = gameHandler.getTerritoryScore(Color.BLACK);
         int whiteTerritoryScore = gameHandler.getTerritoryScore(Color.WHITE);
 
-        assertEquals(0, blackTerritoryScore);
-        assertEquals(1, whiteTerritoryScore);
+        assertEquals(5, blackTerritoryScore);
+        assertEquals(3, whiteTerritoryScore);
     }
+
 }

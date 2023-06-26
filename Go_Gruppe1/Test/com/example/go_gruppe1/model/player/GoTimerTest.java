@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static javafx.application.Platform.runLater;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GoTimerTest {
     private GoTimer goTimer;
@@ -16,40 +17,37 @@ public class GoTimerTest {
     }
 
     @Test
-    public void testStartAndStopTimer() {
-        runLater(() -> {
-            goTimer.startTimer();
-            assertEquals("00:00", goTimer.getTimeProperty().get());
+    public void testStartAndStopTimer() throws InterruptedException {
+        GoTimer timer = new GoTimer();
 
-            goTimer.stopTimer();
-            StringProperty timeProperty = goTimer.getTimeProperty();
-            String stoppedTime = timeProperty.get();
+        timer.startTimer();
 
-            try {
-                // Sleep for 2 seconds to simulate elapsed time
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        // Sleep for some time to let the timer run
+        Thread.sleep(2000);  // 2000 milliseconds = 2 seconds
 
-            assertEquals(stoppedTime, timeProperty.get());
-        });
+        timer.stopTimer();
+
+        int passedSeconds = timer.getPassedSeconds();
+
+        // Check that the timer counted at least 1 second and less than 3 seconds.
+        // This range is used due to potential delays in thread scheduling, timer precision, etc.
+        assertTrue(passedSeconds >= 1);
+        assertTrue(passedSeconds < 3);
     }
 
     @Test
-    public void testElapsedTime() {
-        runLater(() -> {
-            goTimer.startTimer();
+    public void testElapsedTime() throws InterruptedException {
+        GoTimer timer = new GoTimer();
 
-            try {
-                // Sleep for 2 seconds to simulate elapsed time
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        timer.startTimer();
 
-            int passedSeconds = goTimer.getPassedSeconds();
-            assertEquals(2, passedSeconds);
-        });
+        // Sleep for some time to let the timer run
+        Thread.sleep(2000);  // 2000 milliseconds = 2 seconds
+
+        int passedSeconds = timer.getPassedSeconds();
+
+        // Check that the timer counted at least 1 second and less than 3 seconds.
+        assertTrue(passedSeconds >= 1);
+        assertTrue(passedSeconds < 3);
     }
 }
