@@ -153,6 +153,11 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    /**
+     * @throws IOException
+     *
+     * switches to input mask if new game is clicked
+     */
     @FXML
     public void onNewGameClick() throws IOException {
         terminalInfo("Starting new game... \n[log end]");
@@ -173,18 +178,29 @@ public class boardMaskController {
         stage.show();
     }
 
+    /**
+     * opens explorer to select saving location and saves file
+     */
     @FXML
     public void onSaveFileAsClick() {
         terminalInfo("Saving file...");
         fileHandler.save();
     }
 
+    /**
+     * opens explorer to choose file and loads game
+     */
     @FXML
     public void onOpenFileClick(){
         terminalInfo("Loading file... \n[log end]");
         loadGame(fileHandler.open());
     }
 
+    /**
+     * @param fileData data of loaded file
+     *
+     * loads game
+     */
     private void loadGame(FileData fileData){
         if(fileData == null){
             modeAndMoveDisplay.setText("no file selected");
@@ -227,6 +243,9 @@ public class boardMaskController {
         drawStones();
     }
 
+    /**
+     * exits from application
+     */
     @FXML
     public void onExitGameClick() {
         terminalInfo("Exiting file... \n[log end]");
@@ -241,6 +260,9 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    /**
+     * changes board mask nodes to let user play the game but not navigate it
+     */
     @FXML
     public void onModePlayClick() {
         terminalInfo("Play mode activated!");
@@ -250,6 +272,9 @@ public class boardMaskController {
         bindFont(modeAndMoveDisplay, MOVE_AND_MODE_DISPLAY_MULTIPLIER);
     }
 
+    /**
+     * changes board mask nodes to let user navigate the game but not play it
+     */
     @FXML
     public void onModeNavigateClick() {
         terminalInfo("Navigation mode activated!");
@@ -259,6 +284,11 @@ public class boardMaskController {
         bindFont(modeAndMoveDisplay, MOVE_AND_MODE_DISPLAY_MULTIPLIER);
     }
 
+    /**
+     * @param isPlay true if play mode is activated
+     *
+     * sets visibility of nodes accoding to mode
+     */
     private void changeModeVisibility(boolean isPlay){
         leftArrow.setVisible(!isPlay);
         rightArrow.setVisible(!isPlay);
@@ -275,6 +305,9 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    /**
+     * logic for passing: switches player if clicked once, ends game if clicked consecutively
+     */
     @FXML
     public void onPassButtonClick(){
         fileHandler.pass();
@@ -314,6 +347,9 @@ public class boardMaskController {
         playerHandler.moveMade();
     }
 
+    /**
+     * resign logic: ends game if clicked
+     */
     @FXML
     public void onResignButtonClick(){
         //switch player for the other player wins
@@ -331,20 +367,43 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    /**
+     * @param width width of window
+     * @param height height of window
+     *
+     * sets size of window
+     */
     protected void setSize(double width, double height) {
         boardPane.setPrefHeight(height);
         boardPane.setPrefWidth(width);
         boardPane.setMinSize(MIN_WIDTH, MIN_HEIGHT);
     }
 
+    /**
+     * @return width of window
+     */
     protected double getWidth() {
         return boardPane.getWidth();
     }
 
+    /**
+     * @return height of window
+     */
     protected double getHeight() {
         return boardPane.getHeight();
     }
 
+    /**
+     * @param player1Name black player name
+     * @param player2Name white player name
+     * @param komi komi advantage value
+     * @param handicaps handicap advantage value
+     * @param boardSize selected size of board
+     * @param byoyomiOverruns byoyomi time periods
+     * @param byoyomiTimeLimit byoyomi time per period
+     *
+     * initiates all components with information passed by the input mask
+     */
     /*
       ================================================================================================================
 
@@ -381,6 +440,14 @@ public class boardMaskController {
         bindFont(title, 0.08);
     }
 
+    /**
+     * @param playerBlack black player name
+     * @param playerWhite white player name
+     * @param byoyomiOverruns byoyomi periods
+     * @param byoyomiTimeLimit byoyomi time per period
+     *
+     * initiates game-, player- and file handlers for game logic
+     */
     private void initiateHandlers(String playerBlack, String playerWhite, int byoyomiOverruns, int byoyomiTimeLimit) {
         gameHandler = new GameHandler(boardSize);
         playerHandler = (byoyomiOverruns == 0) ? new PlayerHandler(playerBlack, playerWhite) :
@@ -389,6 +456,11 @@ public class boardMaskController {
         fileHandler = new FileHandler(playerBlack, playerWhite, boardSize, komi, handicaps, byoyomiOverruns, byoyomiTimeLimit);
     }
 
+    /**
+     * @param notActive true if user chose byoyomi rules for their game
+     *
+     * initiates nodes and logic for byoyomi if user has selected to use them
+     */
     private void initiateTimeRules(boolean notActive) {
         if (notActive) {
             blackTimeLabel.setVisible(false);
@@ -413,6 +485,12 @@ public class boardMaskController {
         timerWhite.textProperty().bind(playerHandler.getPlayerWhite().getTimer().getTimeProperty());
     }
 
+    /**
+     * @param playerBlack black player name
+     * @param playerWhite white player name
+     *
+     * sets player names according to information from input mask
+     */
     private void displayPlayerNames(String playerBlack, String playerWhite){
         plBlack.setText(playerBlack + " (Black)");
         plWhite.setText(playerWhite + " (White)");
@@ -422,6 +500,9 @@ public class boardMaskController {
         bindFont(plWhite, PLAYER_LABEL_MULTIPLIER);
     }
 
+    /**
+     * displays the trapped stones counters
+     */
     private void displayTrapped() {
         blackTrapped.setText("Trapped: 0");
         whiteTrapped.setText("Trapped: 0");
@@ -437,6 +518,9 @@ public class boardMaskController {
       ----------------------------------------------------------------------------------------------------------------
      */
 
+    /**
+     * draws the board
+     */
     private void drawBoard() {
         //bind height and width property
         setBoardProperties();
@@ -478,6 +562,10 @@ public class boardMaskController {
         setupKeyboardControls();
     }
 
+    /**
+     * sets board to 70% of the height of the window (all other contents accordingly with the remaining 30%)
+     * makes sure that board is centered in the middle of the window
+     */
     private void setBoardProperties(){
         //set padding, so stones are not covered by top region
         board.setPadding(new Insets(20, 0, 0, 0));
@@ -489,20 +577,23 @@ public class boardMaskController {
         topRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(0.2));
 
 
-        //set left, right and center (board) region to 60% of window height
+        //set left, right and center (board) region to 70% of window height
         double regionMultiplier = 0.7;
         leftRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
         rightRegion.prefHeightProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
         board.prefHeightProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
 
-        //bind center width to 60% of window height, so it's a square
+        //bind center width to 70% of window height, so it's a square
         board.prefWidthProperty().bind(boardPane.heightProperty().multiply(regionMultiplier));
 
-        //bind left and right width to remaining width of the window of what's left from taking 60% of the height
+        //bind left and right width to remaining width of the window of what's left from taking 70% of the height
         leftRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
         rightRegion.prefWidthProperty().bind(boardPane.widthProperty().subtract(board.prefWidthProperty()).divide(2));
     }
 
+    /**
+     * creates the board grid according to the board size (+1 due to the labelling)
+     */
     private void createGrid(){
         board.getChildren().clear();
         board.getColumnConstraints().clear();
@@ -518,6 +609,9 @@ public class boardMaskController {
         }
     }
 
+    /**
+     * adds colored panes to board
+     */
     private void addColorToBoard(){
         for (int col = 1; col < boardSize; col++) {
             for (int row = 1; row < boardSize; row++) {
@@ -529,6 +623,9 @@ public class boardMaskController {
         }
     }
 
+    /**
+     * adds transparent circles to all intersections of the board and adds mouse hover color
+     */
     private void addCirclesToBoard() {
         circlesOfBoard = new Circle[boardSize + 1][boardSize + 1];
 
@@ -591,6 +688,13 @@ public class boardMaskController {
         }
     }
 
+    /**
+     * @param event triggered event from click
+     * @param rectangle clicked highlight position
+     * @param circle clicked stone
+     *
+     * adds logic to circles on intersections including highlighting positions via right clicks
+     */
     private void onMouseClicked(MouseEvent event, Rectangle rectangle, Circle circle){
         final Color HOVER_BLACK = playerHandler.getPlayerBlack().getHoverColor();
         final Color HOVER_WHITE = playerHandler.getPlayerWhite().getHoverColor();
@@ -612,6 +716,12 @@ public class boardMaskController {
         }
     }
 
+    /**
+     * @param c circle to be set
+     *
+     * sets stone to board with according logic (valid move check, writing to file,
+     *          changing player, updating GUI components)
+     */
     private void setStone(Circle c) {
         int row = GridPane.getRowIndex(c);
         int col = GridPane.getColumnIndex(c);
@@ -646,6 +756,9 @@ public class boardMaskController {
         whiteTrapped.setText("Trapped: " + gameHandler.getBoard().getTrapped(WHITE));
     }
 
+    /**
+     * adds labelling at the bottom (alphabetically) and the right (numerically) of the board
+     */
     private void addBoardLabelling() {
         //add color and labelling but without borders
         for (int i = 0; i <= boardSize; i++) {
@@ -711,6 +824,9 @@ public class boardMaskController {
         }
     }
 
+    /**
+     * draws chosen number of handicaps to board
+     */
     private void drawHandicaps() {
         if(handicaps == 0)
             return;
@@ -751,10 +867,15 @@ public class boardMaskController {
         drawStones();
     }
 
+    /**
+     * @param arrow arrow that has been clicked
+     * @param isLeftArrow true if left arrow has been clicked
+     *
+     * on left arrow click: undo last move
+     * on right arrow click: redo last move
+     */
     private void addArrowLogic(Polygon arrow, boolean isLeftArrow){
         //add on mouse clicked logic of an arrow
-        //if left is clicked    -->   undo last move
-        //if right is clicked   -->   redo last move
         arrow.setOnMouseClicked(e -> {
             if(isLeftArrow)
                 gameHandler.undo();
@@ -769,6 +890,11 @@ public class boardMaskController {
         arrow.translateYProperty().bind(region.heightProperty().divide(2));
     }
 
+    /**
+     * @param button button to be bound
+     *
+     * resizability of buttons
+     */
     private void addButtonBinding(Button button){
         button.prefWidthProperty().bind(boardPane.widthProperty().multiply(0.1));
         bindFontIntensive(button, 0.03);
@@ -783,12 +909,24 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    /**
+     * @param n node to be bound
+     * @param multiplier factor by which node should be bound
+     *
+     * binds font so it's resizable
+     */
     private void bindFont(Node n, double multiplier){
         n.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", boardPane.heightProperty().multiply(multiplier).asString()
         ));
     }
 
+    /**
+     * @param n node to be bound
+     * @param multiplier factor by which node should be bound
+     *
+     * binds bold font so it's resizable
+     */
     private void bindFontIntensive(Node n, double multiplier){
         n.styleProperty().bind(Bindings.concat(
                 "-fx-text-fill: #483C32; ",
@@ -805,6 +943,9 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    /**
+     * draws stones to color matrix in according color
+     */
     private void drawStones() {
         Color[][] boardToDraw = gameHandler.getBoard().getBoard();
         StringBuilder printBoard = new StringBuilder();
@@ -822,6 +963,11 @@ public class boardMaskController {
         terminalInfo(printBoard.toString());
     }
 
+    /**
+     * @param reasonForWinning 1 for consecutive passing, 2 for byoyomi violation, 3 for resigning
+     *
+     * switches to winner mask if game has ended
+     */
     private void switchToWinnerMask(int reasonForWinning)  {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/winnerMaskGUI.fxml"));
@@ -866,6 +1012,9 @@ public class boardMaskController {
         }
     }
 
+    /**
+     * keyboard control with WSAD and SPACE
+     */
     private void setupKeyboardControls() {
         board.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -882,8 +1031,13 @@ public class boardMaskController {
         });
     }
 
+    /**
+     * @param dx position to be unselected
+     * @param dy position to be selected
+     *
+     * unhighlights the previous position
+     */
     public void moveSelection(int dx, int dy) {
-        // Unhighlight the previous position
         if (currentSelectionRow > 0 && currentSelectionRow <= boardSize &&
                 currentSelectionCol > 0 && currentSelectionCol <= boardSize) {
             Circle previousCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
@@ -911,6 +1065,9 @@ public class boardMaskController {
         circlesOfBoard[currentSelectionRow][currentSelectionCol].setStrokeWidth(STROKE_WIDTH); // use a constant stroke width
     }
 
+    /**
+     * places stone on pressed SPACE key
+     */
     public void placeStoneAtSelection() {
         Circle selectedCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
         setStone(selectedCircle);
@@ -924,10 +1081,19 @@ public class boardMaskController {
       ================================================================================================================
      */
 
+    /**
+     * @param data information to be printed
+     *
+     * prints into to console for debugging
+     */
     private void terminalInfo(String data) {
         System.out.println(data);
     }
 
+    /**
+     * @param row
+     * @return
+     */
     private int switchNumAndIndex (int row) {
         return (boardSize - row);
     }
