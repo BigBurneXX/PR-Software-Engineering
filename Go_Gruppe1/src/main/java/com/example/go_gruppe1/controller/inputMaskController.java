@@ -49,12 +49,18 @@ public class inputMaskController {
         switchToBoardMask(event, true);
     }
 
+    /**
+     * initiates all contents of the input mask
+     */
     public void initiateDisplay() {
         initiateSpinner();
         initiateLabels();
         initiateButtons();
     }
 
+    /**
+     * initiates komi, handicap and byoyomi spinners
+     */
     private void initiateSpinner() {
         createSpinnerFactory(komiSpinner, 9.5, "Komi");
 
@@ -70,6 +76,12 @@ public class inputMaskController {
         timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> durationValueFactory.setMin(newValue > 0 ? 30 : 0));
     }
 
+    /**
+     * @param spinner spinner to be initiated for INTEGER values
+     * @param max max value of spinner
+     * @param name name of spinner
+     * @return SpinnerValueFactory for initialization of Spinner
+     */
     private SpinnerValueFactory.IntegerSpinnerValueFactory createSpinnerFactory(Spinner<Integer> spinner, int max, String name){
         bindFont(spinner, 0.02);
 
@@ -86,6 +98,12 @@ public class inputMaskController {
         return spinnerValueFactory;
     }
 
+    /**
+     * @param spinner spinner to be initiated for DOUBLE values
+     * @param max max value of spinner
+     * @param name name of spinner
+     * @return SpinnerValueFactory for initialization of Spinner
+     */
     private SpinnerValueFactory.DoubleSpinnerValueFactory createSpinnerFactory(Spinner<Double> spinner, double max, String name){
         bindFont(spinner, 0.02);
 
@@ -101,6 +119,10 @@ public class inputMaskController {
         return spinnerValueFactory;
     }
 
+    /**
+     * @param name type of alert
+     * @param max max value for input alert
+     */
     private void createAlert(String name, double max){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(name + "-Warning");
@@ -109,6 +131,9 @@ public class inputMaskController {
         alert.show();
     }
 
+    /**
+     * initiates labels and making them resizable
+     */
     private void initiateLabels() {
         double binding = 0.04;
         bindFont(title, 0.1);
@@ -119,11 +144,19 @@ public class inputMaskController {
         bindFont(byoyomiText, binding);
     }
 
+    /**
+     * initiates start and load button
+     */
     private void initiateButtons() {
         initiateButton(start);
         initiateButton(load);
     }
 
+    /**
+     * @param button button to be bound
+     *
+     * make buttons resizable
+     */
     private void initiateButton(Button button){
         button.prefWidthProperty().bind(inputPane.heightProperty().multiply(15));
         button.styleProperty().bind(Bindings.concat(
@@ -134,6 +167,13 @@ public class inputMaskController {
         button.toFront();
     }
 
+    /**
+     * @param event event for switching back to board mask
+     * @param wantToLoad true if user wants to load a game
+     * @throws IOException
+     *
+     * switches to board game mask (passes all necessary information)
+     */
     private void switchToBoardMask(ActionEvent event, boolean wantToLoad) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/boardMaskGUI.fxml"));
         Parent root = loader.load();
@@ -163,6 +203,9 @@ public class inputMaskController {
         stage.show();
     }
 
+    /**
+     * @return size of board
+     */
     public int getBoardSize() {
         if (size9.isSelected())
             return 9;
@@ -172,12 +215,24 @@ public class inputMaskController {
             return 19;
     }
 
+    /**
+     * @param width width of window
+     * @param height height of window
+     *
+     * sets window size
+     */
     protected void setSize(double width, double height) {
         inputPane.setPrefHeight(height);
         inputPane.setPrefWidth(width);
         inputPane.setMinSize(600, 580);
     }
 
+    /**
+     * @param n node to be bound
+     * @param multiplier factor by which node should be bound
+     *
+     * binds font size to window height
+     */
     private void bindFont(Node n, double multiplier){
         n.styleProperty().bind(Bindings.concat(
                 "-fx-font-size: ", inputPane.heightProperty().multiply(multiplier).asString()
