@@ -64,4 +64,10 @@ public class PlaceStoneCommandTest {
         // Verify that the board returned by getBoard() is the same as the original board
         assertSame(board, command.getBoard());
     }
+
+    @Test
+    public void testGetDescription(){
+        PlaceStoneCommand command = new PlaceStoneCommand(board, 2, 2, Color.YELLOW, "This is a test!");
+        assertEquals("This is a test!", command.getDescription());
+    }
 }

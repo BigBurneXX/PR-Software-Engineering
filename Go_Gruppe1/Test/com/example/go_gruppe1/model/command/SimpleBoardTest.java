@@ -45,6 +45,15 @@ public class SimpleBoardTest {
     }
 
     @Test
+    public void testCheckStoneGroups(){
+        board.setStone(0, 1, Color.BLACK);
+        board.setStone(1, 0, Color.BLACK);
+        board.setStone(1, 2, Color.BLACK);
+        board.setStone(2, 1, Color.BLACK);
+        assertEquals(0, board.setStone(1, 1, Color.BLACK));
+    }
+
+    @Test
     public void testGetBoard() {
         assertNull(board.getBoard()[0][0]);
         board.setStone(1, 1, Color.BLACK);

@@ -52,6 +52,7 @@ public class GoTimer {
         timeProperty.set(String.format("%02d:%02d", minutes, seconds));
     }
 
+
     /**
      * @return seconds passed from move
      */

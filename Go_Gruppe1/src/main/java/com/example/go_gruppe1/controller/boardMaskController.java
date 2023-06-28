@@ -287,7 +287,7 @@ public class boardMaskController {
     /**
      * @param isPlay true if play mode is activated
      *
-     * sets visibility of nodes accoding to mode
+     * sets visibility of nodes according to mode
      */
     private void changeModeVisibility(boolean isPlay){
         leftArrow.setVisible(!isPlay);
@@ -718,7 +718,7 @@ public class boardMaskController {
 
     /**
      * @param c circle to be set
-     *
+     * <p>
      * sets stone to board with according logic (valid move check, writing to file,
      *          changing player, updating GUI components)
      */
@@ -870,7 +870,7 @@ public class boardMaskController {
     /**
      * @param arrow arrow that has been clicked
      * @param isLeftArrow true if left arrow has been clicked
-     *
+     * <p>
      * on left arrow click: undo last move
      * on right arrow click: redo last move
      */
@@ -1013,7 +1013,7 @@ public class boardMaskController {
     }
 
     /**
-     * keyboard control with WSAD and SPACE
+     * keyboard control with WASD and SPACE
      */
     private void setupKeyboardControls() {
         board.setOnKeyPressed(event -> {

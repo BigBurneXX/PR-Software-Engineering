@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class GameTest {
     private Game game;
@@ -62,5 +63,25 @@ public class GameTest {
         assertEquals(Color.YELLOW, game.getBoard().getBoard()[0][1]);
         assertEquals(Color.YELLOW, game.getBoard().getBoard()[1][0]);
         assertEquals(Color.GREEN, game.getBoard().getBoard()[1][1]);
+    }
+
+    @Test
+    public void testGetDescription() {
+        // Initial description
+        String initialDescription = game.getDescription().get();
+
+        // Create a command and execute it
+        Command command = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.YELLOW, "This is a test1");
+        game.executeCommand(command);
+
+        // Check that the description is updated
+        assertNotEquals(initialDescription, game.getDescription().get()); // Description should be updated after command execution
+        assertEquals(command.getDescription(), game.getDescription().get()); // Description should match the executed command's description
+
+        // Undo the last move
+        game.undoLastMove();
+
+        // Check that the description is reverted
+        assertEquals(initialDescription, game.getDescription().get()); // Description should be reverted after undoing the move
     }
 }

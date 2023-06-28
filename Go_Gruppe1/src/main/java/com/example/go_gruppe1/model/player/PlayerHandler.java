@@ -16,7 +16,7 @@ public class PlayerHandler {
      * @param playerBlackName black player name
      * @param playerWhiteName white player name
      *
-     * initiates both Go players (black and white) whith no byoyomi rules
+     * initiates both Go players (black and white) with no byoyomi rules
      */
     public PlayerHandler(String playerBlackName, String playerWhiteName){
         this(playerBlackName, playerWhiteName, 0, 0);
@@ -28,7 +28,7 @@ public class PlayerHandler {
      * @param byoyomiOverruns # of byoyomi time periods
      * @param byoyomiTimeLimit time of byoyomi period
      *
-     * initiates both Go players (black and white) whith byoyomi rules
+     * initiates both Go players (black and white) with byoyomi rules
      */
     public PlayerHandler(String playerBlackName, String playerWhiteName, int byoyomiOverruns, int byoyomiTimeLimit){
         final Color hoverBlack = Color.valueOf("#00000070");
@@ -54,7 +54,6 @@ public class PlayerHandler {
         if(timerActive) {
             currentPlayer.getTimer().stopTimer();
             nextPlayer.getTimer().startTimer();
-            //terminalInfo("passed seconds: " + currentPlayer.getTimer().getPassedSeconds());
         }
         changePlayer();
     }
@@ -120,7 +119,7 @@ public class PlayerHandler {
 
     /**
      * @return true if player has used all time periods
-     *
+     * <p>
      * if byoyomi time rules are set, checks if last move surpassed time period limit
      * and if there are time periods left
      */

@@ -30,6 +30,7 @@ public class PlayerHandlerTest {
     @Test
     public void testStartTimer() {
         playerHandler.startTimer();
+        playerHandler2.startTimer();
         //assertTrue(playerHandler.getCurrentPlayer().getTimer().isTimerRunning());
     }
 
