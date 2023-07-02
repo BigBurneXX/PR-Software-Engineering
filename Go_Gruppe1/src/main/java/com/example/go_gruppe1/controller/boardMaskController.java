@@ -316,11 +316,21 @@ public class boardMaskController {
             //switching to winnerMask
             Player current = playerHandler.getCurrentPlayer();
             Player next = playerHandler.getNextPlayer();
-            double currentPlayerPoints = gameHandler.getTerritoryScore(current.getColor()) +
-                                            gameHandler.getBoard().getTrapped(current.getColor());
+            gameHandler.getBoard().calcScores(komi);
 
-            double nextPlayerPoints = gameHandler.getTerritoryScore(next.getColor()) +
-                                            gameHandler.getBoard().getTrapped(next.getColor());
+            double currentPlayerPoints/*gameHandler.getTerritoryScore(current.getColor()) +
+                                            gameHandler.getBoard().getTrapped(current.getColor())*/;
+
+            double nextPlayerPoints/*gameHandler.getTerritoryScore(next.getColor()) +
+                                            gameHandler.getBoard().getTrapped(next.getColor())*/;
+
+            if(current.getColor() == BLACK) {
+                currentPlayerPoints = gameHandler.getBoard().blackTotal;
+                nextPlayerPoints = gameHandler.getBoard().whiteTotal;
+            } else {
+                currentPlayerPoints = gameHandler.getBoard().whiteTotal;
+                nextPlayerPoints = gameHandler.getBoard().blackTotal;
+            }
 
             //result > 0 --> currentPlayer won
             //result = 0 --> draw
@@ -984,15 +994,25 @@ public class boardMaskController {
 
             terminalInfo(playerWon + " won... \n[log end]");
             switch (reasonForWinning) {
-                case 1 ->
-                        //2x passed
-                        winnerMask.initiateDisplay(playerWon, gameHandler.getTerritoryScore(player.getColor()),
-                                                        gameHandler.getBoard().getTrapped(player.getColor()), komi);
+                case 1 -> {
+                    int total = 0;
+                    int trapped = 0;
+                    //2x passed
+                    if(player.getColor() == BLACK) {
+                        total = gameHandler.getBoard().blackTotal;
+                        trapped = gameHandler.getBoard().getTrapped(BLACK);
+                    } else {
+                        total = gameHandler.getBoard().whiteTotal;
+                        trapped = gameHandler.getBoard().getTrapped(WHITE);
+                    }
+                    winnerMask.initiateDisplay(playerWon, total, trapped, komi/*gameHandler.getTerritoryScore(player.getColor()),
+                                                    gameHandler.getBoard().getTrapped(player.getColor()), komi*/);
+                }
                 case 2 ->
                         //resigned
                         winnerMask.initiateDisplay(playerWon, playerLost, true);
                 case 3 ->
-                        //byoyomi time run out
+                        //byoyomi time ran out
                         winnerMask.initiateDisplay(playerWon, playerLost, false);
                 case 4 ->
                         //draw
