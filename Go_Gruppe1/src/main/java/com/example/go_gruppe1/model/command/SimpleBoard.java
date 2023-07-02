@@ -2,6 +2,7 @@ package com.example.go_gruppe1.model.command;
 
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +12,10 @@ public class SimpleBoard {
     private final Color[][] board;
     private int blackTrapped = 0;
     private int whiteTrapped = 0;
+
+    public int blackTotal = 0;
+
+    public int whiteTotal = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
     /**
@@ -148,5 +153,96 @@ public class SimpleBoard {
      */
     public int getTrapped(Color color) {
         return color.equals(Color.BLACK) ? blackTrapped : whiteTrapped;
+    }
+
+    public void calcScores(double komi) {
+        blackTotal += blackTrapped;
+        whiteTrapped += whiteTrapped + komi;
+
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if(board[row][col] == Color.BLACK) {
+                    blackTotal++;
+                } else if(board[row][col] == Color.WHITE) {
+                    whiteTotal++;
+                }
+            }
+        }
+
+        if(blackTotal == 0 || whiteTotal == 0) {
+            return;
+        }
+
+        boolean[][] visited = new boolean[size][size];
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                visited[row][col] = false;
+            }
+        }
+
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if(!visited[row][col] && board[row][col] == null) {
+                    ArrayList<Position> libertyArea = new ArrayList<>();
+                    boolean blackSurrounding = true;
+                    boolean whiteSurrounding = true;
+                    findLibertyArea(row, col, libertyArea, visited);
+                    for(Position p : libertyArea) {
+                        if(!isSurrounded(p.row(), p.col(), Color.BLACK)) {
+                            blackSurrounding = false;
+                        }
+                        if(!isSurrounded(p.row(), p.col(), Color.WHITE)) {
+                            whiteSurrounding = false;
+                        }
+                        if(!blackSurrounding && !whiteSurrounding) {
+                            break;
+                        }
+                    }
+
+                    if(blackSurrounding) {
+                        blackTotal += libertyArea.size();
+                    } else if(whiteSurrounding) {
+                        whiteTotal += libertyArea.size();
+                    }
+
+                }
+            }
+        }
+    }
+
+    private boolean isSurrounded(int row, int col, Color c) {
+        boolean isSurrounded;
+        isSurrounded = checkNeighbours(row + 1, col, c);
+        isSurrounded &= checkNeighbours(row - 1, col, c);
+        isSurrounded &= checkNeighbours(row, col + 1, c);
+        isSurrounded &= checkNeighbours(row, col - 1, c);
+        return isSurrounded;
+
+    }
+
+    private boolean checkNeighbours(int row, int col, Color c) {
+        if(row < 0 || row >= size || col < 0 || col >= size) {
+            return true;
+        }
+        return board[row][col] == null || board[row][col] == c;
+    }
+
+    private void findLibertyArea(int row, int col, ArrayList<Position> libertyArea, boolean[][] visited) {
+        if (row < 0 || row >= size || col < 0 || col >= size) {
+            return;
+        }
+        if (visited[row][col]) {
+            return;
+        }
+        if (board[row][col] != null) {
+            return;
+        }
+
+        visited[row][col] = true;
+        libertyArea.add(new Position(row, col));
+        findLibertyArea(row + 1, col, libertyArea, visited);
+        findLibertyArea(row - 1, col, libertyArea, visited);
+        findLibertyArea(row, col + 1, libertyArea, visited);
+        findLibertyArea(row, col - 1, libertyArea, visited);
     }
 }

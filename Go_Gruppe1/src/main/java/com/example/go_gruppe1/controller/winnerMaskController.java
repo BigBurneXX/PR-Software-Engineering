@@ -32,16 +32,15 @@ public class winnerMaskController {
 
     /**
      * @param winner player that has won
-     * @param territory captured territory by winner
      * @param trapped trapped stones by winner
      * @param komiValue advantage for white
      *
      * initiates all labels in the case that the end of the game has been reached due to consecutive passing
      */
-    protected void initiateDisplay(String winner, long territory, int trapped, double komiValue){
+    protected void initiateDisplay(String winner, long total, int trapped, double komiValue){
         declareWinner(winner + " won!");
-        setScore(territory, trapped);
-        setTerritory(territory);
+        setScore(total);
+        setTerritory(total - trapped);
         setTrapped(trapped);
         if(komiValue == 0.0)
             komi.setVisible(false);
@@ -132,13 +131,11 @@ public class winnerMaskController {
 
     /**
      * @param total score
-     * @param trapped number of trapped stoned
      *
      * set points label and binds label size
      */
-    private void setScore(long total, int trapped) {
-        int score = (int) total + trapped;
-        totalPoints.setText("Total Points: " + score);
+    private void setScore(long total) {
+        totalPoints.setText("Total Points: " + total);
         bindFont(totalPoints, 0.042);
     }
 
