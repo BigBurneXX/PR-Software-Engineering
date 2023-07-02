@@ -20,11 +20,13 @@ public class FileControlTest {
     public void setUp() throws IOException {
         fileControl = new FileControl();
         outputFile = File.createTempFile("testFile", ".json");
+        System.out.println(outputFile.getAbsolutePath());  // add this line
     }
+
 
     @Test
     public void testCreateFile() {
-        fileControl.createFile(outputFile.getName(), "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
+        fileControl.createFile(outputFile.getAbsolutePath(), "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
 
         assertTrue(outputFile.exists());
 
@@ -33,7 +35,7 @@ public class FileControlTest {
         assertEquals("BlackPlayer", fileData.player1Name());
         assertEquals("WhitePlayer", fileData.player2Name());
         assertEquals(19, fileData.boardSize());
-        assertEquals(6.5, fileData.komi());
+        assertEquals(6.5, fileData.komi(), 0.001);  // for floating point comparison, provide a delta
         assertEquals(0, fileData.handicaps());
         assertEquals(3, fileData.byoyomiOverruns());
         assertEquals(30, fileData.byoyomiTimeLimit());

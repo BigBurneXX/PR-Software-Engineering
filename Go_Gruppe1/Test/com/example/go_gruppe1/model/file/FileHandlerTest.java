@@ -23,7 +23,11 @@ public class FileHandlerTest {
     @Test
     public void testSave() {
         // Call the save method
-        fileHandler.save();
+        try {
+            fileHandler.save();
+        } catch (Exception e) {
+            fail("save() method threw an exception");
+        }
     }
 
     @Test

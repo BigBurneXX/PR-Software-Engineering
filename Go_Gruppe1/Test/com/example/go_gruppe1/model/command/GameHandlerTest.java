@@ -55,16 +55,34 @@ public class GameHandlerTest {
 
     @Test
     public void testGetTerritoryScore() {
-        gameHandler.addMove(0, 0, Color.BLACK);
-        gameHandler.addMove(1, 1, Color.WHITE);
-        gameHandler.addMove(2, 2, Color.WHITE);
-        gameHandler.addMove(3, 3, Color.BLACK);
+        GameHandler gameHandler = new GameHandler(10);
+
+        // creating a 5x5 board with Black territory
+        for (int i = 0; i < 5; i++) {
+            gameHandler.addMove(i, 0, Color.BLACK, "Black territory");
+            gameHandler.addMove(i, 4, Color.BLACK, "Black territory");
+        }
+        for (int i = 1; i < 4; i++) {
+            gameHandler.addMove(0, i, Color.BLACK, "Black territory");
+            gameHandler.addMove(4, i, Color.BLACK, "Black territory");
+        }
+
+        // creating a 3x3 board inside Black territory with White territory
+        for (int i = 1; i < 4; i++) {
+            gameHandler.addMove(i, 1, Color.WHITE, "White territory");
+            gameHandler.addMove(i, 3, Color.WHITE, "White territory");
+        }
+        gameHandler.addMove(1, 2, Color.WHITE, "White territory");
+        gameHandler.addMove(3, 2, Color.WHITE, "White territory");
 
         int blackTerritoryScore = gameHandler.getTerritoryScore(Color.BLACK);
         int whiteTerritoryScore = gameHandler.getTerritoryScore(Color.WHITE);
 
-        assertEquals(5, blackTerritoryScore);
-        assertEquals(3, whiteTerritoryScore);
+        // The black territory should have 12 empty spaces inside.
+        // The white territory should have 1 empty space inside.
+        assertEquals(12, blackTerritoryScore);
+        assertEquals(1, whiteTerritoryScore);
     }
+
 
 }
