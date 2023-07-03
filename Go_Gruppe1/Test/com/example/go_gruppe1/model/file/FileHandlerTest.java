@@ -2,6 +2,12 @@ package com.example.go_gruppe1.model.file;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FileHandlerTest {
@@ -22,20 +28,45 @@ public class FileHandlerTest {
 
     @Test
     public void testSave() {
-        // Call the save method
         try {
+            // Assuming that saveFile creates or modifies a file
+            File beforeSave = new File("filename.json"); // Replace with your actual filename or path
+            long beforeSaveTimestamp = beforeSave.lastModified();
+
+            // wait a second to make sure there is a difference in the timestamp
+            Thread.sleep(1000);
+
             fileHandler.save();
+
+            File afterSave = new File("filename.json"); // Replace with your actual filename or path
+            long afterSaveTimestamp = afterSave.lastModified();
+
+            assertTrue(afterSaveTimestamp > beforeSaveTimestamp, "File was not saved");
         } catch (Exception e) {
-            fail("save() method threw an exception");
+            fail("save() method threw an exception: " + e.getMessage());
         }
     }
 
     @Test
     public void testOpen() {
-        // Call the open method
-        FileData fileData = fileHandler.open();
+        // Ensure there is a file that the method can open
+        File testFile = new File("testFile.json"); // Replace with your actual filename or path
 
-        assertNotNull(fileData);
+        if (!testFile.exists()) {
+            // Generate a file for the method to open
+            try (PrintWriter out = new PrintWriter(new FileOutputStream(testFile))) {
+                out.println("{}");
+            } catch (FileNotFoundException e) {
+                fail("Failed to create a file for the open() method to test with: " + e.getMessage());
+            }
+        }
+
+        try {
+            FileData fileData = fileHandler.open();
+            assertNotNull(fileData, "Failed to open file");
+        } catch (Exception e) {
+            fail("open() method threw an exception: " + e.getMessage());
+        }
     }
 
     @Test
