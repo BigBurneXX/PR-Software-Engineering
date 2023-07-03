@@ -155,10 +155,16 @@ public class SimpleBoard {
         return color.equals(Color.BLACK) ? blackTrapped : whiteTrapped;
     }
 
+    /**
+     * @param komi advantage for white
+     *
+     * calculates the total scores for both players
+     */
     public void calcScores(double komi) {
         blackTotal += blackTrapped;
         whiteTrapped += whiteTrapped + komi;
 
+        //counts number of own stones on board
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 if(board[row][col] == Color.BLACK) {
@@ -169,10 +175,12 @@ public class SimpleBoard {
             }
         }
 
+        //no stone has been set - draw
         if(blackTotal == 0 || whiteTotal == 0) {
             return;
         }
 
+        //initiate boolean matrix to check whole board
         boolean[][] visited = new boolean[size][size];
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -180,6 +188,7 @@ public class SimpleBoard {
             }
         }
 
+        //
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 if(!visited[row][col] && board[row][col] == null) {
@@ -188,17 +197,24 @@ public class SimpleBoard {
                     boolean whiteSurrounding = true;
                     findLibertyArea(row, col, libertyArea, visited);
                     for(Position p : libertyArea) {
-                        if(!isSurrounded(p.row(), p.col(), Color.BLACK)) {
+
+                        //liberty area is not exclusively surrounded by black
+                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.BLACK)) {
                             blackSurrounding = false;
                         }
-                        if(!isSurrounded(p.row(), p.col(), Color.WHITE)) {
+
+                        //liberty area is not exclusively surrounded by white
+                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.WHITE)) {
                             whiteSurrounding = false;
                         }
+
+                        //if a liberty area is surrounded by both colours, the area is not captured by any player
                         if(!blackSurrounding && !whiteSurrounding) {
                             break;
                         }
                     }
 
+                    //if a liberty area is exclusively surrounded by a colour, the area counts as captured
                     if(blackSurrounding) {
                         blackTotal += libertyArea.size();
                     } else if(whiteSurrounding) {
@@ -210,30 +226,56 @@ public class SimpleBoard {
         }
     }
 
-    private boolean isSurrounded(int row, int col, Color c) {
+    /**
+     * @param row position to be checked
+     * @param col position to be checked
+     * @param c color to be checked
+     * @return true if a position is exclusively surrounded by empty positions or same color
+     */
+    private boolean isExclusivelySurrounded(int row, int col, Color c) {
         boolean isSurrounded;
         isSurrounded = checkNeighbours(row + 1, col, c);
         isSurrounded &= checkNeighbours(row - 1, col, c);
         isSurrounded &= checkNeighbours(row, col + 1, c);
         isSurrounded &= checkNeighbours(row, col - 1, c);
         return isSurrounded;
-
     }
 
+    /**
+     * @param row position to be checked
+     * @param col position to be checked
+     * @param c color to be checked
+     * @return true if there's no neighbour or one of the same colour as passed in the parameter
+     */
     private boolean checkNeighbours(int row, int col, Color c) {
+        //position out of bounds
         if(row < 0 || row >= size || col < 0 || col >= size) {
             return true;
         }
+        //true if no neighbour or same color
         return board[row][col] == null || board[row][col] == c;
     }
 
+    /**
+     * @param row position to be checked
+     * @param col position to be checked
+     * @param libertyArea position to be checked
+     * @param visited boolean matrix to keep track of visited positions
+     *
+     * finds areas of empty positions
+     */
     private void findLibertyArea(int row, int col, ArrayList<Position> libertyArea, boolean[][] visited) {
+        //position out of bounds
         if (row < 0 || row >= size || col < 0 || col >= size) {
             return;
         }
+
+        //position has been visited
         if (visited[row][col]) {
             return;
         }
+
+        //position is not free
         if (board[row][col] != null) {
             return;
         }
