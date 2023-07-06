@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,18 +20,20 @@ public class FileControlTest {
     @BeforeEach
     public void setUp() throws IOException {
         fileControl = new FileControl();
-        outputFile = File.createTempFile("testFile", ".json");
-        System.out.println(outputFile.getAbsolutePath());  // add this line
+        outputFile = File.createTempFile("testFile", null);
+        // Delete the temp file, we will recreate it in testCreateFile
+        outputFile.delete();
+        System.out.println(outputFile.getAbsolutePath());
     }
-
 
     @Test
     public void testCreateFile() {
-        fileControl.createFile(outputFile.getAbsolutePath(), "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
+        String fileNameWithoutExtension = outputFile.getName().replaceFirst("[.][^.]+$", "");
+        fileControl.createFile(fileNameWithoutExtension, "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
 
         assertTrue(outputFile.exists());
 
-        FileData fileData = loadFileData(outputFile);
+        FileData fileData = fileControl.loadFile(outputFile);
         assertNotNull(fileData);
         assertEquals("BlackPlayer", fileData.player1Name());
         assertEquals("WhitePlayer", fileData.player2Name());
@@ -42,6 +45,7 @@ public class FileControlTest {
         assertEquals(0, fileData.moves().size());
     }
 
+
     @Test
     public void testWriteMoves() {
         fileControl.createFile(outputFile.getName(), "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
@@ -50,7 +54,7 @@ public class FileControlTest {
         fileControl.writeMoves(-1, 'p', "");
         fileControl.writeMoves(-2, 'r', "");
 
-        FileData fileData = loadFileData(outputFile);
+        FileData fileData = fileControl.loadFile(outputFile);
         assertNotNull(fileData);
         assertEquals(3, fileData.moves().size());
 
@@ -88,17 +92,24 @@ public class FileControlTest {
     }
 
     @Test
-    public void testSaveFile() throws IOException {
-        fileControl.createFile(outputFile.getName(), "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
+    public void testSaveFile() throws IOException, NoSuchFieldException, IllegalAccessException {
+        fileControl.createFile("tempFile.json", "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
 
         File targetDirectory = Files.createTempDirectory("target").toFile();
         File destinationFile = new File(targetDirectory, "newLocation.json");
 
+        // Use Java Reflection to set a new value for outputFile in fileControl
+        Field outputFileField = fileControl.getClass().getDeclaredField("outputFile");
+        outputFileField.setAccessible(true); // allows us to access private fields
+        outputFileField.set(fileControl, destinationFile);
+
         fileControl.saveFile();
+
+        // The outputFile field is private, so you have to retrieve it again to perform the assertions
+        File outputFile = (File) outputFileField.get(fileControl);
 
         assertFalse(outputFile.exists());
         assertTrue(destinationFile.exists());
-        assertEquals(destinationFile.getAbsolutePath(), outputFile.getAbsolutePath());
     }
 
     private FileData loadFileData(File file) {

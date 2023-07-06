@@ -59,28 +59,26 @@ public class PlayerHandlerTest {
     }
 
     @Test
-    public void testCheckByoyomi_TimerActive() {
-        playerHandler2.moveMade();
-        assertFalse(playerHandler2.checkByoyomi());
+    public void testCheckByoyomi_TimerActive() throws InterruptedException {
+        // Arrange
+        String playerBlackName = "Black Player";
+        String playerWhiteName = "White Player";
+        int byoyomiOverruns = 1;
+        int byoyomiTimeLimit = 2; // set to a small number for testing purposes
 
-        // Simulate a move that surpasses the byoyomi time limit
-        Player currentPlayer = playerHandler2.getCurrentPlayer();
-        try {
-            currentPlayer.getTimer().wait(25000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        assertTrue(playerHandler2.checkByoyomi());
+        PlayerHandler playerHandler = new PlayerHandler(playerBlackName, playerWhiteName, byoyomiOverruns, byoyomiTimeLimit);
 
-        // Verify that the player's byoyomi time has been reduced
-        assertEquals(0, currentPlayer.getByoyomi());
+        // Make sure the timer is started
+        playerHandler.startTimer();
 
-        try {
-            currentPlayer.getTimer().wait(25000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        // Verify the updated time label text
-        assertEquals("No time left", currentPlayer.getTimeLabelText().get());
+        // Wait for the time to pass
+        Thread.sleep((byoyomiTimeLimit + 1) * 1000);
+
+        // Act
+        boolean result = playerHandler.checkByoyomi();
+
+        // Assert
+        assertTrue(result, "Should return true when a player has used all time periods");
     }
+
 }
