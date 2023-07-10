@@ -27,13 +27,20 @@ public class FileControlTest {
     }
 
     @Test
-    public void testCreateFile() {
+    public void testCreateFile() throws NoSuchFieldException, IllegalAccessException {
         String fileNameWithoutExtension = outputFile.getName().replaceFirst("[.][^.]+$", "");
         fileControl.createFile(fileNameWithoutExtension, "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
 
-        assertTrue(outputFile.exists());
+        // Use reflection to get outputFile from fileControl
+        Field field = FileControl.class.getDeclaredField("outputFile");
+        field.setAccessible(true);
+        File outputFileInFileControl = (File) field.get(fileControl);
 
-        FileData fileData = fileControl.loadFile(outputFile);
+        // Assert that outputFile in fileControl exists
+        assertTrue(outputFileInFileControl.exists());
+
+        // Load the data from outputFile in fileControl
+        FileData fileData = fileControl.loadFile(outputFileInFileControl);
         assertNotNull(fileData);
         assertEquals("BlackPlayer", fileData.player1Name());
         assertEquals("WhitePlayer", fileData.player2Name());
