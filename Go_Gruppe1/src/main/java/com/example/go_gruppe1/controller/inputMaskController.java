@@ -73,7 +73,13 @@ public class inputMaskController {
 
         createSpinnerFactory(timePeriodSpinner, Integer.MAX_VALUE, "TimeOverruns");
         SpinnerValueFactory.IntegerSpinnerValueFactory durationValueFactory = createSpinnerFactory(durationSpinner, Integer.MAX_VALUE, "TimeLimit");
-        timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> durationValueFactory.setMin(newValue > 0 ? 30 : 0));
+        timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null)
+                newValue = 0;
+            durationValueFactory.setMin(newValue > 0 ? 30 : 0);
+            if (newValue <= 0)
+                durationValueFactory.setValue(0);
+        });
     }
 
     /**
@@ -90,9 +96,8 @@ public class inputMaskController {
         spinnerValueFactory.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null)
                 spinnerValueFactory.setValue(0);
-            else if(oldValue > spinnerValueFactory.getMax()){
+            else if(oldValue != null && oldValue > spinnerValueFactory.getMax())
                 createAlert(name, spinnerValueFactory.getMax());
-            }
         });
 
         return spinnerValueFactory;
@@ -112,7 +117,7 @@ public class inputMaskController {
         spinnerValueFactory.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null)
                 spinnerValueFactory.setValue(0.0);
-            else if(oldValue > spinnerValueFactory.getMax())
+            else if(oldValue != null && oldValue > spinnerValueFactory.getMax())
                 createAlert(name, spinnerValueFactory.getMax());
         });
 

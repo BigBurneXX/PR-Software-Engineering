@@ -1005,18 +1005,18 @@ public class boardMaskController {
                         total = gameHandler.getBoard().whiteTotal;
                         trapped = gameHandler.getBoard().getTrapped(WHITE);
                     }
-                    winnerMask.initiateDisplay(playerWon, total, trapped, komi/*gameHandler.getTerritoryScore(player.getColor()),
+                    winnerMask.initiateDisplay(fileHandler.getFileControl(), playerWon, total, trapped, komi/*gameHandler.getTerritoryScore(player.getColor()),
                                                     gameHandler.getBoard().getTrapped(player.getColor()), komi*/);
                 }
                 case 2 ->
                         //resigned
-                        winnerMask.initiateDisplay(playerWon, playerLost, true);
+                        winnerMask.initiateDisplay(fileHandler.getFileControl(), playerWon, playerLost, true);
                 case 3 ->
                         //byoyomi time ran out
-                        winnerMask.initiateDisplay(playerWon, playerLost, false);
+                        winnerMask.initiateDisplay(fileHandler.getFileControl(), playerWon, playerLost, false);
                 case 4 ->
                         //draw
-                        winnerMask.initiateDisplay();
+                        winnerMask.initiateDisplay(fileHandler.getFileControl());
             }
             terminalInfo("switching to winner Mask...\n[log end]");
 
