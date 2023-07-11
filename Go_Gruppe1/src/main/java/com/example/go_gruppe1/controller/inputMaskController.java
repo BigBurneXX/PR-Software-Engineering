@@ -71,6 +71,16 @@ public class inputMaskController {
                 handicapValueFactory.setMax(9);
         });
 
+        size13.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue)
+                handicapValueFactory.setMax(5);
+        });
+
+        size9.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue)
+                handicapValueFactory.setMax(5);
+        });
+
         createSpinnerFactory(timePeriodSpinner, Integer.MAX_VALUE, "TimeOverruns");
         SpinnerValueFactory.IntegerSpinnerValueFactory durationValueFactory = createSpinnerFactory(durationSpinner, Integer.MAX_VALUE, "TimeLimit");
         timePeriodSpinner.valueProperty().addListener((observable, oldValue, newValue) -> durationValueFactory.setMin(newValue > 0 ? 30 : 0));
