@@ -13,9 +13,9 @@ public class SimpleBoard {
     private int blackTrapped = 0;
     private int whiteTrapped = 0;
 
-    public int blackTotal = 0;
+    public long blackTotal = 0;
 
-    public int whiteTotal = 0;
+    public long whiteTotal = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
     /**
@@ -162,7 +162,7 @@ public class SimpleBoard {
      */
     public void calcScores(double komi) {
         blackTotal += blackTrapped;
-        whiteTrapped += whiteTrapped + komi;
+        whiteTotal += whiteTrapped;
 
         //counts number of own stones on board
         for (int row = 0; row < size; row++) {

@@ -995,7 +995,7 @@ public class boardMaskController {
             terminalInfo(playerWon + " won... \n[log end]");
             switch (reasonForWinning) {
                 case 1 -> {
-                    int total = 0;
+                    long total = 0;
                     int trapped = 0;
                     //2x passed
                     if(player.getColor() == BLACK) {
