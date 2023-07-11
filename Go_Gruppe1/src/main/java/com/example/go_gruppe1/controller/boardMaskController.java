@@ -215,9 +215,9 @@ public class boardMaskController {
             char colLetter = m.col();
 
             if(colLetter == 'p')
-                passButton.getOnMouseClicked().handle(null);
+                passButton.getOnMouseClicked();
             else if (colLetter == 'r')
-                resignButton.getOnMouseClicked().handle(null);
+                resignButton.getOnMouseClicked();
             else {
                 System.out.print("m.row() " + m.row() + ", ");
                 System.out.println("m.col() " + colLetter);
@@ -995,8 +995,8 @@ public class boardMaskController {
             terminalInfo(playerWon + " won... \n[log end]");
             switch (reasonForWinning) {
                 case 1 -> {
-                    long total = 0;
-                    int trapped = 0;
+                    long total;
+                    int trapped;
                     //2x passed
                     if(player.getColor() == BLACK) {
                         total = gameHandler.getBoard().blackTotal;
@@ -1111,8 +1111,9 @@ public class boardMaskController {
     }
 
     /**
-     * @param row
-     * @return
+     * @param row converts between logical row (starting with 0)
+     *                             and displayed row (starting with 9)
+     * @return the converted row value
      */
     private int switchNumAndIndex (int row) {
         return (boardSize - row);
