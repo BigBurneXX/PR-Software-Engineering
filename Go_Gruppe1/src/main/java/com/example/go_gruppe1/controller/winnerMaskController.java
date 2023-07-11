@@ -42,10 +42,13 @@ public class winnerMaskController {
         setScore(total);
         setTerritory(total - trapped);
         setTrapped(trapped);
-        if(komiValue == 0.0)
+        if(komiValue == 0.0) {
             komi.setVisible(false);
-        else
+        } else {
             setKomi(komiValue);
+            System.out.println(total + komiValue);
+            setScore(total + komiValue);
+        }
         initiateButtons();
     }
 
@@ -134,7 +137,7 @@ public class winnerMaskController {
      *
      * set points label and binds label size
      */
-    private void setScore(long total) {
+    private void setScore(double total) {
         totalPoints.setText("Total Points: " + total);
         bindFont(totalPoints, 0.042);
     }
