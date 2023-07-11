@@ -1013,7 +1013,7 @@ public class boardMaskController {
                         winnerMask.initiateDisplay(playerWon, playerLost, true);
                 case 3 ->
                         //byoyomi time ran out
-                        winnerMask.initiateDisplay(playerWon, playerLost, false);
+                        winnerMask.initiateDisplay(playerLost, playerWon, false);
                 case 4 ->
                         //draw
                         winnerMask.initiateDisplay();

@@ -46,7 +46,6 @@ public class winnerMaskController {
             komi.setVisible(false);
         } else {
             setKomi(komiValue);
-            System.out.println(total + komiValue);
             setScore(total + komiValue);
         }
         initiateButtons();
