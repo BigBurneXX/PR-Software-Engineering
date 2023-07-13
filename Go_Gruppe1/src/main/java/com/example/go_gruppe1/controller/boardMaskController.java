@@ -1090,7 +1090,13 @@ public class boardMaskController {
      */
     public void placeStoneAtSelection() {
         Circle selectedCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
-        setStone(selectedCircle);
+        // Check if the selected spot is already occupied
+        if (selectedCircle.getFill().equals(Color.TRANSPARENT)) {
+            setStone(selectedCircle);
+        } else {
+            // Spot is already occupied, show an error message or ignore the command
+            System.out.println("Spot already occupied. Please choose a different spot.");
+        }
     }
 
     /*
