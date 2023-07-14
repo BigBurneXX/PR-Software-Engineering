@@ -28,7 +28,49 @@ public class winnerMaskController {
     @FXML
     private Button saveAs, newGame, exit;
 
-    private final FileControl fileControl = new FileControl();
+    private FileControl fileControl;
+
+    /**
+     * @param event action event
+     * @throws IOException
+     *
+     * button logic for starting new game
+     */
+    @FXML
+    public void onNewGameClick(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
+        Parent root = loader.load();
+
+        inputMaskController inputMask = loader.getController();
+        inputMask.setSize(getWidth(), getHeight());
+        inputMask.initiateDisplay();
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setMinWidth(630);
+        stage.setMinHeight(500);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+
+    /**
+     * button logic for saving game file
+     */
+    @FXML
+    public void onSaveFileAsClick() {
+        System.out.println("Saving file...");
+        fileControl.saveFile();
+    }
+
+    /**
+     * button logic for exit button
+     */
+    @FXML
+    public void onExitGameClick() {
+        Platform.exit();
+    }
 
     /**
      * @param winner player that has won
@@ -37,7 +79,8 @@ public class winnerMaskController {
      *
      * initiates all labels in the case that the end of the game has been reached due to consecutive passing
      */
-    protected void initiateDisplay(String winner, long total, int trapped, double komiValue){
+    protected void initiateDisplay(FileControl fileControl, String winner, long total, int trapped, double komiValue){
+        this.fileControl = fileControl;
         declareWinner(winner + " won!");
         setScore(total);
         setTerritory(total - trapped);
@@ -58,7 +101,8 @@ public class winnerMaskController {
      *
      * initiates mask without labels
      */
-    protected void initiateDisplay(String winner, String other, boolean hasResigned){
+    protected void initiateDisplay(FileControl fileControl, String winner, String other, boolean hasResigned){
+        this.fileControl = fileControl;
         setName(winner, other, hasResigned);
         makeButtonsInvisible();
         initiateButtons();
@@ -67,7 +111,8 @@ public class winnerMaskController {
     /**
      * initiates display in case of a draw (consecutive passing and same points)
      */
-    protected void initiateDisplay(){
+    protected void initiateDisplay(FileControl fileControl){
+        this.fileControl = fileControl;
         makeButtonsInvisible();
         declareWinner("It's a draw");
     }
@@ -169,47 +214,6 @@ public class winnerMaskController {
     private void setKomi(double value) {
         komi.setText("Komi: " + value);
         bindFont(komi, 0.035);
-    }
-
-    /**
-     * button logic for saving game file
-     */
-    @FXML
-    public void onSaveFileAsClick() {
-        System.out.println("Saving file...");
-        fileControl.saveFile();
-    }
-
-    /**
-     * @param event action event
-     * @throws IOException
-     *
-     * button logic for starting new game
-     */
-    @FXML
-    public void onNewGameClick(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
-        Parent root = loader.load();
-
-        inputMaskController inputMask = loader.getController();
-        inputMask.setSize(getWidth(), getHeight());
-        inputMask.initiateDisplay();
-
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setMinWidth(630);
-        stage.setMinHeight(500);
-        stage.centerOnScreen();
-        stage.show();
-    }
-
-    /**
-     * button logic for exit button
-     */
-    @FXML
-    public void onExitGameClick() {
-        Platform.exit();
     }
 
     /**

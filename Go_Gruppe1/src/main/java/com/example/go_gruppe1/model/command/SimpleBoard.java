@@ -12,10 +12,8 @@ public class SimpleBoard {
     private final Color[][] board;
     private int blackTrapped = 0;
     private int whiteTrapped = 0;
-
-    public long blackTotal = 0;
-
-    public long whiteTotal = 0;
+    private long blackTotal = 0;
+    private long whiteTotal = 0;
     private final Set<Position> toDelete = new HashSet<>();
 
     /**
@@ -38,6 +36,8 @@ public class SimpleBoard {
         this.board = Arrays.stream(toCopy.board).map(Color[]::clone).toArray(Color[][]::new);
         this.blackTrapped = toCopy.getTrapped(Color.BLACK);
         this.whiteTrapped = toCopy.getTrapped(Color.WHITE);
+        this.blackTotal = toCopy.getTotal(Color.BLACK);
+        this.whiteTotal = toCopy.getTotal(Color.WHITE);
     }
 
     /**
@@ -156,74 +156,69 @@ public class SimpleBoard {
     }
 
     /**
+     * @param color color of trapped stones
+     * @return total score of the player with the stones of a specific color9
+     *
+     * returns the total score of a player
+     */
+    public long getTotal(Color color) {
+        return color.equals(Color.BLACK) ? blackTotal : whiteTrapped;
+    }
+
+    /**
      * @param komi advantage for white
      *
      * calculates the total scores for both players
      */
     public void calcScores(double komi) {
-        blackTotal += blackTrapped;
-        whiteTotal += whiteTrapped;
+        blackTotal = blackTrapped;
+        whiteTotal = whiteTrapped;
+        whiteTotal += komi;
 
+        /*
         //counts number of own stones on board
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                if(board[row][col] == Color.BLACK) {
+        for (int row = 0; row < size; row++)
+            for (int col = 0; col < size; col++)
+                if(board[row][col] == Color.BLACK)
                     blackTotal++;
-                } else if(board[row][col] == Color.WHITE) {
+                else if(board[row][col] == Color.WHITE)
                     whiteTotal++;
-                }
-            }
-        }
 
         //no stone has been set - draw
-        if(blackTotal == 0 || whiteTotal == 0) {
+        if(blackTotal == 0 || whiteTotal == 0)
             return;
-        }
+*/
 
         //initiate boolean matrix to check whole board
         boolean[][] visited = new boolean[size][size];
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                visited[row][col] = false;
-            }
-        }
 
-        //
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
+        for (int row = 0; row < size; row++)
+            for (int col = 0; col < size; col++)
                 if(!visited[row][col] && board[row][col] == null) {
                     ArrayList<Position> libertyArea = new ArrayList<>();
                     boolean blackSurrounding = true;
                     boolean whiteSurrounding = true;
                     findLibertyArea(row, col, libertyArea, visited);
                     for(Position p : libertyArea) {
-
                         //liberty area is not exclusively surrounded by black
-                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.BLACK)) {
+                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.BLACK))
                             blackSurrounding = false;
-                        }
 
                         //liberty area is not exclusively surrounded by white
-                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.WHITE)) {
+                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.WHITE))
                             whiteSurrounding = false;
-                        }
 
                         //if a liberty area is surrounded by both colours, the area is not captured by any player
-                        if(!blackSurrounding && !whiteSurrounding) {
+                        if(!blackSurrounding && !whiteSurrounding)
                             break;
-                        }
                     }
 
                     //if a liberty area is exclusively surrounded by a colour, the area counts as captured
-                    if(blackSurrounding) {
+                    if(blackSurrounding)
                         blackTotal += libertyArea.size();
-                    } else if(whiteSurrounding) {
+                    else if(whiteSurrounding)
                         whiteTotal += libertyArea.size();
-                    }
-
                 }
-            }
-        }
     }
 
     /**
@@ -249,9 +244,9 @@ public class SimpleBoard {
      */
     private boolean checkNeighbours(int row, int col, Color c) {
         //position out of bounds
-        if(row < 0 || row >= size || col < 0 || col >= size) {
+        if(row < 0 || row >= size || col < 0 || col >= size)
             return true;
-        }
+
         //true if no neighbour or same color
         return board[row][col] == null || board[row][col] == c;
     }
@@ -266,19 +261,12 @@ public class SimpleBoard {
      */
     private void findLibertyArea(int row, int col, ArrayList<Position> libertyArea, boolean[][] visited) {
         //position out of bounds
-        if (row < 0 || row >= size || col < 0 || col >= size) {
+        if (row < 0 || row >= size || col < 0 || col >= size)
             return;
-        }
 
-        //position has been visited
-        if (visited[row][col]) {
+        //position has been visited or is not free
+        if (visited[row][col] || board[row][col] != null)
             return;
-        }
-
-        //position is not free
-        if (board[row][col] != null) {
-            return;
-        }
 
         visited[row][col] = true;
         libertyArea.add(new Position(row, col));

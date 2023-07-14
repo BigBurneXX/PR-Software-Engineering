@@ -68,4 +68,11 @@ public class FileHandler {
     public void write(int row, char col, String text){
         fileControl.writeMoves(row, col, text);
     }
+
+    /**
+     * returns the FileControl of the FileHandler
+     */
+    public FileControl getFileControl(){
+        return fileControl;
+    }
 }

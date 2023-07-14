@@ -9,6 +9,7 @@ import com.example.go_gruppe1.model.player.PlayerHandler;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -159,7 +160,7 @@ public class boardMaskController {
      * switches to input mask if new game is clicked
      */
     @FXML
-    public void onNewGameClick() throws IOException {
+    public void onNewGameClick(ActionEvent event) throws IOException {
         terminalInfo("Starting new game... \n[log end]");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/inputMaskGUI.fxml"));
         Parent root = loader.load();
@@ -168,8 +169,7 @@ public class boardMaskController {
         inputMask.setSize(getWidth(), getHeight());
         inputMask.initiateDisplay();
 
-        Node source = topRegion.getTop();
-        Stage stage = (Stage) source.getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setMinWidth(630);
@@ -215,9 +215,9 @@ public class boardMaskController {
             char colLetter = m.col();
 
             if(colLetter == 'p')
-                passButton.getOnMouseClicked().handle(null);
+                passButton.getOnMouseClicked();
             else if (colLetter == 'r')
-                resignButton.getOnMouseClicked().handle(null);
+                resignButton.getOnMouseClicked();
             else {
                 System.out.print("m.row() " + m.row() + ", ");
                 System.out.println("m.col() " + colLetter);
@@ -234,7 +234,6 @@ public class boardMaskController {
                 gameHandler.addMove(row, colIndex, currentColor, text);
 
                 circlesOfBoard[colIndex + 1][row + 1].setFill(currentColor);
-                //setSampleSolutionDisplay(text);
                 currentColor = (currentColor == BLACK ? WHITE : BLACK);
             }
         }
@@ -315,22 +314,12 @@ public class boardMaskController {
         if(doublePassed){
             //switching to winnerMask
             Player current = playerHandler.getCurrentPlayer();
-            Player next = playerHandler.getNextPlayer();
             gameHandler.getBoard().calcScores(komi);
 
-            double currentPlayerPoints/*gameHandler.getTerritoryScore(current.getColor()) +
-                                            gameHandler.getBoard().getTrapped(current.getColor())*/;
-
-            double nextPlayerPoints/*gameHandler.getTerritoryScore(next.getColor()) +
-                                            gameHandler.getBoard().getTrapped(next.getColor())*/;
-
-            if(current.getColor() == BLACK) {
-                currentPlayerPoints = gameHandler.getBoard().blackTotal;
-                nextPlayerPoints = gameHandler.getBoard().whiteTotal;
-            } else {
-                currentPlayerPoints = gameHandler.getBoard().whiteTotal;
-                nextPlayerPoints = gameHandler.getBoard().blackTotal;
-            }
+            Color color = current.getColor();
+            double currentPlayerPoints = gameHandler.getBoard().getTotal(color);
+            Color otherColor = color.equals(BLACK) ? WHITE : BLACK;
+            double nextPlayerPoints = gameHandler.getBoard().getTotal(otherColor);
 
             //result > 0 --> currentPlayer won
             //result = 0 --> draw
@@ -403,6 +392,13 @@ public class boardMaskController {
         return boardPane.getHeight();
     }
 
+    /*
+      ================================================================================================================
+
+                                            initialization methods
+
+      ================================================================================================================
+     */
     /**
      * @param player1Name black player name
      * @param player2Name white player name
@@ -413,13 +409,6 @@ public class boardMaskController {
      * @param byoyomiTimeLimit byoyomi time per period
      *
      * initiates all components with information passed by the input mask
-     */
-    /*
-      ================================================================================================================
-
-                                            initialization methods
-
-      ================================================================================================================
      */
     protected void initiateDisplay(String player1Name, String player2Name, double komi, int handicaps, int boardSize,
                                    int byoyomiOverruns, int byoyomiTimeLimit) {
@@ -648,7 +637,6 @@ public class boardMaskController {
                 board.add(rectangle, col, row);
 
                 circlesOfBoard[row][col] = circle;
-                rectangle.toFront();
 
                 //make stones resizable and adjust X and Y properties
                 circle.radiusProperty().bind(boardPane.heightProperty().multiply(0.8).divide(boardSize).divide(4));
@@ -721,7 +709,6 @@ public class boardMaskController {
         } else if (modePlay.isSelected()) {
             if (circle.getFill().equals(HOVER_WHITE) || circle.getFill().equals(HOVER_BLACK)) {
                 setStone(circle);
-                circle.toFront();
             }
         }
     }
@@ -782,6 +769,7 @@ public class boardMaskController {
                 Pane rightCell = new Pane();
                 rightCell.setStyle("-fx-background-color:  #C4A484");
                 board.add(rightCell, boardSize, i);
+                rightCell.toBack();
             }
 
             //bottom color
@@ -806,17 +794,17 @@ public class boardMaskController {
                 GridPane.setHalignment(rightNumberCell, HPos.RIGHT);
                 GridPane.setValignment(rightNumberCell, VPos.TOP);
                 rightNumberCell.translateYProperty().bind(rightNumberCell.heightProperty().divide(2).multiply(-1));
-                topLetterCell.toBack();
-                bottomLetterCell.toBack();
                 board.add(rightNumberCell, boardSize, i);
             }
-
+            topLetterCell.toBack();
+            bottomLetterCell.toBack();
 
             //left color
             if (i != 0 && i != boardSize) {
                 Pane leftNumberCell = new Pane();
                 leftNumberCell.setStyle("-fx-background-color:  #C4A484");
                 board.add(leftNumberCell, 0, i);
+                leftNumberCell.toBack();
             }
 
             //bottom labelling
@@ -995,28 +983,20 @@ public class boardMaskController {
             terminalInfo(playerWon + " won... \n[log end]");
             switch (reasonForWinning) {
                 case 1 -> {
-                    long total = 0;
-                    int trapped = 0;
                     //2x passed
-                    if(player.getColor() == BLACK) {
-                        total = gameHandler.getBoard().blackTotal;
-                        trapped = gameHandler.getBoard().getTrapped(BLACK);
-                    } else {
-                        total = gameHandler.getBoard().whiteTotal;
-                        trapped = gameHandler.getBoard().getTrapped(WHITE);
-                    }
-                    winnerMask.initiateDisplay(playerWon, total, trapped, komi/*gameHandler.getTerritoryScore(player.getColor()),
-                                                    gameHandler.getBoard().getTrapped(player.getColor()), komi*/);
+                    long total = gameHandler.getBoard().getTotal(player.getColor());
+                    int trapped = gameHandler.getBoard().getTrapped(player.getColor());
+                    winnerMask.initiateDisplay(fileHandler.getFileControl(), playerWon, total, trapped, komi);
                 }
                 case 2 ->
                         //resigned
-                        winnerMask.initiateDisplay(playerWon, playerLost, true);
+                        winnerMask.initiateDisplay(fileHandler.getFileControl(), playerWon, playerLost, true);
                 case 3 ->
                         //byoyomi time ran out
-                        winnerMask.initiateDisplay(playerLost, playerWon, false);
+                        winnerMask.initiateDisplay(fileHandler.getFileControl(), playerWon, playerLost, false);
                 case 4 ->
                         //draw
-                        winnerMask.initiateDisplay();
+                        winnerMask.initiateDisplay(fileHandler.getFileControl());
             }
             terminalInfo("switching to winner Mask...\n[log end]");
 
@@ -1038,10 +1018,10 @@ public class boardMaskController {
     private void setupKeyboardControls() {
         board.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case W -> moveSelection(0, -1);
-                case S -> moveSelection(0, 1);
-                case A -> moveSelection(-1, 0);
-                case D -> moveSelection(1, 0);
+                case W, UP -> moveSelection(0, -1);
+                case S, DOWN -> moveSelection(0, 1);
+                case A, LEFT -> moveSelection(-1, 0);
+                case D, RIGHT -> moveSelection(1, 0);
                 case SPACE -> {
                     placeStoneAtSelection();
                     // Request focus again after placing a stone
@@ -1057,7 +1037,7 @@ public class boardMaskController {
      *
      * unhighlights the previous position
      */
-    public void moveSelection(int dx, int dy) {
+    private void moveSelection(int dx, int dy) {
         if (currentSelectionRow > 0 && currentSelectionRow <= boardSize &&
                 currentSelectionCol > 0 && currentSelectionCol <= boardSize) {
             Circle previousCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
@@ -1088,15 +1068,9 @@ public class boardMaskController {
     /**
      * places stone on pressed SPACE key
      */
-    public void placeStoneAtSelection() {
+    private void placeStoneAtSelection() {
         Circle selectedCircle = circlesOfBoard[currentSelectionRow][currentSelectionCol];
-        // Check if the selected spot is already occupied
-        if (selectedCircle.getFill().equals(Color.TRANSPARENT)) {
-            setStone(selectedCircle);
-        } else {
-            // Spot is already occupied, show an error message or ignore the command
-            System.out.println("Spot already occupied. Please choose a different spot.");
-        }
+        setStone(selectedCircle);
     }
 
     /*
@@ -1117,8 +1091,9 @@ public class boardMaskController {
     }
 
     /**
-     * @param row
-     * @return
+     * @param row converts between logical row (starting with 0)
+     *                             and displayed row (starting with 9)
+     * @return the converted row value
      */
     private int switchNumAndIndex (int row) {
         return (boardSize - row);
