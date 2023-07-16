@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class PlayerTest {
-
     private Player player;
     private Player player2;
 

@@ -3,9 +3,6 @@ package com.example.go_gruppe1.model.command;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GameHandler {
     private final Game game;
 

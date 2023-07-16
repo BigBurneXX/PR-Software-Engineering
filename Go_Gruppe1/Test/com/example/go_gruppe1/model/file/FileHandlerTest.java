@@ -89,4 +89,9 @@ public class FileHandlerTest {
         String text = "Stone";
         fileHandler.write(row, col, text);
     }
+
+    @Test
+    public void testGetFileControl() {
+        fileHandler.getFileControl();
+    }
 }

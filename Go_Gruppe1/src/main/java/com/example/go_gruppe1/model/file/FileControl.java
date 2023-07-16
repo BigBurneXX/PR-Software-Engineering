@@ -105,8 +105,7 @@ public class FileControl {
      */
     private void updateMovesLog(int row, char col, String text) {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(outputFile.getAbsolutePath()))) {
-            Type type = new TypeToken<FileData>() {
-            }.getType();
+            Type type = new TypeToken<FileData>(){}.getType();
             FileData fileData = gson.fromJson(reader, type);
 
             if (fileData != null) {
@@ -158,9 +157,8 @@ public class FileControl {
             } catch (IOException e) {
                 terminalInfo("an IO Exception was thrown when trying to save file to " + selectedDirectory.getName());
             }
-        } else {
+        } else
             terminalInfo("No directory selected");
-        }
     }
 
     /**

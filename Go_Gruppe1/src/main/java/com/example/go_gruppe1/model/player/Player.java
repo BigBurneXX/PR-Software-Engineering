@@ -1,5 +1,6 @@
 package com.example.go_gruppe1.model.player;
 
+import com.example.go_gruppe1.controller.GoTimer;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;

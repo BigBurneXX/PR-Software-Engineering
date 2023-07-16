@@ -54,14 +54,23 @@ public class FileControlTest {
 
 
     @Test
-    public void testWriteMoves() {
-        fileControl.createFile(outputFile.getName(), "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
+    public void testWriteMoves() throws NoSuchFieldException, IllegalAccessException {
+        fileControl.createFile("", "BlackPlayer", "WhitePlayer", 19, 6.5, 0, 3, 30);
 
         fileControl.writeMoves(3, 'c', "Move");
         fileControl.writeMoves(-1, 'p', "");
         fileControl.writeMoves(-2, 'r', "");
 
-        FileData fileData = fileControl.loadFile(outputFile);
+        // Use reflection to get outputFile from fileControl
+        Field field = FileControl.class.getDeclaredField("outputFile");
+        field.setAccessible(true);
+        File outputFileInFileControl = (File) field.get(fileControl);
+
+        // Assert that outputFile in fileControl exists
+        assertTrue(outputFileInFileControl.exists());
+
+        // Load the data from outputFile in fileControl
+        FileData fileData = fileControl.loadFile(outputFileInFileControl);
         assertNotNull(fileData);
         assertEquals(3, fileData.moves().size());
 
@@ -117,16 +126,6 @@ public class FileControlTest {
 
         assertFalse(outputFile.exists());
         assertTrue(destinationFile.exists());
-    }
-
-    private FileData loadFileData(File file) {
-        try {
-            String json = new String(Files.readAllBytes(file.toPath()));
-            return new Gson().fromJson(json, FileData.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private void writeJsonToFile(File file, FileData fileData) {

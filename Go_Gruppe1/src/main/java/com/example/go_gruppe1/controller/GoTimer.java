@@ -1,4 +1,4 @@
-package com.example.go_gruppe1.model.player;
+package com.example.go_gruppe1.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,7 +16,7 @@ public class GoTimer {
     /**
      * initiates timer with start time 0
      */
-    protected GoTimer(){
+    public GoTimer(){
         startTime = 0;
         timeProperty = new SimpleStringProperty("00:00");
 
@@ -27,7 +27,7 @@ public class GoTimer {
     /**
      * starts timer
      */
-    protected void startTimer(){
+    public void startTimer(){
         startTime = System.currentTimeMillis();
         timeline.play();
     }
@@ -35,7 +35,7 @@ public class GoTimer {
     /**
      * stops timer
      */
-    protected void stopTimer(){
+    public void stopTimer(){
         timeline.stop();
     }
 

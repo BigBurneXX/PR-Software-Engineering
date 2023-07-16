@@ -162,7 +162,7 @@ public class SimpleBoard {
      * returns the total score of a player
      */
     public long getTotal(Color color) {
-        return color.equals(Color.BLACK) ? blackTotal : whiteTrapped;
+        return color.equals(Color.BLACK) ? blackTotal : whiteTotal;
     }
 
     /**
@@ -175,7 +175,6 @@ public class SimpleBoard {
         whiteTotal = whiteTrapped;
         whiteTotal += komi;
 
-        /*
         //counts number of own stones on board
         for (int row = 0; row < size; row++)
             for (int col = 0; col < size; col++)
@@ -187,7 +186,6 @@ public class SimpleBoard {
         //no stone has been set - draw
         if(blackTotal == 0 || whiteTotal == 0)
             return;
-*/
 
         //initiate boolean matrix to check whole board
         boolean[][] visited = new boolean[size][size];
