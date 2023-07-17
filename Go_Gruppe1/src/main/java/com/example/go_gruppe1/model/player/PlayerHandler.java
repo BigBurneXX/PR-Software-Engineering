@@ -5,7 +5,6 @@ import javafx.scene.paint.Color;
 public class PlayerHandler {
     private final Player playerBlack;
     private final Player playerWhite;
-    private final int byoyomiOverruns;
     private final int byoyomiTimeLimit;
     private final boolean timerActive;
     private Player currentPlayer;
@@ -36,7 +35,6 @@ public class PlayerHandler {
 
         terminalInfo("Number of Byoyomi time overruns: " + byoyomiOverruns);
         terminalInfo("Byoyomi time limit: " + byoyomiTimeLimit);
-        this.byoyomiOverruns = byoyomiOverruns;
         this.byoyomiTimeLimit = byoyomiTimeLimit;
         timerActive = (byoyomiOverruns != 0);
 
@@ -101,20 +99,6 @@ public class PlayerHandler {
      */
     public Player getPlayerWhite(){
         return playerWhite;
-    }
-
-    /**
-     * @return # of byoyomi time periods
-     */
-    public int getByoyomiOverruns(){
-        return byoyomiOverruns;
-    }
-
-    /**
-     * @return time of byoyomi period
-     */
-    public int getByoyomiTimeLimit(){
-        return byoyomiTimeLimit;
     }
 
     /**

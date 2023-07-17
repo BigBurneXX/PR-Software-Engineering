@@ -66,13 +66,8 @@ public class Game {
             for(int col = 0; col < currentBoard[row].length; col++)
                 if(currentBoard[row][col] != null)
                     currentSet.add(new Position(row, col));
-        if(beforeOne.isEmpty())
-            beforeOne.addAll(currentSet);
-        else if(beforeTwo.isEmpty())
-            beforeTwo.addAll(currentSet);
-        else
-            if(koViolated(command, currentSet))
-                return true;
+        if(koViolated(command, currentSet))
+            return true;
         beforeTwo.clear();
         beforeTwo.addAll(beforeOne);
         beforeOne.clear();

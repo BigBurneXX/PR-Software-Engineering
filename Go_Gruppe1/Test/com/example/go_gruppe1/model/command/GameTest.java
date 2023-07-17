@@ -17,17 +17,28 @@ public class GameTest {
 
     @Test
     public void testExecuteCommand() {
-        Command command = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.YELLOW);
-        Command command1 = new PlaceStoneCommand(game.getBoard(), 1, 0, Color.YELLOW);
-        Command command2 = new PlaceStoneCommand(game.getBoard(), 1, 2, Color.YELLOW);
-        Command command3 = new PlaceStoneCommand(game.getBoard(), 2, 1, Color.YELLOW);
-        Command commandSuicide = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.GRAY);
+        Command command = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.BLACK);
+        Command command1 = new PlaceStoneCommand(game.getBoard(), 1, 0, Color.BLACK);
+        Command command2 = new PlaceStoneCommand(game.getBoard(), 1, 2, Color.BLACK);
+        Command command3 = new PlaceStoneCommand(game.getBoard(), 2, 1, Color.BLACK);
+        Command commandSuicide = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.WHITE);
+
+        Command command4 = new PlaceStoneCommand(game.getBoard(), 0, 2, Color.WHITE);
+        Command command5 = new PlaceStoneCommand(game.getBoard(), 1, 3, Color.WHITE);
+        Command command6 = new PlaceStoneCommand(game.getBoard(), 2, 2, Color.WHITE);
+        Command ko1 = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.WHITE);
+        Command ko2 = new PlaceStoneCommand(game.getBoard(), 1, 2, Color.BLACK);
 
         assertEquals(0, game.executeCommand(command));
         game.executeCommand(command1);
         game.executeCommand(command2);
         game.executeCommand(command3);
         assertEquals(1, game.executeCommand(commandSuicide));
+        game.executeCommand(command4);
+        game.executeCommand(command5);
+        game.executeCommand(command6);
+        assertEquals(0, game.executeCommand(ko1));
+        assertEquals(2, game.executeCommand(ko2));
     }
 
     @Test
@@ -124,5 +135,4 @@ public class GameTest {
         game.undoLastMove();  // this should not raise any exception
         game.redoLastMove();  // this should not raise any exception
     }
-    
 }

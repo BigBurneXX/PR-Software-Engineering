@@ -731,6 +731,9 @@ public class boardMaskController {
 
         int isValidMove = gameHandler.addMove(row-1, col-1, current);
         if (isValidMove != 0) {
+            if(isValidMove != 1)
+                gameHandler.undo();
+
             drawStones();
             modeAndMoveDisplay.setText(isValidMove == 1 ? "This is suicide. Please select another position" :
                     "This violates the ko logic. Please select another position");
