@@ -171,4 +171,8 @@ public class FileControl {
     private void terminalInfo(String data) {
         System.out.println(data);
     }
+
+    public File getOutputFile() {
+        return outputFile;
+    }
 }
