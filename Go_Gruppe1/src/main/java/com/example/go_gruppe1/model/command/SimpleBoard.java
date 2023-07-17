@@ -2,7 +2,6 @@ package com.example.go_gruppe1.model.command;
 
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,8 +11,8 @@ public class SimpleBoard {
     private final Color[][] board;
     private int blackTrapped = 0;
     private int whiteTrapped = 0;
-    private long blackTotal = 0;
-    private long whiteTotal = 0;
+    private double blackTotal = 0.0;
+    private double whiteTotal = 0.0;
     private final Set<Position> toDelete = new HashSet<>();
 
     /**
@@ -161,7 +160,7 @@ public class SimpleBoard {
      *
      * returns the total score of a player
      */
-    public long getTotal(Color color) {
+    public double getTotal(Color color) {
         return color.equals(Color.BLACK) ? blackTotal : whiteTotal;
     }
 
@@ -183,8 +182,8 @@ public class SimpleBoard {
                 else if(board[row][col] == Color.WHITE)
                     whiteTotal++;
 
-        //no stone has been set - draw
-        if(blackTotal == 0 || whiteTotal == 0)
+        //no stone has been set -> draw
+        if(blackTotal == 0 && whiteTotal == 0)
             return;
 
         //initiate boolean matrix to check whole board
@@ -192,23 +191,20 @@ public class SimpleBoard {
 
         for (int row = 0; row < size; row++)
             for (int col = 0; col < size; col++)
-                if(!visited[row][col] && board[row][col] == null) {
-                    ArrayList<Position> libertyArea = new ArrayList<>();
-                    boolean blackSurrounding = true;
-                    boolean whiteSurrounding = true;
+                if(board[row][col] == null) {
+                    Set<Position> libertyArea = new HashSet<>();
+                    boolean blackSurrounding = false;
+                    boolean whiteSurrounding = false;
                     findLibertyArea(row, col, libertyArea, visited);
                     for(Position p : libertyArea) {
-                        //liberty area is not exclusively surrounded by black
-                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.BLACK))
-                            blackSurrounding = false;
-
-                        //liberty area is not exclusively surrounded by white
-                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.WHITE))
-                            whiteSurrounding = false;
-
+                        Color color = isExclusivelySurrounded(p.row(), p.col());
                         //if a liberty area is surrounded by both colours, the area is not captured by any player
-                        if(!blackSurrounding && !whiteSurrounding)
+                        if(color == null)
                             break;
+                        else if(color.equals(Color.BLACK))      //liberty area is not exclusively surrounded by black
+                            blackSurrounding = true;
+                        else                                    //liberty area is not exclusively surrounded by white
+                            whiteSurrounding = true;
                     }
 
                     //if a liberty area is exclusively surrounded by a colour, the area counts as captured
@@ -222,16 +218,26 @@ public class SimpleBoard {
     /**
      * @param row position to be checked
      * @param col position to be checked
-     * @param c color to be checked
-     * @return true if a position is exclusively surrounded by empty positions or same color
+     * @return Color if a position is exclusively surrounded by empty positions or same color
      */
-    private boolean isExclusivelySurrounded(int row, int col, Color c) {
+    private Color isExclusivelySurrounded(int row, int col) {
+        Color c = Color.BLACK;
         boolean isSurrounded;
         isSurrounded = checkNeighbours(row + 1, col, c);
         isSurrounded &= checkNeighbours(row - 1, col, c);
         isSurrounded &= checkNeighbours(row, col + 1, c);
         isSurrounded &= checkNeighbours(row, col - 1, c);
-        return isSurrounded;
+        if(isSurrounded)
+            return c;
+
+        c = Color.WHITE;
+        isSurrounded = checkNeighbours(row + 1, col, c);
+        isSurrounded &= checkNeighbours(row - 1, col, c);
+        isSurrounded &= checkNeighbours(row, col + 1, c);
+        isSurrounded &= checkNeighbours(row, col - 1, c);
+        if(isSurrounded)
+            return c;
+        return null;
     }
 
     /**
@@ -257,7 +263,7 @@ public class SimpleBoard {
      *
      * finds areas of empty positions
      */
-    private void findLibertyArea(int row, int col, ArrayList<Position> libertyArea, boolean[][] visited) {
+    private void findLibertyArea(int row, int col, Set<Position> libertyArea, boolean[][] visited) {
         //position out of bounds
         if (row < 0 || row >= size || col < 0 || col >= size)
             return;

@@ -51,5 +51,9 @@ public class GameHandler {
     public SimpleBoard getBoard(){
         return game.getBoard();
     }
+
+    /**
+     * @return description of the current board state
+     */
     public StringProperty getDescription() {return game.getDescription();}
 }

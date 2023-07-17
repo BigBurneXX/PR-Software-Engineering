@@ -79,7 +79,7 @@ public class winnerMaskController {
      *
      * initiates all labels in the case that the end of the game has been reached due to consecutive passing
      */
-    protected void initiateDisplay(FileControl fileControl, String winner, long total, int trapped, double komiValue){
+    protected void initiateDisplay(FileControl fileControl, String winner, double total, int trapped, double komiValue){
         this.fileControl = fileControl;
         declareWinner(winner + " won!");
         setScore(total);
@@ -191,7 +191,7 @@ public class winnerMaskController {
      *
      * set captured territory label and binds label size
      */
-    private void setTerritory(long territoryValue){
+    private void setTerritory(double territoryValue){
         territory.setText("Territory: " + territoryValue);
         bindFont(territory, 0.035);
     }

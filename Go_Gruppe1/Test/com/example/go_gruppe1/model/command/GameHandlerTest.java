@@ -84,5 +84,10 @@ public class GameHandlerTest {
        // assertEquals(1, whiteTerritoryScore);
     }
 
-
+    @Test
+    public void testGetDescription() {
+        gameHandler = new GameHandler(3);
+        gameHandler.addMove(1, 1, Color.BLACK, "This is a test!");
+        assertEquals("This is a test!", gameHandler.getDescription().getValue());
+    }
 }

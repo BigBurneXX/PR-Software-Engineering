@@ -984,7 +984,7 @@ public class boardMaskController {
             switch (reasonForWinning) {
                 case 1 -> {
                     //2x passed
-                    long total = gameHandler.getBoard().getTotal(player.getColor());
+                    double total = gameHandler.getBoard().getTotal(player.getColor());
                     int trapped = gameHandler.getBoard().getTrapped(player.getColor());
                     winnerMask.initiateDisplay(fileHandler.getFileControl(), playerWon, total, trapped, komi);
                 }
