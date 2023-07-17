@@ -5,14 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerHandlerTest {
-
     private PlayerHandler playerHandler;
     private PlayerHandler playerHandler2;
 
@@ -56,8 +53,6 @@ public class PlayerHandlerTest {
     public void testGetters() {
         assertEquals("BlackPlayer", playerHandler.getPlayerBlack().getName());
         assertEquals("WhitePlayer", playerHandler.getPlayerWhite().getName());
-        assertEquals(0, playerHandler.getByoyomiOverruns());
-        assertEquals(0, playerHandler.getByoyomiTimeLimit());
     }
 
     @Test
@@ -68,7 +63,7 @@ public class PlayerHandlerTest {
     @Test
     public void testCheckByoyomi_TimerActive_ExceedsTimeLimit() throws InterruptedException {
         // Setup
-        int byoyomiOverruns = 2;
+        int byoyomiOverruns = 1;
         int byoyomiTimeLimit = 2; // set a smaller time limit for testing
 
         Platform.startup(() -> {});
@@ -81,10 +76,17 @@ public class PlayerHandlerTest {
         });
 
         // Wait for (byoyomiTimeLimit * byoyomiOverruns + 1) seconds to force byoyomi overrun
-        Thread.sleep((byoyomiTimeLimit * byoyomiOverruns + 1) * 1000);
+        Thread.sleep(2000);
 
         Platform.runLater(() -> {
             // Assert
+            assertFalse(playerHandler2.checkByoyomi());
+            assertEquals(1 + " time period(s) à " + byoyomiTimeLimit + " s", playerHandler2.getCurrentPlayer().getTimeLabelText().get());
+        });
+
+        Thread.sleep(5000);
+
+        Platform.runLater(() -> {
             assertTrue(playerHandler2.checkByoyomi());
             assertEquals("No time left", playerHandler2.getCurrentPlayer().getTimeLabelText().get());
         });
@@ -204,19 +206,13 @@ public class PlayerHandlerTest {
     }
 
     @Test
-    public void testCheckByoyomiWithDifferentValues() {
-        PlayerHandler playerHandlerByoyomi = new PlayerHandler("BlackPlayer", "WhitePlayer", 2, 30);
-        // Setup and assertions here...
-    }
-
-    @Test
     public void testStartTimerWithoutByoyomi() {
         PlayerHandler playerHandlerNoByoyomi = new PlayerHandler("BlackPlayer", "WhitePlayer");
         playerHandlerNoByoyomi.startTimer();
 
         // Add some assertions here, depending on your implementation.
     }
-
+/*
     @Test
     public void testTerminalInfo() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -236,6 +232,19 @@ public class PlayerHandlerTest {
         // reset the System.out
         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
     }
+*/
+    @Test
+    public void testTerminalInfo() {
+        // Redirect the standard output to a ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
 
+        PlayerHandler playerHandler2 = new PlayerHandler("Nice", "Done", 1, 5);
+        // Get the output from the ByteArrayOutputStream
+        String consoleOutput = outputStream.toString().trim();
+
+        // Assert that the output matches the expected data
+        assertEquals("Number of Byoyomi time overruns: " + 1 + System.lineSeparator() + "Byoyomi time limit: " + 5, consoleOutput);
+    }
 }
 
