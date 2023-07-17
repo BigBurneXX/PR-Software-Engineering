@@ -85,7 +85,7 @@ public class SimpleBoardTest {
         // Perform assertions to check the expected behavior
         assertEquals(1, board.getTrapped(Color.BLACK));
         assertEquals(0, board.getTrapped(Color.WHITE));
-        assertEquals(5.0, board.getTotal(Color.BLACK), 0.01);
+        assertEquals(6.0, board.getTotal(Color.BLACK), 0.01);
         assertEquals(0.5, board.getTotal(Color.WHITE), 0.01);
     }
 }

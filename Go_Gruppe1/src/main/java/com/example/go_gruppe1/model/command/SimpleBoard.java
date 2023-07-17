@@ -174,18 +174,6 @@ public class SimpleBoard {
         whiteTotal = whiteTrapped;
         whiteTotal += komi;
 
-        //counts number of own stones on board
-        for (int row = 0; row < size; row++)
-            for (int col = 0; col < size; col++)
-                if(board[row][col] == Color.BLACK)
-                    blackTotal++;
-                else if(board[row][col] == Color.WHITE)
-                    whiteTotal++;
-
-        //no stone has been set -> draw
-        if(blackTotal == 0 && whiteTotal == 0)
-            return;
-
         //initiate boolean matrix to check whole board
         boolean[][] visited = new boolean[size][size];
 
@@ -222,22 +210,28 @@ public class SimpleBoard {
      */
     private Color isExclusivelySurrounded(int row, int col) {
         Color c = Color.BLACK;
+        if (isExclusivelySurrounded(row, col, c))
+            return c;
+
+        c = Color.WHITE;
+        if (isExclusivelySurrounded(row, col, c))
+            return c;
+        return null;
+    }
+
+    /**
+     * @param row position to be checked
+     * @param col position to be checked
+     * @param c color to be checked
+     * @return Color if a position is exclusively surrounded by empty positions or same color
+     */
+    private boolean isExclusivelySurrounded(int row, int col, Color c) {
         boolean isSurrounded;
         isSurrounded = checkNeighbours(row + 1, col, c);
         isSurrounded &= checkNeighbours(row - 1, col, c);
         isSurrounded &= checkNeighbours(row, col + 1, c);
         isSurrounded &= checkNeighbours(row, col - 1, c);
-        if(isSurrounded)
-            return c;
-
-        c = Color.WHITE;
-        isSurrounded = checkNeighbours(row + 1, col, c);
-        isSurrounded &= checkNeighbours(row - 1, col, c);
-        isSurrounded &= checkNeighbours(row, col + 1, c);
-        isSurrounded &= checkNeighbours(row, col - 1, c);
-        if(isSurrounded)
-            return c;
-        return null;
+        return isSurrounded;
     }
 
     /**
