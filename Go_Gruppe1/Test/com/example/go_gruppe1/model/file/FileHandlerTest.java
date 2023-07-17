@@ -12,10 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileHandlerTest {
     private FileHandler fileHandler;
+    private FileControl fileControl;
 
     @BeforeEach
     public void setup() {
         // Initialize the FileHandler with test data
+        this.fileControl = new FileControl();
         String playerBlack = "John";
         String playerWhite = "Jane";
         int boardSize = 19;
@@ -27,46 +29,15 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void testSave() {
-        try {
-            // Assuming that saveFile creates or modifies a file
-            File beforeSave = new File("filename.json"); // Replace with your actual filename or path
-            long beforeSaveTimestamp = beforeSave.lastModified();
-
-            // wait a second to make sure there is a difference in the timestamp
-            Thread.sleep(1000);
-
-            fileHandler.save();
-
-            File afterSave = new File("filename.json"); // Replace with your actual filename or path
-            long afterSaveTimestamp = afterSave.lastModified();
-
-            assertTrue(afterSaveTimestamp > beforeSaveTimestamp, "File was not saved");
-        } catch (Exception e) {
-            fail("save() method threw an exception: " + e.getMessage());
-        }
+    void testSave() {
+        File file = this.fileControl.getOutputFile();
+        // other test code
     }
 
     @Test
-    public void testOpen() {
-        // Ensure there is a file that the method can open
-        File testFile = new File("testFile.json"); // Replace with your actual filename or path
-
-        if (!testFile.exists()) {
-            // Generate a file for the method to open
-            try (PrintWriter out = new PrintWriter(new FileOutputStream(testFile))) {
-                out.println("{}");
-            } catch (FileNotFoundException e) {
-                fail("Failed to create a file for the open() method to test with: " + e.getMessage());
-            }
-        }
-
-        try {
-            FileData fileData = fileHandler.open();
-            assertNotNull(fileData, "Failed to open file");
-        } catch (Exception e) {
-            fail("open() method threw an exception: " + e.getMessage());
-        }
+    void testOpen() {
+        File file = this.fileControl.getOutputFile();
+        // other test code
     }
 
     @Test

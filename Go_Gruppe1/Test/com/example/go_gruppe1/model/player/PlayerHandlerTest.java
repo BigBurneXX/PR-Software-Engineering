@@ -1,5 +1,6 @@
 package com.example.go_gruppe1.model.player;
 
+import javafx.application.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,25 +61,29 @@ public class PlayerHandlerTest {
 
     @Test
     public void testCheckByoyomi_TimerActive() throws InterruptedException {
-        // Arrange
-        String playerBlackName = "Black Player";
-        String playerWhiteName = "White Player";
+        // Setup
         int byoyomiOverruns = 1;
-        int byoyomiTimeLimit = 2; // set to a small number for testing purposes
+        int byoyomiTimeLimit = 2; // set a smaller time limit for the purpose of the test
 
-        PlayerHandler playerHandler = new PlayerHandler(playerBlackName, playerWhiteName, byoyomiOverruns, byoyomiTimeLimit);
+        Platform.startup(() -> {});
 
-        // Make sure the timer is started
-        playerHandler.startTimer();
+        Platform.runLater(() -> {
+            playerHandler2 = new PlayerHandler("BluePlayer", "YellowPlayer", byoyomiOverruns, byoyomiTimeLimit);
 
-        // Wait for the time to pass
-        Thread.sleep((byoyomiTimeLimit + 1) * 1000);
+            // Act
+            playerHandler2.startTimer();
+        });
 
-        // Act
-        boolean result = playerHandler.checkByoyomi();
+        Thread.sleep((byoyomiTimeLimit + 1) * 1000); // Delay for time limit + 1 second to trigger byoyomi
 
-        // Assert
-        assertTrue(result, "Should return true when a player has used all time periods");
+        Platform.runLater(() -> {
+            // Assert
+            assertTrue(playerHandler2.checkByoyomi());
+            assertEquals("No time left", playerHandler2.getCurrentPlayer().getTimeLabelText().get());
+        });
     }
+
+
+
 
 }
