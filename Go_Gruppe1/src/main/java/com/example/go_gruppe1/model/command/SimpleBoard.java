@@ -181,18 +181,19 @@ public class SimpleBoard {
             for (int col = 0; col < size; col++)
                 if(board[row][col] == null) {
                     Set<Position> libertyArea = new HashSet<>();
-                    boolean blackSurrounding = false;
-                    boolean whiteSurrounding = false;
+                    boolean blackSurrounding = true;
+                    boolean whiteSurrounding = true;
                     findLibertyArea(row, col, libertyArea, visited);
                     for(Position p : libertyArea) {
-                        Color color = isExclusivelySurrounded(p.row(), p.col());
+                        //liberty area is not exclusively surrounded by black
+                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.BLACK))
+                            blackSurrounding = false;
+                        //liberty area is not exclusively surrounded by white
+                        if(!isExclusivelySurrounded(p.row(), p.col(), Color.WHITE))
+                            whiteSurrounding = false;
                         //if a liberty area is surrounded by both colours, the area is not captured by any player
-                        if(color == null)
+                        if(!blackSurrounding && !whiteSurrounding)
                             break;
-                        else if(color.equals(Color.BLACK))      //liberty area is not exclusively surrounded by black
-                            blackSurrounding = true;
-                        else                                    //liberty area is not exclusively surrounded by white
-                            whiteSurrounding = true;
                     }
 
                     //if a liberty area is exclusively surrounded by a colour, the area counts as captured
@@ -201,22 +202,6 @@ public class SimpleBoard {
                     else if(whiteSurrounding)
                         whiteTotal += libertyArea.size();
                 }
-    }
-
-    /**
-     * @param row position to be checked
-     * @param col position to be checked
-     * @return Color if a position is exclusively surrounded by empty positions or same color
-     */
-    private Color isExclusivelySurrounded(int row, int col) {
-        Color c = Color.BLACK;
-        if (isExclusivelySurrounded(row, col, c))
-            return c;
-
-        c = Color.WHITE;
-        if (isExclusivelySurrounded(row, col, c))
-            return c;
-        return null;
     }
 
     /**
