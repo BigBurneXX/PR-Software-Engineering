@@ -23,7 +23,7 @@ public class Game {
      */
     public Game(int boardSize) {
         this.board = new SimpleBoard(boardSize);
-        this.description = new SimpleStringProperty("Something!!");
+        this.description = new SimpleStringProperty("");
         this.undoStack = new Stack<>();
         this.redoStack = new Stack<>();
     }
@@ -33,23 +33,12 @@ public class Game {
      * @return 0 if stone placement is fine, 1 if it is suicide and 2 if ko logic is violated
      */
     public int executeCommand(Command command) {
-        for(int row = 0; row < board.getBoard().length; row++) {
-            for (int col = 0; col < board.getBoard()[row].length; col++)
-                System.out.print(board.getBoard()[row][col] + "\t\t");
-            System.out.println();
-        }
         undoStack.push(command);
         redoStack.clear();
         if(command.execute() == 1)
             return 1;
-        if(checkForKo(command)) {
-            for(int row = 0; row < command.getBoard().getBoard().length; row++) {
-                for (int col = 0; col < command.getBoard().getBoard()[row].length; col++)
-                    System.out.print(command.getBoard().getBoard()[row][col] + "\t\t");
-                System.out.println();
-            }
+        if(checkForKo(command))
             return 2;
-        }
         board = command.getBoard();
         description.set(command.getDescription());
         return 0;

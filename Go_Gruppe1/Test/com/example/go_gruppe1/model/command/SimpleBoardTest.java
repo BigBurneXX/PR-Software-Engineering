@@ -73,20 +73,42 @@ public class SimpleBoardTest {
 
     @Test
     public void testCalcScores() {
-        // Set up the initial state for testing
-        double komi = 0.5;
         board.setStone(1, 1, Color.WHITE);
         board.setStone(0, 1, Color.BLACK);
         board.setStone(1, 0, Color.BLACK);
         board.setStone(1, 2, Color.BLACK);
         board.setStone(2, 1, Color.BLACK);
-        board.calcScores(komi);
+        board.calcScores(0.5);
 
-        // Perform assertions to check the expected behavior
         assertEquals(1, board.getTrapped(Color.BLACK));
         assertEquals(0, board.getTrapped(Color.WHITE));
         assertEquals(6.0, board.getTotal(Color.BLACK), 0.01);
         assertEquals(0.5, board.getTotal(Color.WHITE), 0.01);
+
+        board = new SimpleBoard(3);
+        board.setStone(0,0, Color.WHITE);
+        board.setStone(0, 1, Color.WHITE);
+        board.setStone(1, 0, Color.WHITE);
+        board.setStone(1, 2, Color.BLACK);
+        board.setStone(2, 2, Color.BLACK);
+        board.setStone(2, 1, Color.BLACK);
+        board.calcScores(3.5);
+
+        assertEquals(0.0, board.getTotal(Color.BLACK), 0.01);
+        assertEquals(3.5, board.getTotal(Color.WHITE), 0.01);
+
+        board = new SimpleBoard(3);
+        board.setStone(1, 1, Color.BLACK);
+        board.setStone(0, 1, Color.WHITE);
+        board.setStone(1, 0, Color.WHITE);
+        board.setStone(1, 2, Color.WHITE);
+        board.setStone(2, 1, Color.WHITE);
+        board.calcScores(9.5);
+
+        assertEquals(0, board.getTrapped(Color.BLACK));
+        assertEquals(1, board.getTrapped(Color.WHITE));
+        assertEquals(0.0, board.getTotal(Color.BLACK), 0.01);
+        assertEquals(15.5, board.getTotal(Color.WHITE), 0.01);
     }
 }
 

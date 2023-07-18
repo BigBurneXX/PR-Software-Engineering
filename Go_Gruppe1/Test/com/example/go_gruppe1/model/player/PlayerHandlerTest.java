@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +60,7 @@ public class PlayerHandlerTest {
     @Test
     public void testCheckByoyomi() {
         assertFalse(playerHandler.checkByoyomi());
+        assertTrue(playerHandler2.checkByoyomi());
     }
 
     @Test
@@ -212,7 +215,7 @@ public class PlayerHandlerTest {
 
         // Add some assertions here, depending on your implementation.
     }
-/*
+
     @Test
     public void testTerminalInfo() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -232,9 +235,9 @@ public class PlayerHandlerTest {
         // reset the System.out
         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
     }
-*/
+
     @Test
-    public void testTerminalInfo() {
+    public void testTerminalInfo2() {
         // Redirect the standard output to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));

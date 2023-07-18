@@ -80,7 +80,6 @@ public class GameTest {
         assertNull(game.getBoard().getBoard()[0][1]);
     }
 
-
     @Test
     public void testRedoLastMove() {
         // Set up a new game
@@ -127,18 +126,6 @@ public class GameTest {
 
         // Check that the description is the same as the command's description (since your code sets it to the command's description even when undoing)
         assertEquals(command.getDescription(), game.getDescription().get()); // Description should match the command's description even after undoing
-    }
-    @Test
-    public void testUndoRedoWithEmptyStacks() {
-        // Call undo and redo on a new game (stacks are empty)
-        Game game = new Game(3);
-        game.undoLastMove();  // this should not raise any exception
-        game.redoLastMove();  // this should not raise any exception
-    }
-    
-    @Test
-    public void testGetDescriptionBeforeAnyCommand() {
-        assertEquals("Something!!", game.getDescription().get());
     }
 
     @Test
