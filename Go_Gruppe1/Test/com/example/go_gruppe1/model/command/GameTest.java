@@ -135,4 +135,46 @@ public class GameTest {
         game.undoLastMove();  // this should not raise any exception
         game.redoLastMove();  // this should not raise any exception
     }
+    
+    @Test
+    public void testGetDescriptionBeforeAnyCommand() {
+        assertEquals("Something!!", game.getDescription().get());
+    }
+
+    @Test
+    public void testUndoRedoOrder() {
+        Command command1 = new PlaceStoneCommand(game.getBoard(), 0, 0, Color.BLACK);
+        Command command2 = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.WHITE);
+
+        game.executeCommand(command1);
+        game.executeCommand(command2);
+
+        game.undoLastMove();
+        game.undoLastMove();
+
+        game.redoLastMove();
+
+        // After undoing both moves and redoing one, the first stone should be back
+        assertEquals(Color.BLACK, game.getBoard().getBoard()[0][0]);
+        assertNull(game.getBoard().getBoard()[0][1]); // The second stone should still be absent
+    }
+
+    @Test
+    public void testExecuteCommandSequence() {
+        Command command1 = new PlaceStoneCommand(game.getBoard(), 0, 0, Color.BLACK);
+        Command command2 = new PlaceStoneCommand(game.getBoard(), 0, 1, Color.WHITE);
+        Command command3 = new PlaceStoneCommand(game.getBoard(), 1, 0, Color.BLACK);
+        Command command4 = new PlaceStoneCommand(game.getBoard(), 1, 1, Color.WHITE);
+
+        game.executeCommand(command1);
+        game.executeCommand(command2);
+        game.executeCommand(command3);
+        game.executeCommand(command4);
+
+        game.undoLastMove();
+        game.redoLastMove();
+
+        // After undoing and redoing the last move, the last stone should be present again
+        assertEquals(Color.WHITE, game.getBoard().getBoard()[1][1]);
+    }
 }
